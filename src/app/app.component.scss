@@ -1,0 +1,26 @@
+.container {
+  padding: 24px;
+}
+
+mat-sidenav-container {
+  height: calc(100vh - 64px);
+}
+
+.component-selector {
+  width: 200px;
+  height: inherit;
+  background: var(--background);
+  --mat-sidenav-container-divider-color: var(--primary-light);
+}
+
+.credits {
+  position: absolute;
+  bottom: 20px;
+}
+
+.theme-selector {
+  width: 300px;
+  height: inherit;
+  background: var(--background);
+  --mat-sidenav-container-divider-color: var(--primary-light);
+}
