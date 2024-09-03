@@ -2,7 +2,7 @@
 // Proceed with caution if making changes to this file.
 
 @use "sass:map";
-@use "@angular/material" as mat;
+@use "../node_modules/@angular/material/index" as mat;
 
 // Note: Color palettes are generated from primary: #022f40, tertiary: #0090C1
 $_palettes: (

@@ -7,8 +7,6 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "inlineTemplate": true,
-          "inlineStyle": true,
           "style": "scss",
           "skipTests": true
         },
@@ -73,12 +71,14 @@
                   "maximumError": "4kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "localize": ["en", "ru"]
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "localize": ["en", "ru"]
             }
           },
           "defaultConfiguration": "production"

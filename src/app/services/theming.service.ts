@@ -17,22 +17,21 @@ type Theme = {
 export class ThemingService {
 
   telegramService = inject(TelegramService);
-  background = signal(this.telegramService.tg.themeParams?.bg_color);
   primary = signal(this.telegramService.tg.themeParams?.button_color);
-  primaryLight = signal(this.telegramService.tg.themeParams?.button_text_color);
-  // ripple = signal(this.telegramService.tg.themeParams?.button_color);
-  ripple = signal('#81B6C71e');
-  primaryDark = signal(this.telegramService.tg.themeParams?.link_color);
+  primaryLight = signal(this.telegramService.tg.themeParams?.secondary_bg_color);
+  primaryDark = signal(this.telegramService.tg.themeParams?.hint_color);
+  background = signal(this.telegramService.tg.themeParams?.bg_color);
+  ripple = signal(this.telegramService.tg.themeParams?.link_color + '1e');
   error = signal('#ba1a1a');
 
   constructor() {
     if (window.Telegram && window.Telegram.WebApp) {
       window.Telegram.WebApp.onEvent('themeChanged', () => {
         this.primary.set(this.telegramService.tg.themeParams?.button_color);
-        this.primaryLight.set(this.telegramService.tg.themeParams?.button_text_color);
-        this.primaryDark.set(this.telegramService.tg.themeParams?.link_color);
+        this.primaryLight.set(this.telegramService.tg.themeParams?.secondary_bg_color);
+        this.primaryDark.set(this.telegramService.tg.themeParams?.hint_color);
         this.background.set(this.telegramService.tg.themeParams?.bg_color);
-        this.ripple.set(this.telegramService.tg.themeParams?.button_color + '1e');
+        this.ripple.set(this.telegramService.tg.themeParams?.link_color + '1e');
         this.error.set('#ba1a1a');
       });
 

@@ -1,0 +1,15 @@
+svg {
+  vertical-align: middle;
+}
+
+.user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,12 +1,16 @@
-import {Component, computed, inject, model} from '@angular/core';
+import {Component, computed, inject, model, OnInit} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {ResponsiveService} from '../../services/responsive.service';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {TelegramService} from "../../services/telegram.service";
+import {ITelegramWebAppData} from "../../interface/telegram-web-app-data";
+
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [MatIcon, MatButtonModule],
+  imports: [MatIcon, MatButtonModule, MatMenu, MatMenuTrigger, MatMenuItem],
   template: `
     <button
       mat-icon-button
@@ -15,12 +19,23 @@ import {ResponsiveService} from '../../services/responsive.service';
       <mat-icon>menu</mat-icon>
     </button>
     {{ title() }}
-    <button
-      mat-icon-button
-      (click)="themeSelectorOpen.set(!themeSelectorOpen())"
-    >
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
       <mat-icon>settings</mat-icon>
     </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="changeToolbarTheme('Default')">
+        <mat-icon>format_paint</mat-icon>
+        <span>Toolbar style 1</span>
+      </button>
+      <button mat-menu-item (click)="changeToolbarTheme('Reversed')">
+        <mat-icon>format_paint</mat-icon>
+        <span>Toolbar style 2</span>
+      </button>
+      <button mat-menu-item (click)="changeToolbarTheme('Secondary')">
+        <mat-icon>format_paint</mat-icon>
+        <span>Toolbar style 3</span>
+      </button>
+    </mat-menu>
   `,
   styles: `
 
@@ -28,21 +43,65 @@ import {ResponsiveService} from '../../services/responsive.service';
       display: flex;
       justify-content: space-between;
       align-items: center;
-      --mdc-icon-button-icon-color: var(--primary-light);
+      color: var(--mat-toolbar-container-text-color);
+      --mdc-icon-button-icon-color: var(--mat-toolbar-container-text-color);
       width: 100%;
     }
 
   `,
 })
-export class ToolbarComponent {
+export class ToolbarComponent implements OnInit {
   componentSelectorOpen = model.required<boolean>();
   themeSelectorOpen = model.required<boolean>();
 
   responsiveService = inject(ResponsiveService);
+  telegramService = inject(TelegramService);
+  webAppData: ITelegramWebAppData = window!.Telegram.WebApp;
 
   title = computed(
     () => `${
       this.responsiveService.largeWidth() ? 'Telegram Template ' : 'TgTemplate'
     }`
   );
+
+  ngOnInit(): void {
+    this.changeToolbarTheme('Default');
+  }
+
+  changeToolbarTheme(theme: string) {
+    switch (theme) {
+      case 'Default':
+        document.body.style.setProperty(
+          `--mat-toolbar-container-background-color`,
+          this.webAppData.platform === 'unknown' ? '#3390ec' : 'var(--tg-theme-button-color)'
+        );
+        document.body.style.setProperty(
+          `--mat-toolbar-container-text-color`,
+          this.webAppData.platform === 'unknown' ? '#ffffff' : 'var(--tg-theme-button-text-color)'
+        );
+        break;
+      case 'Reversed':
+        document.body.style.setProperty(
+          `--mat-toolbar-container-background-color`,
+          this.webAppData.platform === 'unknown' ? '#ffffff' : this.webAppData.themeParams.bg_color
+        );
+        document.body.style.setProperty(
+          `--mat-toolbar-container-text-color`,
+          this.webAppData.platform === 'unknown' ? '#3390ec' : this.webAppData.themeParams.button_color
+        );
+        break;
+      case 'Secondary':
+        document.body.style.setProperty(
+          `--mat-toolbar-container-background-color`,
+          this.webAppData.platform === 'unknown' ? '#f4f4f4' : this.webAppData.themeParams.secondary_bg_color
+        );
+        document.body.style.setProperty(
+          `--mat-toolbar-container-text-color`,
+          this.webAppData.platform === 'unknown' ? '#3390ec' : 'var(--tg-theme-button-color)'
+        );
+        break;
+    }
+  }
+
+
 }

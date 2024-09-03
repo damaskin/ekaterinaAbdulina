@@ -8,7 +8,8 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
-@import "./../m3-theme.scss";
+@import "m3-theme";
+@import "tg-theme";
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -25,6 +26,15 @@
 // @include mat.color-variants-backwards-compatibility($theme);
 /* You can add global styles to this file, and also import other style files */
 
+root {
+  --primary: var(--tg-theme-button-color);
+  --primary-light: var(--tg-theme-secondary-bg-color);
+  --primary-dark: var(--tg-theme-hint-color);
+  --background: var(--tg-theme-bg-color);
+  --ripple: var(--tg-theme-link-color);
+  --error: var(--tg-theme-button-text-color);
+}
+
 html,
 body {
   height: 100%;
@@ -32,6 +42,12 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+
+  // Overrides material theme
+  --mdc-filled-button-label-text-color: var(--tg-theme-button-text-color, var(--primary-light));
+  --mat-tab-header-divider-color: var(--tg-theme-hint-color);
+  --mat-sidenav-content-text-color: var(--tg-theme-text-color, var(--primary));
+  --mat-menu-item-hover-state-layer-color: var(--tg-theme-bg-color);
 }
 
 @import "./easy-theming.css";
@@ -40,4 +56,16 @@ body {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.fw-normal {
+  font-weight: normal;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.mt0 {
+  margin-top: 0;
 }

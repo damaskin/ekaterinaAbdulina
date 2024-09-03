@@ -354,4 +354,7 @@ body {
 
   /*Ripple*/
   --mat-ripple-color: var(--ripple);
+
+  /* Bottom Sheet */
+  --mat-bottom-sheet-container-background-color: var(--background);
 }

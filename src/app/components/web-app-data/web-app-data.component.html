@@ -1,0 +1,17 @@
+<h3 class="theme-accent-text-color fw-normal mt0">{{ 'webAppData.title' | translate }}</h3>
+
+<app-user-data></app-user-data>
+
+@if (webAppData.platform !== 'unknown') {
+  <app-theme-params></app-theme-params>
+  <app-main-btn-params></app-main-btn-params>
+}
+
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.colorScheme' | translate }} - {{ webAppData.colorScheme }}</h4>
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.viewportHeight' | translate }} - {{ webAppData.viewportHeight }}</h4>
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.viewportStableHeight' | translate }} - {{ webAppData.viewportStableHeight }}</h4>
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.isExpanded' | translate }} - {{ webAppData.isExpanded ? 'Yes' : 'No' }}</h4>
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.backButton.isVisible' | translate }} - {{ webAppData.BackButton.isVisible ? 'Yes' : 'No' }}</h4>
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.settingsButton.isVisible' | translate }} - {{ webAppData.SettingsButton.isVisible ? 'Yes' : 'No' }}</h4>
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.platform' | translate }} - {{ webAppData.platform }}</h4>
+<h4 class="theme-link-color fw-normal">{{ 'webAppData.version' | translate }} - {{ webAppData.version }}</h4>
