@@ -1,8 +1,9 @@
 import {Component, EventEmitter, inject, Output} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatListModule} from '@angular/material/list';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 import {MatIcon} from "@angular/material/icon";
+import {MenuService} from "../../services/menu.service";
 
 @Component({
   selector: 'app-main-menu',
@@ -11,7 +12,7 @@ import {MatIcon} from "@angular/material/icon";
   template: `
     <div class="menu-container">
       <mat-nav-list>
-        @for (route of routes; track route.route) {
+        @for (route of menuService.routes; track route.route) {
           <a
             routerLinkActive
             #rla="routerLinkActive"
@@ -23,10 +24,12 @@ import {MatIcon} from "@angular/material/icon";
           >
         }
       </mat-nav-list>
+      <div class="menu-footer">
+        v.1.0.0
+      </div>
     </div>
   `,
   styles: `
-
     :host {
       display: block;
     }
@@ -40,21 +43,15 @@ import {MatIcon} from "@angular/material/icon";
       vertical-align: sub;
     }
 
+    .menu-footer {
+      padding: 16px;
+      font-size: 12px;
+      position: absolute;
+      bottom: 1px;
+    }
   `,
 })
 export class MainMenuComponent {
   @Output() closeMenu = new EventEmitter<void>();
-  private router = inject(Router);
-  routes: { label: string; route: string, icon: string }[] = [
-    {
-      label: 'Main',
-      route: 'main',
-      icon: 'home',
-    },
-    {
-      label: 'WebApp Data',
-      route: 'web-app-data',
-      icon: 'web_asset',
-    }
-  ];
+  menuService = inject(MenuService);
 }

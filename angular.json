@@ -78,7 +78,22 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "localize": ["en", "ru"]
+              "localize": [
+                "en",
+                "ru"
+              ]
+            },
+            "admin": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/app.component.ts",
+                  "with": "admin/app/app.component.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.admin.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -91,6 +106,9 @@
             },
             "development": {
               "buildTarget": "telegramTemplate:build:development"
+            },
+            "admin": {
+              "buildTarget": "telegramTemplate:build:admin"
             }
           },
           "defaultConfiguration": "development"

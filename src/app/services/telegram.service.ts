@@ -24,7 +24,6 @@ export class TelegramService {
     this.window = this._document.defaultView;
     this.tg = this.window!.Telegram.WebApp;
 
-    // По умолчанию во весь экран
     this.tg.expand();
     this.tg.isClosingConfirmationEnabled = true;
 
@@ -32,6 +31,13 @@ export class TelegramService {
 
     this.translate.use(this.tg?.initDataUnsafe?.user?.language_code!);
     this.initUser();
+  }
+
+  getTelegramWebAppData(): any {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+      return window.Telegram.WebApp.initDataUnsafe.user || null;
+    }
+    return null;
   }
 
   showMainBtn(text: string = 'Main button text') {
@@ -61,6 +67,11 @@ export class TelegramService {
       this.telegramUser = this.tg.initDataUnsafe.user;
       return this.telegramUser;
     }
+  }
+
+  public showPrimaryMainBtn(text: string): void {
+    this.tg.MainButton.setText(text);
+    this.tg.MainButton.show();
   }
 
 }
