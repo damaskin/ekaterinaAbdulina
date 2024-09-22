@@ -82,6 +82,18 @@
                 "en",
                 "ru"
               ]
+            },
+            "admin": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/app.component.ts",
+                  "with": "admin/app/app.component.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "admin/app/environment.admin.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -94,6 +106,9 @@
             },
             "development": {
               "buildTarget": "telegramTemplate:build:development"
+            },
+            "admin": {
+              "buildTarget": "telegramTemplate:build:admin"
             }
           },
           "defaultConfiguration": "development"
