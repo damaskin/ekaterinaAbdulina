@@ -1,62 +1,62 @@
 {
   "mainPage": {
-    "title": "Текст на русском",
-    "description": "<p>This is a template for creating Telegram themes.</p>\n<p>It is built with Angular and Angular Material.</p>\n<p>You can use it to create your own themes.</p>"
+    "title": "Шаблон Telegram",
+    "description": "<p>Это шаблон для создания тем Telegram.</p>\n<p>Он создан с использованием Angular и Angular Material.</p>\n<p>Вы можете использовать его для создания собственных тем.</p>"
   },
   "auth": {
-    "title": "Sign In",
-    "alert": "<p>After successful authorization, user data should be stored in the database and the authenticity and integrity of the received data should be checked, as specified in the documentation - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>We do not save your data, this functionality works for demonstration purposes.</p><p>This means that each time you reload the page, you will need to log in again.</p>"
+    "title": "Войти",
+    "alert": "<p>После успешной авторизации данные пользователя должны быть сохранены в базе данных, а подлинность и целостность полученных данных должны быть проверены, как указано в документации - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>Мы не сохраняем ваши данные, эта функция работает исключительно в демонстрационных целях.</p><p>Это означает, что каждый раз при перезагрузке страницы вам потребуется снова войти в систему.</p>"
   },
   "webAppData": {
-    "title": "Telegram Web App Data",
+    "title": "Данные веб-приложения Telegram",
     "user": {
-      "title": "User",
+      "title": "Пользователь",
       "id": "ID",
-      "username": "Username",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "languageCode": "Language code",
-      "language": "Language",
-      "isPremium": "Is premium",
-      "authDate": "Auth date",
-      "hash": "Hash"
+      "username": "Имя пользователя",
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "languageCode": "Код языка",
+      "language": "Язык",
+      "isPremium": "Премиум",
+      "authDate": "Дата авторизации",
+      "hash": "Хеш"
     },
     "themeParams": {
-      "title": "Theme Params",
-      "accentTextColor": "Accent Text Color",
-      "bgColor": "Background Color",
-      "buttonColor": "Button Color",
-      "buttonTextColor": "Button Text Color",
-      "destructiveTextColor": "Destructive Text Color",
-      "headerBgColor": "Header Background Color",
-      "hintColor": "Hint Color",
-      "linkColor": "Link Color",
-      "secondaryBgColor": "Secondary Background Color",
-      "sectionBgColor": "Section Background Color",
-      "sectionHeaderTextColor": "Section Header Text Color",
-      "sectionSeparatorColor": "Section Separator Color",
-      "subtitleTextColor": "Subtitle Text Color"
+      "title": "Параметры темы",
+      "accentTextColor": "Цвет акцентного текста",
+      "bgColor": "Цвет фона",
+      "buttonColor": "Цвет кнопки",
+      "buttonTextColor": "Цвет текста на кнопке",
+      "destructiveTextColor": "Цвет разрушительного текста",
+      "headerBgColor": "Цвет фона заголовка",
+      "hintColor": "Цвет подсказки",
+      "linkColor": "Цвет ссылки",
+      "secondaryBgColor": "Цвет второстепенного фона",
+      "sectionBgColor": "Цвет фона секции",
+      "sectionHeaderTextColor": "Цвет текста заголовка секции",
+      "sectionSeparatorColor": "Цвет разделителя секции",
+      "subtitleTextColor": "Цвет подзаголовка"
     },
-    "colorScheme": "Color scheme",
-    "platform": "Platform",
-    "version": "Version",
-    "viewportHeight": "Viewport Height",
-    "viewportStableHeight": "Viewport Stable Height",
-    "isExpanded": "Is Expanded",
+    "colorScheme": "Цветовая схема",
+    "platform": "Платформа",
+    "version": "Версия",
+    "viewportHeight": "Высота экрана",
+    "viewportStableHeight": "Стабильная высота экрана",
+    "isExpanded": "Развернуто",
     "backButton": {
-      "isVisible": "Back Button Visible"
+      "isVisible": "Кнопка 'Назад' видна"
     },
     "mainButton": {
-      "title": "Main Button",
-      "text": "Text",
-      "color": "Color",
-      "textColor": "Text Color",
-      "isVisible": "Main Button Visible",
-      "isProgressVisible": "Progress Visible",
-      "isActive": "Active"
+      "title": "Основная кнопка",
+      "text": "Текст",
+      "color": "Цвет",
+      "textColor": "Цвет текста",
+      "isVisible": "Основная кнопка видна",
+      "isProgressVisible": "Прогресс виден",
+      "isActive": "Активна"
     },
     "settingsButton": {
-      "isVisible": "Settings Button Visible"
+      "isVisible": "Кнопка настроек видна"
     }
   }
 }

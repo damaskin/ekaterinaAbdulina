@@ -31,7 +31,7 @@ export class TelegramLoginComponent implements OnInit {
     script.setAttribute('data-telegram-login', environment.telegramBotName);
     script.setAttribute('data-size', 'large');
     script.setAttribute('data-radius', '10');
-    script.setAttribute('data-auth-url', 'https://express.a.pinggy.link/api/auth/telegram');
+    script.setAttribute('data-auth-url', 'https://angular2.ru/api/auth/telegram');
     script.setAttribute('data-request-access', 'write');
     script.setAttribute('data-onauth', `window.onTelegramAuth(user)`);
     document.getElementById('telegram-login-button')?.appendChild(script);

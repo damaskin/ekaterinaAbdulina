@@ -1,0 +1,62 @@
+{
+  "mainPage": {
+    "title": "Modèle Telegram",
+    "description": "<p>Ceci est un modèle pour créer des thèmes Telegram.</p>\n<p>Il est construit avec Angular et Angular Material.</p>\n<p>Vous pouvez l'utiliser pour créer vos propres thèmes.</p>"
+  },
+  "auth": {
+    "title": "Se connecter",
+    "alert": "<p>Après une autorisation réussie, les données de l'utilisateur doivent être stockées dans la base de données et l'authenticité et l'intégrité des données reçues doivent être vérifiées, comme spécifié dans la documentation - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>Nous ne conservons pas vos données, cette fonctionnalité fonctionne à des fins de démonstration.</p><p>Cela signifie qu'à chaque fois que vous rechargez la page, vous devrez vous reconnecter.</p>"
+  },
+  "webAppData": {
+    "title": "Données de l'application Web Telegram",
+    "user": {
+      "title": "Utilisateur",
+      "id": "ID",
+      "username": "Nom d'utilisateur",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "languageCode": "Code de langue",
+      "language": "Langue",
+      "isPremium": "Est Premium",
+      "authDate": "Date d'authentification",
+      "hash": "Hash"
+    },
+    "themeParams": {
+      "title": "Paramètres du thème",
+      "accentTextColor": "Couleur du texte d'accent",
+      "bgColor": "Couleur de l'arrière-plan",
+      "buttonColor": "Couleur du bouton",
+      "buttonTextColor": "Couleur du texte du bouton",
+      "destructiveTextColor": "Couleur du texte destructif",
+      "headerBgColor": "Couleur de l'arrière-plan de l'en-tête",
+      "hintColor": "Couleur de l'indice",
+      "linkColor": "Couleur du lien",
+      "secondaryBgColor": "Couleur de l'arrière-plan secondaire",
+      "sectionBgColor": "Couleur de l'arrière-plan de la section",
+      "sectionHeaderTextColor": "Couleur du texte de l'en-tête de la section",
+      "sectionSeparatorColor": "Couleur du séparateur de section",
+      "subtitleTextColor": "Couleur du texte des sous-titres"
+    },
+    "colorScheme": "Schéma de couleurs",
+    "platform": "Plateforme",
+    "version": "Version",
+    "viewportHeight": "Hauteur de la fenêtre",
+    "viewportStableHeight": "Hauteur stable de la fenêtre",
+    "isExpanded": "Est étendu",
+    "backButton": {
+      "isVisible": "Bouton de retour visible"
+    },
+    "mainButton": {
+      "title": "Bouton principal",
+      "text": "Texte",
+      "color": "Couleur",
+      "textColor": "Couleur du texte",
+      "isVisible": "Bouton principal visible",
+      "isProgressVisible": "Progression visible",
+      "isActive": "Actif"
+    },
+    "settingsButton": {
+      "isVisible": "Bouton des paramètres visible"
+    }
+  }
+}
