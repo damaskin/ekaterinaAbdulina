@@ -31,4 +31,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
-        path: dist/browser/ # Убедитесь, что путь соответствует выходной директории вашего проекта
+        path: dist/telegram-template/browser/ # Убедитесь, что путь соответствует выходной директории вашего проекта
