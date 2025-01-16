@@ -6,16 +6,13 @@ import {MatSidenav, MatSidenavContainer} from "@angular/material/sidenav";
 import {MainMenuComponent} from "./components/main-menu/main-menu.component";
 import {ThemingService} from "./services/theming.service";
 import {ResponsiveService} from "./services/responsive.service";
-import {ThemeSelectorComponent} from "./components/theme-selector/theme-selector.component";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import {TelegramLoginComponent} from "./components/telegram-login/telegram-login.component";
 import {TelegramService} from "./services/telegram.service";
-import {JsonPipe} from "@angular/common";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatToolbar, ToolbarComponent, MatSidenavContainer, MainMenuComponent, MatSidenav, ThemeSelectorComponent, TranslateModule, TelegramLoginComponent, JsonPipe],
+  imports: [RouterOutlet, MatToolbar, ToolbarComponent, MatSidenavContainer, MainMenuComponent, MatSidenav, TranslateModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

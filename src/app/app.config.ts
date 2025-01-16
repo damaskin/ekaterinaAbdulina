@@ -6,6 +6,9 @@ import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http"
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { firebaseConfig } from '../environments/firebase.config';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -27,6 +30,8 @@ appConfig = {
         },
         defaultLanguage: 'en'
       })
-    )
+    ),
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirestore(() => getFirestore())
   ]
 };

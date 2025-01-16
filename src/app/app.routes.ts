@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import {MainPageComponent} from "./pages/main-page/main-page.component";
 import {WebAppDataPageComponent} from "./pages/web-app-data-page/web-app-data-page.component";
 import {AuthComponent} from "./pages/auth-page/auth.component";
+import {StyleFormComponent} from "./components/style-form/style-form.component";
 
 export const routes: Routes = [
   {
@@ -20,5 +21,6 @@ export const routes: Routes = [
   {
     path: 'web-app-data',
     component: WebAppDataPageComponent,
-  }
+  },
+  { path: 'form/:id', component: StyleFormComponent },
 ];

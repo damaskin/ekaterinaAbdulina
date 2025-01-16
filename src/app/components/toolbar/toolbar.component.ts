@@ -60,7 +60,7 @@ export class ToolbarComponent implements OnInit {
 
   title = computed(
     () => `${
-      this.responsiveService.largeWidth() ? 'Telegram Template ' : 'TgTemplate'
+      this.responsiveService.largeWidth() ? 'Екатерина Абдулина' : 'Екатерина Абдулина'
     }`
   );
 

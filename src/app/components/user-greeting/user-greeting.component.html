@@ -1,0 +1,15 @@
+@if (user) {
+  <div class="greeting">
+    @if (user.photo_url) {
+      <img
+        [src]="user.photo_url"
+        alt="Avatar"
+        class="avatar"
+      />
+    }
+    <span>
+      Привет,
+      <strong>{{ user.first_name || user.username }}</strong>!
+    </span>
+  </div>
+} 

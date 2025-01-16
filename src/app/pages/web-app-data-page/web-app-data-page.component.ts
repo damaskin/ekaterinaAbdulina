@@ -15,7 +15,7 @@ export class WebAppDataPageComponent implements OnInit, OnDestroy {
   private readonly telegramService = inject(TelegramService);
 
   ngOnInit(): void {
-    this.telegramService.showMainBtn();
+    // this.telegramService.showMainBtn();
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,14 @@
+<div class="categories">
+  <div class="categories-grid">
+    @for (category of categories; track category.id) {
+      <button class="category-item" (click)="selectCategory(category)">
+        <img 
+          src="assets/images/icons/{{ category.id }}.png" 
+          alt="{{ category.title }}"
+          class="category-icon"
+        />
+        <span class="category-title">{{ category.title }}</span>
+      </button>
+    }
+  </div>
+</div>

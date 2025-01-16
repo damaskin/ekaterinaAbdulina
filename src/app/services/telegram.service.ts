@@ -3,6 +3,7 @@ import {DOCUMENT} from "@angular/common";
 import {ITelegramWebAppData, User} from "../interface/telegram-web-app-data";
 import {TranslateService} from "@ngx-translate/core";
 import {ITelegramUser} from "../interface/telegram-user";
+import {FirebaseService} from "./firebase.service";
 
 declare global {
   interface Window {
@@ -20,7 +21,8 @@ export class TelegramService {
   telegramUser!: ITelegramUser;
 
   constructor(@Inject(DOCUMENT) private _document: Document,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private readonly firebaseService: FirebaseService,) {
     this.window = this._document.defaultView;
     this.tg = this.window!.Telegram.WebApp;
 
@@ -61,17 +63,20 @@ export class TelegramService {
         return {} as User;
       } else {
         this.telegramUser = JSON.parse(userData);
+        this.saveTelegramUser(this.telegramUser);
         return this.telegramUser;
       }
     } else {
       this.telegramUser = this.tg.initDataUnsafe.user;
+      this.saveTelegramUser(this.telegramUser);
       return this.telegramUser;
     }
   }
 
-  public showPrimaryMainBtn(text: string): void {
-    this.tg.MainButton.setText(text);
-    this.tg.MainButton.show();
+  saveTelegramUser(user: ITelegramUser) {
+    this.firebaseService.saveUser(user).catch((err) => {
+      console.error('Error saving user:', err);
+    });
   }
 
 }

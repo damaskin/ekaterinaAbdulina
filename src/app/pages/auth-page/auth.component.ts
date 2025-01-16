@@ -1,5 +1,4 @@
 import {Component, inject} from '@angular/core';
-import {TelegramLoginComponent} from "../../components/telegram-login/telegram-login.component";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
@@ -8,7 +7,6 @@ import {MatButtonModule} from "@angular/material/button";
   selector: 'app-auth',
   standalone: true,
   imports: [
-    TelegramLoginComponent,
     TranslateModule,
     MatCardModule, MatButtonModule
   ],
