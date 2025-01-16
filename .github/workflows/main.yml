@@ -19,7 +19,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16' # Убедитесь, что версия Node.js соответствует требованиям вашего проекта
+        node-version: '20' # Убедитесь, что версия Node.js соответствует требованиям вашего проекта
 
     - name: Install dependencies
       run: npm install
