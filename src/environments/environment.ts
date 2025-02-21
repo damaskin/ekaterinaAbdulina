@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   // This is the name of your Telegram bot
   telegramBotName: 'tgTemplate_Bot',
 };
