@@ -1,10 +1,11 @@
-@if (telegramService.telegramUser && telegramService.telegramUser.id) {
+@if (telegramService.telegramUser && telegramService.telegramUser.id && user) {
 <!--  <mat-toolbar>-->
 <!--    <app-toolbar-->
 <!--      [(componentSelectorOpen)]="componentSelectorOpen"-->
 <!--      [(themeSelectorOpen)]="themeSelectorOpen"-->
 <!--    />-->
 <!--  </mat-toolbar>-->
+
 }
 <mat-sidenav-container>
   <mat-sidenav
@@ -15,6 +16,9 @@
     <app-main-menu  (closeMenu)="closeMenu()" />
   </mat-sidenav>
   <div class="container">
+
+    <app-user-greeting [user]="user"></app-user-greeting>
+
     <router-outlet />
   </div>
 </mat-sidenav-container>

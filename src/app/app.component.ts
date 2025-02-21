@@ -8,15 +8,20 @@ import {ThemingService} from "./services/theming.service";
 import {ResponsiveService} from "./services/responsive.service";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {TelegramService} from "./services/telegram.service";
+import {UserGreetingComponent} from "./components/user-greeting/user-greeting.component";
+import {ITelegramUser} from "./interface/telegram-user";
+import {User} from "./interface/telegram-web-app-data";
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatToolbar, ToolbarComponent, MatSidenavContainer, MainMenuComponent, MatSidenav, TranslateModule],
+    imports: [RouterOutlet, MatToolbar, ToolbarComponent, MatSidenavContainer, MainMenuComponent, MatSidenav, TranslateModule, UserGreetingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+  public user: any;
   telegramService = inject(TelegramService);
   translate = inject(TranslateService);
   router = inject(Router);
@@ -72,6 +77,7 @@ export class AppComponent implements OnInit {
 
   private initUser(): void {
     const user = this.telegramService.initUser();
+    this.user = user;
     if (user && user.id) {
       this.router.navigate(['/main']).then();
     } else {

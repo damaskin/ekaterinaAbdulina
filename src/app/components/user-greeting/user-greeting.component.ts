@@ -9,4 +9,4 @@ import { ITelegramUser } from '../../interface/telegram-user';
 })
 export class UserGreetingComponent {
   @Input() user?: ITelegramUser;
-} 
+}
