@@ -1,5 +1,12 @@
 <!--<app-user-greeting [user]="user"></app-user-greeting>-->
 
+<!-- Если идет загрузка, показываем loader -->
+<!--@if (isLoading) {-->
+<!--  <div class="loader-container">-->
+<!--    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>-->
+<!--  </div>-->
+<!--}-->
+
 <form [formGroup]="styleForm" (ngSubmit)="onSubmit()" class="style-form">
 
   <!-- Личная информация -->
@@ -44,7 +51,7 @@
   </div>
 
   <!-- Покупательские привычки -->
-  <div class="form-section">
+  <div class="form-section" formGroupName="shoppingHabits">
     <h3>Покупательские привычки</h3>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Как часто вы покупаете вещи?</mat-label>
@@ -172,3 +179,4 @@
   </div>
 
 </form>
+

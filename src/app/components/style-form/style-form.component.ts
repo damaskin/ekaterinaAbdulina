@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { UserGreetingComponent } from '../user-greeting/user-greeting.component';
 import { TelegramService } from '../../services/telegram.service';
@@ -13,6 +13,7 @@ import { MatInput } from "@angular/material/input";
 import { MatCard } from "@angular/material/card";
 import { MatCardContent } from "@angular/material/card";
 import { MatIcon } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-style-form',
@@ -30,13 +31,16 @@ import { MatIcon } from "@angular/material/icon";
     MatInput,
     MatCard,
     MatCardContent,
-    MatIcon
+    MatIcon,
+    MatProgressSpinnerModule
   ]
 })
-export class StyleFormComponent implements OnInit, OnDestroy {
+export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
   styleForm: FormGroup;
   categoryId: number = 0;
   user: any;
+  router = inject(Router);
+  isLoading: boolean = true; // флаг загрузки
 
   constructor(
     private fb: FormBuilder,
@@ -94,7 +98,7 @@ export class StyleFormComponent implements OnInit, OnDestroy {
     this.user = this.telegramService.initUser();
 
     if (window.Telegram && window.Telegram.WebApp) {
-      // Настройка Main Button
+      // Настройка Main Button с текстом "Отправить"
       window.Telegram.WebApp.MainButton.setText("Отправить");
       window.Telegram.WebApp.MainButton.show();
 
@@ -102,10 +106,15 @@ export class StyleFormComponent implements OnInit, OnDestroy {
       if (window.Telegram.WebApp.BackButton) {
         window.Telegram.WebApp.BackButton.show();
         window.Telegram.WebApp.BackButton.onClick(() => {
-          this.location.back();
+          this.router.navigate(['/main']);
         });
       }
     }
+  }
+
+  // После отображения всех дочерних компонентов ждем 1.5 секунды и убираем loader
+  ngAfterViewInit() {
+    this.isLoading = false;
   }
 
   ngOnDestroy() {
