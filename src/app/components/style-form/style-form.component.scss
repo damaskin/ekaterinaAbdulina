@@ -81,6 +81,7 @@ button[type="submit"] {
   font-size: 14px;
   line-height: 1.4;
   color: var(--tg-theme-text-color);
+  box-sizing: border-box;
 
   .info-icon {
     flex-shrink: 0;
@@ -110,4 +111,4 @@ button[type="submit"] {
   span {
     font-size: 14px;
   }
-} 
+}

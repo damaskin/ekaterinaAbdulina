@@ -1,194 +1,174 @@
-<app-user-greeting [user]="user"></app-user-greeting>
+<!--<app-user-greeting [user]="user"></app-user-greeting>-->
+
 <form [formGroup]="styleForm" (ngSubmit)="onSubmit()" class="style-form">
-  <div class="form-section" formGroupName="personalInfo">
+
+  <!-- Личная информация -->
+  <div formGroupName="personalInfo">
     <h3>Личная информация</h3>
-    
-    <div class="info-block">
+    <div class="info-block full-width">
       <svg class="info-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11 11H13V17H11V11Z" fill="currentColor"/>
       </svg>
       <span>Для наиболее эффективной работы прошу отвечать на вопросы анкеты развернуто и честно</span>
     </div>
 
-    <div class="form-field">
-      <label>Фамилия, имя, отчество</label>
-      <input formControlName="fullName" placeholder="Введите ФИО">
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Фамилия, имя, отчество</mat-label>
+      <input matInput formControlName="fullName" placeholder="Введите ФИО">
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Возраст</label>
-      <input type="number" formControlName="age" placeholder="Введите возраст">
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Возраст</mat-label>
+      <input matInput type="number" formControlName="age" placeholder="Введите возраст">
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Место жительства</label>
-      <input formControlName="location" placeholder="Город проживания">
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Место жительства</mat-label>
+      <input matInput formControlName="location" placeholder="Город проживания">
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Род деятельности</label>
-      <input formControlName="occupation" placeholder="Ваша профессия">
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Род деятельности</mat-label>
+      <input matInput formControlName="occupation" placeholder="Ваша профессия">
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Хобби</label>
-      <textarea formControlName="hobbies" placeholder="Расскажите о ваших увлечениях"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Хобби</mat-label>
+      <textarea matInput formControlName="hobbies" placeholder="Расскажите о ваших увлечениях"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>В браке</label>
-      <div class="radio-group">
-        <label class="radio-label">
-          <input type="radio" formControlName="maritalStatus" value="yes">
-          <span>Да</span>
-        </label>
-        <label class="radio-label">
-          <input type="radio" formControlName="maritalStatus" value="no">
-          <span>Нет</span>
-        </label>
-      </div>
+    <!-- Выбор статуса с использованием mat-slide-toggle -->
+    <div class="form-field full-width">
+      <mat-slide-toggle formControlName="maritalStatus">В браке</mat-slide-toggle>
     </div>
   </div>
 
+  <!-- Покупательские привычки -->
   <div class="form-section">
     <h3>Покупательские привычки</h3>
-    <div class="form-field">
-      <label>Как часто вы покупаете вещи?</label>
-      <textarea formControlName="shoppingFrequency"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Как часто вы покупаете вещи?</mat-label>
+      <textarea matInput formControlName="shoppingFrequency"></textarea>
+    </mat-form-field>
   </div>
 
+  <!-- Внешность и параметры -->
   <div class="form-section" formGroupName="appearance">
     <h3>Внешность и параметры</h3>
-    
-    <div class="form-field">
-      <label>Ваши сильные стороны внешности</label>
-      <textarea formControlName="strongPoints"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Ваши сильные стороны внешности</mat-label>
+      <textarea matInput formControlName="strongPoints"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Ваши слабые стороны внешности</label>
-      <textarea formControlName="weakPoints"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Ваши слабые стороны внешности</mat-label>
+      <textarea matInput formControlName="weakPoints"></textarea>
+    </mat-form-field>
 
-    <div formGroupName="parameters">
-      <div class="form-field">
-        <label>Рост</label>
-        <input formControlName="height" type="number">
-      </div>
-      
-      <div class="form-field">
-        <label>Размер ноги</label>
-        <input formControlName="shoeSize" type="number">
-      </div>
+    <div formGroupName="parameters" class="full-width">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Рост</mat-label>
+        <input matInput type="number" formControlName="height">
+      </mat-form-field>
 
-      <div class="parameters-group">
-        <div class="form-field">
-          <label>Обхват груди</label>
-          <input formControlName="bust" type="number">
-        </div>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Размер ноги</mat-label>
+        <input matInput type="number" formControlName="shoeSize">
+      </mat-form-field>
 
-        <div class="form-field">
-          <label>Обхват талии</label>
-          <input formControlName="waist" type="number">
-        </div>
+      <div class="parameters-group full-width">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Обхват груди</mat-label>
+          <input matInput type="number" formControlName="bust">
+        </mat-form-field>
 
-        <div class="form-field">
-          <label>Обхват бедер</label>
-          <input formControlName="hips" type="number">
-        </div>
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Обхват талии</mat-label>
+          <input matInput type="number" formControlName="waist">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Обхват бедер</mat-label>
+          <input matInput type="number" formControlName="hips">
+        </mat-form-field>
       </div>
     </div>
   </div>
 
+  <!-- Социальные сети -->
   <div class="form-section">
     <h3>Социальные сети</h3>
-    <div class="form-field">
-      <label>Ваши социальные сети</label>
-      <textarea formControlName="socialMedia" placeholder="Укажите ссылки на ваши соцсети"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Ваши социальные сети</mat-label>
+      <textarea matInput formControlName="socialMedia" placeholder="Укажите ссылки на ваши соцсети"></textarea>
+    </mat-form-field>
   </div>
 
+  <!-- Распределение времени -->
   <div class="form-section">
     <h3>Распределение времени</h3>
-    <div class="form-field">
-      <label>Диаграмма занятости</label>
-      <textarea 
-        formControlName="timeDistribution" 
-        placeholder="Распределите в % вашу занятость (спорт, работа, хобби и т.д.)"
-      ></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Диаграмма занятости</mat-label>
+      <textarea matInput formControlName="timeDistribution" placeholder="Распределите в % вашу занятость (спорт, работа, хобби и т.д.)"></textarea>
+    </mat-form-field>
   </div>
 
+  <!-- Стиль и предпочтения -->
   <div class="form-section" formGroupName="style">
     <h3>Стиль и предпочтения</h3>
-    
-    <div class="form-field">
-      <label>Опишите ваш привычный комплект одежды</label>
-      <textarea formControlName="usualOutfit"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Опишите ваш привычный комплект одежды</mat-label>
+      <textarea matInput formControlName="usualOutfit"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Какой образ хотели бы реализовать?</label>
-      <textarea formControlName="desiredStyle" placeholder="Что вас вдохновляет? О чем этот образ?"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Какой образ хотели бы реализовать?</mat-label>
+      <textarea matInput formControlName="desiredStyle" placeholder="Что вас вдохновляет? О чем этот образ?"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Какие цвета преобладают в гардеробе?</label>
-      <textarea formControlName="dominantColors"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Какие цвета преобладают в гардеробе?</mat-label>
+      <textarea matInput formControlName="dominantColors"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Какие марки/магазины предпочитаете?</label>
-      <textarea formControlName="preferredBrands"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Какие марки/магазины предпочитаете?</mat-label>
+      <textarea matInput formControlName="preferredBrands"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Фото "из жизни" (10-15 фото)</label>
-      <input type="file" formControlName="lifePhotos" multiple>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Какое впечатление хотите производить?</mat-label>
+      <textarea matInput formControlName="desiredImpression"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Вдохновляющие образы (5-7 фото)</label>
-      <input type="file" formControlName="inspirationPhotos" multiple>
-    </div>
-
-    <div class="form-field">
-      <label>Какое впечатление хотите производить?</label>
-      <textarea formControlName="desiredImpression"></textarea>
-    </div>
-
-    <div class="form-field">
-      <label>Стоп-лист вещей</label>
-      <textarea formControlName="stopList" placeholder="Вещи, которые вы никогда не добавите в гардероб"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Стоп-лист вещей</mat-label>
+      <textarea matInput formControlName="stopList" placeholder="Вещи, которые вы никогда не добавите в гардероб"></textarea>
+    </mat-form-field>
   </div>
 
-  <div class="form-section" formGroupName="additional">
+  <!-- Дополнительная информация -->
+  <div class="form-section mb-0" formGroupName="additional">
     <h3>Дополнительная информация</h3>
-    
-    <div class="form-field">
-      <label>Следите за тенденциями в моде?</label>
-      <textarea formControlName="followsFashion" placeholder="Каких блогеров/инфлюенсеров смотрите?"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Следите за тенденциями в моде?</mat-label>
+      <textarea matInput formControlName="followsFashion" placeholder="Каких блогеров/инфлюенсеров смотрите?"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Чье мнение важно для вас?</label>
-      <textarea formControlName="importantOpinion"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Чье мнение важно для вас?</mat-label>
+      <textarea matInput formControlName="importantOpinion"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Опыт работы со стилистом</label>
-      <textarea formControlName="previousStylist" placeholder="Обращались ли ранее? Понравилось ли?"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Опыт работы со стилистом</mat-label>
+      <textarea matInput formControlName="previousStylist" placeholder="Обращались ли ранее? Понравилось ли?"></textarea>
+    </mat-form-field>
 
-    <div class="form-field">
-      <label>Что еще важно знать о вас?</label>
-      <textarea formControlName="additionalInfo"></textarea>
-    </div>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Что еще важно знать о вас?</mat-label>
+      <textarea matInput formControlName="additionalInfo"></textarea>
+    </mat-form-field>
   </div>
 
-  <button type="submit" [disabled]="!styleForm.valid">Отправить</button>
-</form> 
-
-<!-- <pre>{{ styleForm.value | json }}</pre> -->
+</form>
