@@ -5,7 +5,7 @@
   },
   "auth": {
     "title": "Sign In",
-    "alert": "<p>After successful authorization, user data should be stored in the database and the authenticity and integrity of the received data should be checked, as specified in the documentation - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>We do not save your data, this functionality works for demonstration purposes.</p><br><p>This means that each time you reload the page, you will need to log in again.</p>"
+    "alert": "<p>After successful authorization, user data should be stored in the database and the authenticity and integrity of the received data should be checked, as specified in the documentation - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>We do not save your data, this functionality works for demonstration purposes.</p>"
   },
   "webAppData": {
     "title": "Telegram Web App Data",
