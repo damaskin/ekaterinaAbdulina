@@ -19,30 +19,50 @@
       <span>Для наиболее эффективной работы прошу отвечать на вопросы анкеты развернуто и честно</span>
     </div>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Фамилия, имя, отчество</mat-label>
-      <input matInput formControlName="fullName" placeholder="Введите ФИО">
-    </mat-form-field>
+    <app-form-element
+      label="Фамилия, имя, отчество"
+      type="text"
+      formControlName="fullName"
+      placeholder="Введите ФИО"
+      [mask]="MASKS.fullName"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Возраст</mat-label>
-      <input matInput type="number" formControlName="age" placeholder="Введите возраст">
-    </mat-form-field>
+    <app-form-element
+      label="Возраст"
+      type="number"
+      formControlName="age"
+      placeholder="Введите возраст"
+      [mask]="MASKS.age"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Место жительства</mat-label>
-      <input matInput formControlName="location" placeholder="Город проживания">
-    </mat-form-field>
+    <app-form-element
+      label="Место жительства"
+      type="text"
+      formControlName="location"
+      placeholder="Город проживания"
+      [mask]="MASKS.location"
+      [isLoading]="isLoading"
+    ></app-form-element>
+    
+    <app-form-element
+      label="Род деятельности"
+      type="text"
+      formControlName="occupation"
+      placeholder="Ваша профессия"
+      [mask]="MASKS.occupation"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Род деятельности</mat-label>
-      <input matInput formControlName="occupation" placeholder="Ваша профессия">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Хобби</mat-label>
-      <textarea matInput formControlName="hobbies" placeholder="Расскажите о ваших увлечениях"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Хобби"
+      type="text"
+      formControlName="hobbies"
+      placeholder="Расскажите о ваших увлечениях"
+      [mask]="MASKS.hobbies"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
     <!-- Выбор статуса с использованием mat-slide-toggle -->
     <div class="form-field full-width">
@@ -53,52 +73,81 @@
   <!-- Покупательские привычки -->
   <div class="form-section" formGroupName="shoppingHabits">
     <h3>Покупательские привычки</h3>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Как часто вы покупаете вещи?</mat-label>
-      <textarea matInput formControlName="shoppingFrequency"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Как часто вы покупаете вещи?"
+      type="text"
+      formControlName="shoppingFrequency"
+      placeholder="Введите частоту покупок"
+      [isLoading]="isLoading"
+    ></app-form-element>
   </div>
 
   <!-- Внешность и параметры -->
   <div class="form-section" formGroupName="appearance">
     <h3>Внешность и параметры</h3>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Ваши сильные стороны внешности</mat-label>
-      <textarea matInput formControlName="strongPoints"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Ваши сильные стороны внешности"
+      inputMode="text"
+      inputType="textarea"
+      formControlName="strongPoints"
+      placeholder="Введите сильные стороны внешности"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Ваши слабые стороны внешности</mat-label>
-      <textarea matInput formControlName="weakPoints"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Ваши слабые стороны внешности"
+      type="text"
+      formControlName="weakPoints"
+      placeholder="Введите слабые стороны внешности"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
     <div formGroupName="parameters" class="full-width">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Рост</mat-label>
-        <input matInput type="number" formControlName="height">
-      </mat-form-field>
+      <app-form-element
+      label="Рост"
+      type="number"
+      [mask]="MASKS.height"
+      formControlName="height"
+      placeholder="Введите рост"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Размер ноги</mat-label>
-        <input matInput type="number" formControlName="shoeSize">
-      </mat-form-field>
+    <app-form-element
+      label="Размер ноги"
+      type="number"
+      [mask]="MASKS.shoeSize"
+      formControlName="shoeSize"
+      placeholder="Введите размер ноги"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-      <div class="parameters-group full-width">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Обхват груди</mat-label>
-          <input matInput type="number" formControlName="bust">
-        </mat-form-field>
+    <app-form-element
+      label="Обхват груди"
+      type="number"
+      [mask]="MASKS.bust"
+      formControlName="bust"
+      placeholder="Введите обхват груди"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Обхват талии</mat-label>
-          <input matInput type="number" formControlName="waist">
-        </mat-form-field>
+    <app-form-element
+      label="Обхват талии"
+      type="number"
+      [mask]="MASKS.waist"
+      formControlName="waist"
+      placeholder="Введите обхват талии"
+      [isLoading]="isLoading"
+    ></app-form-element>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Обхват бедер</mat-label>
-          <input matInput type="number" formControlName="hips">
-        </mat-form-field>
-      </div>
+    <app-form-element
+      label="Обхват бедер"
+      type="number"
+      [mask]="MASKS.hips"
+      formControlName="hips"
+      placeholder="Введите обхват бедер"
+      [isLoading]="isLoading"
+    ></app-form-element>
+    
     </div>
   </div>
 
@@ -178,5 +227,7 @@
     </mat-form-field>
   </div>
 
+  <!-- <button type="submit">Submit</button> -->
 </form>
 
+<pre>{{styleForm.value | json}}</pre>

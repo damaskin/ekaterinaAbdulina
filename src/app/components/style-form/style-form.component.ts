@@ -2,18 +2,19 @@ import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/co
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { UserGreetingComponent } from '../user-greeting/user-greeting.component';
 import { TelegramService } from '../../services/telegram.service';
 import { JsonPipe } from '@angular/common';
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatLabel } from "@angular/material/form-field";
 import { MatFormField } from "@angular/material/form-field";
-import { MatButton } from "@angular/material/button";
 import { MatInput } from "@angular/material/input";
-import { MatCard } from "@angular/material/card";
-import { MatCardContent } from "@angular/material/card";
-import { MatIcon } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { IMaskModule } from 'angular-imask';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MASKS } from '../../masks/mask-config';
+import { FormElementComponent } from '../../shared/components/form-element/form-element.component';
+import { validationConfig } from '../../validation/validation-config';
 
 @Component({
   selector: 'app-style-form',
@@ -22,17 +23,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    UserGreetingComponent,
     JsonPipe,
     MatSlideToggle,
     MatLabel,
     MatFormField,
-    MatButton,
     MatInput,
-    MatCard,
-    MatCardContent,
-    MatIcon,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    IMaskModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormElementComponent
   ]
 })
 export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -41,6 +41,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
   user: any;
   router = inject(Router);
   isLoading: boolean = true; // флаг загрузки
+  MASKS = MASKS;
 
   constructor(
     private fb: FormBuilder,
@@ -48,11 +49,12 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private telegramService: TelegramService,
     private location: Location
   ) {
+    console.log(validationConfig.personalInfo);
     this.styleForm = this.fb.group({
       personalInfo: this.fb.group({
-        fullName: ['', Validators.required],
-        age: ['', [Validators.required, Validators.min(1), Validators.max(120)]],
-        location: ['', Validators.required],
+        fullName: ['', validationConfig.personalInfo['fullName'].validators],
+        age: ['', validationConfig.personalInfo['age'].validators],
+        location: ['', validationConfig.personalInfo['location'].validators],
         occupation: ['', Validators.required],
         hobbies: ['', Validators.required],
         maritalStatus: ['', Validators.required]
@@ -127,10 +129,11 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.styleForm.valid) {
       console.log(this.styleForm.value);
-      // Логика отправки формы
+    } else {
+      console.error('Form is invalid');
     }
   }
 }
