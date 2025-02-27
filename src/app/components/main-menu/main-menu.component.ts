@@ -4,24 +4,27 @@ import {MatListModule} from '@angular/material/list';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {MatIcon} from "@angular/material/icon";
 import {MenuService} from "../../services/menu.service";
+import { TelegramService } from '../../services/telegram.service';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-main-menu',
   standalone: true,
-  imports: [MatListModule, RouterLink, RouterLinkActive, MatButtonModule, MatIcon],
+  imports: [MatListModule, RouterLink, RouterLinkActive, MatButtonModule, MatIcon, JsonPipe],
   template: `
     <div class="menu-container">
       <mat-nav-list>
         @for (route of menuService.routes; track route.route) {
-          <a
+          @if (route.isAdmin === telegramService.telegramUser.isAdmin || !route.isAdmin) {
+            <a
             routerLinkActive
             #rla="routerLinkActive"
             mat-list-item
             routerLink="/{{ route.route }}"
             (click)="closeMenu.emit()"
             [activated]="rla.isActive"
-          ><mat-icon>{{ route.icon }}</mat-icon> {{ route.label }}</a
-          >
+          ><mat-icon>{{ route.icon }}</mat-icon> {{ route.label }}</a>
+          }
         }
       </mat-nav-list>
       <div class="menu-footer">
@@ -36,6 +39,9 @@ import {MenuService} from "../../services/menu.service";
 
     .menu-container {
       padding: 8px;
+      a {
+        margin-top: 10px;
+      }
     }
 
     mat-icon {
@@ -54,4 +60,5 @@ import {MenuService} from "../../services/menu.service";
 export class MainMenuComponent {
   @Output() closeMenu = new EventEmitter<void>();
   menuService = inject(MenuService);
+  telegramService = inject(TelegramService);
 }

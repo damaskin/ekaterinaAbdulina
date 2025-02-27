@@ -4,20 +4,28 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class MenuService {
-  routes: { label: string; route: string; icon: string }[] = [
+  routes: { label: string; route: string; icon: string, isAdmin: boolean }[] = [
     {
-      label: 'Main',
+      label: 'Главная',
       route: 'main',
       icon: 'home',
+      isAdmin: false,
     },
     {
-      label: 'WebApp Data',
-      route: 'web-app-data',
-      icon: 'web_asset',
+      label: 'Клиенты',
+      route: 'clients',
+      icon: 'account_circle',
+      isAdmin: true,
     },
+    // {
+    //   label: 'WebApp Data',
+    //   route: 'web-app-data',
+    //   icon: 'web_asset',
+    //   isAdmin: false,
+    // },
   ];
 
-  addRoute(route: { label: string; route: string; icon: string }) {
+  addRoute(route: { label: string; route: string; icon: string, isAdmin: boolean }) {
     this.routes.push(route);
   }
 }

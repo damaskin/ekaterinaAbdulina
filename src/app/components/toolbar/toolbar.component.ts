@@ -1,16 +1,17 @@
-import {Component, computed, inject, model, OnInit} from '@angular/core';
+import {Component, computed, inject, Input, model, OnInit} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {ResponsiveService} from '../../services/responsive.service';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {TelegramService} from "../../services/telegram.service";
 import {ITelegramWebAppData} from "../../interface/telegram-web-app-data";
+import { UserGreetingComponent } from "../user-greeting/user-greeting.component";
 
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [MatIcon, MatButtonModule, MatMenu, MatMenuTrigger, MatMenuItem],
+  imports: [MatIcon, MatButtonModule, MatMenu, MatMenuTrigger, MatMenuItem, UserGreetingComponent],
   template: `
     <button
       mat-icon-button
@@ -18,11 +19,11 @@ import {ITelegramWebAppData} from "../../interface/telegram-web-app-data";
     >
       <mat-icon>menu</mat-icon>
     </button>
-    {{ title() }}
-    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+    <app-user-greeting [user]="user"></app-user-greeting>
+    <!-- <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
       <mat-icon>settings</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
+    </button> -->
+    <!-- <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="changeToolbarTheme('Default')">
         <mat-icon>format_paint</mat-icon>
         <span>Toolbar style 1</span>
@@ -35,7 +36,7 @@ import {ITelegramWebAppData} from "../../interface/telegram-web-app-data";
         <mat-icon>format_paint</mat-icon>
         <span>Toolbar style 3</span>
       </button>
-    </mat-menu>
+    </mat-menu> -->
   `,
   styles: `
 
@@ -51,6 +52,7 @@ import {ITelegramWebAppData} from "../../interface/telegram-web-app-data";
   `,
 })
 export class ToolbarComponent implements OnInit {
+  @Input() user: any;
   componentSelectorOpen = model.required<boolean>();
   themeSelectorOpen = model.required<boolean>();
 
@@ -65,7 +67,7 @@ export class ToolbarComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.changeToolbarTheme('Default');
+    this.changeToolbarTheme('Reversed');
   }
 
   changeToolbarTheme(theme: string) {

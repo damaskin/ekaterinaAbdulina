@@ -1,5 +1,8 @@
 @if (user) {
   <div class="greeting">
+    <span>
+      Привет, {{ user.first_name || user.username }}
+    </span>
     @if (user.photo_url) {
       <img
         [src]="user.photo_url"
@@ -7,9 +10,9 @@
         class="avatar"
       />
     }
-    <span>
-      Привет,
-      <strong>{{ user.first_name || user.username }}</strong>!
-    </span>
+   
+    <!-- @if (user.isAdmin) {
+      <button class="admin-button">Админ</button>
+    } -->
   </div>
 } 

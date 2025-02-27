@@ -42,6 +42,8 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
 
   // Overrides material theme
   --mdc-filled-button-label-text-color: var(--tg-theme-button-text-color, var(--primary-light));
@@ -80,4 +82,22 @@ body {
 
 .mb-0 {
   margin-bottom: 0;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--tg-theme-subtitle-text-color);
+  margin-bottom: 12px;
+}
+
+ngx-dropzone-remove-badge {
+  opacity: 1!important;
 }
