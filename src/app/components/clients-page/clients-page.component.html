@@ -1,0 +1,13 @@
+<div *ngIf="isLoading" class="loader-container">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<div class="clients-page" *ngIf="!isLoading">
+  <div class="title">Мои клиенты</div>
+  <div class="user-card"
+       *ngFor="let u of filteredUsers()"
+       (click)="openBottomSheet(u)">
+    <img class="avatar" ... />
+    ...
+  </div>
+</div> 

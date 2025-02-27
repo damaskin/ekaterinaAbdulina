@@ -1,12 +1,10 @@
-@if (telegramService.telegramUser && telegramService.telegramUser.id && user) {
-<!--  <mat-toolbar>-->
-<!--    <app-toolbar-->
-<!--      [(componentSelectorOpen)]="componentSelectorOpen"-->
-<!--      [(themeSelectorOpen)]="themeSelectorOpen"-->
-<!--    />-->
-<!--  </mat-toolbar>-->
-
-}
+<mat-toolbar>
+  <app-toolbar
+    [user]="user"
+    [(componentSelectorOpen)]="componentSelectorOpen"
+    [(themeSelectorOpen)]="themeSelectorOpen"
+  />
+</mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav
     class="component-selector"
@@ -16,9 +14,7 @@
     <app-main-menu  (closeMenu)="closeMenu()" />
   </mat-sidenav>
   <div class="container">
-
-    <app-user-greeting [user]="user"></app-user-greeting>
-
+    <!-- <pre>{{ user | json }}</pre> -->
     <router-outlet />
   </div>
 </mat-sidenav-container>

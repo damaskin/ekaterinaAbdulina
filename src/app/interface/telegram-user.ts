@@ -16,4 +16,12 @@ export interface ITelegramUser {
 
   /** Имя пользователя в Telegram (если есть) */
   username?: string;
+
+  /** Является ли пользователь администратором */
+  isAdmin: boolean;
+
+  /** Является ли пользователь активным */
+  isActive: boolean;
+
+  
 }

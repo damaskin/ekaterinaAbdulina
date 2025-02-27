@@ -21,7 +21,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // this.telegramService.showMainBtn();
-    this.user = this.telegramService.initUser(); // Получение данных пользователя
+    // this.user = this.telegramService.initUser(); // Получение данных пользователя
   }
 
   ngOnDestroy(): void {

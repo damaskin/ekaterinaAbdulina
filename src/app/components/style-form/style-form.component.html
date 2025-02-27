@@ -11,7 +11,7 @@
 
   <!-- Личная информация -->
   <div formGroupName="personalInfo">
-    <h3>Личная информация</h3>
+    <div class="title">Личная информация</div>
     <div class="info-block full-width">
       <svg class="info-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11 11H13V17H11V11Z" fill="currentColor"/>
@@ -68,11 +68,46 @@
     <div class="form-field full-width">
       <mat-slide-toggle formControlName="maritalStatus">В браке</mat-slide-toggle>
     </div>
+
+    <!-- Dropzone for Image #1 -->
+    <div class="custom-dropzone" ngx-dropzone [accept]="'image/*'" (change)="onSelect($event, 'lifePhotos')">
+      <ngx-dropzone-label>
+        <div>
+          Пришлите пожалуйста, 10-15 фото «из жизни». (Не проф фото)
+        </div>
+      </ngx-dropzone-label>
+      <div class="custom-dropzone-images">
+        @for (f of lifePhotoFiles; track f) {
+          <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" [file]="f" [removable]="true" (removed)="onRemove(f, 'lifePhotos')">
+            <!-- <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label> -->
+          </ngx-dropzone-image-preview>
+        }
+      </div>
+    </div>
+
+    <br>
+    <!-- Dropzone for Image #2 -->
+    <div class="custom-dropzone" ngx-dropzone [accept]="'image/*'" (change)="onSelect($event, 'inspirationPhotos')">
+      <ngx-dropzone-label>
+        <div>
+          Пришлите 5-7 образов которые вас вдохновляют.
+        </div>
+      </ngx-dropzone-label>
+      <div class="custom-dropzone-images">
+        @for (f of inspirationPhotoFiles; track f) {
+          <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" [file]="f" [removable]="true" (removed)="onRemove(f, 'inspirationPhotos')">
+            <!-- <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label> -->
+          </ngx-dropzone-image-preview>
+        }
+      </div>
+    </div>
+    <br>
+    <br>
   </div>
 
   <!-- Покупательские привычки -->
   <div class="form-section" formGroupName="shoppingHabits">
-    <h3>Покупательские привычки</h3>
+    <div class="title">Покупательские привычки</div>
     <app-form-element
       label="Как часто вы покупаете вещи?"
       type="text"
@@ -84,11 +119,10 @@
 
   <!-- Внешность и параметры -->
   <div class="form-section" formGroupName="appearance">
-    <h3>Внешность и параметры</h3>
+    <div class="title">Внешность и параметры</div>
     <app-form-element
       label="Ваши сильные стороны внешности"
-      inputMode="text"
-      inputType="textarea"
+      inputMode="textarea"
       formControlName="strongPoints"
       placeholder="Введите сильные стороны внешности"
       [isLoading]="isLoading"
@@ -104,127 +138,146 @@
 
     <div formGroupName="parameters" class="full-width">
       <app-form-element
-      label="Рост"
-      type="number"
-      [mask]="MASKS.height"
-      formControlName="height"
-      placeholder="Введите рост"
-      [isLoading]="isLoading"
-    ></app-form-element>
+        label="Рост"
+        type="number"
+        [mask]="MASKS.height"
+        formControlName="height"
+        placeholder="Введите рост"
+        [isLoading]="isLoading"
+      ></app-form-element>
 
-    <app-form-element
-      label="Размер ноги"
-      type="number"
-      [mask]="MASKS.shoeSize"
-      formControlName="shoeSize"
-      placeholder="Введите размер ноги"
-      [isLoading]="isLoading"
-    ></app-form-element>
+      <app-form-element
+        label="Размер ноги"
+        type="number"
+        [mask]="MASKS.shoeSize"
+        formControlName="shoeSize"
+        placeholder="Введите размер ноги"
+        [isLoading]="isLoading"
+      ></app-form-element>
 
-    <app-form-element
-      label="Обхват груди"
-      type="number"
-      [mask]="MASKS.bust"
-      formControlName="bust"
-      placeholder="Введите обхват груди"
-      [isLoading]="isLoading"
-    ></app-form-element>
+      <app-form-element
+        label="Обхват груди"
+        type="number"
+        [mask]="MASKS.bust"
+        formControlName="bust"
+        placeholder="Введите обхват груди"
+        [isLoading]="isLoading"
+      ></app-form-element>
 
-    <app-form-element
-      label="Обхват талии"
-      type="number"
-      [mask]="MASKS.waist"
-      formControlName="waist"
-      placeholder="Введите обхват талии"
-      [isLoading]="isLoading"
-    ></app-form-element>
+      <app-form-element
+        label="Обхват талии"
+        type="number"
+        [mask]="MASKS.waist"
+        formControlName="waist"
+        placeholder="Введите обхват талии"
+        [isLoading]="isLoading"
+      ></app-form-element>
 
-    <app-form-element
-      label="Обхват бедер"
-      type="number"
-      [mask]="MASKS.hips"
-      formControlName="hips"
-      placeholder="Введите обхват бедер"
-      [isLoading]="isLoading"
-    ></app-form-element>
-    
+      <app-form-element
+        label="Обхват бедер"
+        type="number"
+        [mask]="MASKS.hips"
+        formControlName="hips"
+        placeholder="Введите обхват бедер"
+        [isLoading]="isLoading"
+      ></app-form-element>
     </div>
   </div>
 
   <!-- Социальные сети -->
   <div class="form-section">
-    <h3>Социальные сети</h3>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Ваши социальные сети</mat-label>
-      <textarea matInput formControlName="socialMedia" placeholder="Укажите ссылки на ваши соцсети"></textarea>
-    </mat-form-field>
+    <div class="title">Социальные сети</div>
+    <app-form-element
+      label="Ваши социальные сети"
+      inputMode="textarea"
+      formControlName="socialMedia"
+      placeholder="Укажите ссылки на ваши соцсети"
+      [isLoading]="isLoading"
+    ></app-form-element>
   </div>
 
   <!-- Распределение времени -->
   <div class="form-section">
-    <h3>Распределение времени</h3>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Диаграмма занятости</mat-label>
-      <textarea matInput formControlName="timeDistribution" placeholder="Распределите в % вашу занятость (спорт, работа, хобби и т.д.)"></textarea>
-    </mat-form-field>
+    <div class="title">Распределение времени</div>
+    <app-form-element
+      label="Диаграмма занятости"
+      inputMode="textarea"
+      formControlName="timeDistribution"
+      placeholder="Распределите в % вашу занятость (спорт, работа, хобби и т.д.)"
+      [isLoading]="isLoading"
+    ></app-form-element>
   </div>
 
   <!-- Стиль и предпочтения -->
   <div class="form-section" formGroupName="style">
-    <h3>Стиль и предпочтения</h3>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Опишите ваш привычный комплект одежды</mat-label>
-      <textarea matInput formControlName="usualOutfit"></textarea>
-    </mat-form-field>
+    <div class="title">Стиль и предпочтения</div>
+    <app-form-element
+      label="Опишите ваш привычный комплект одежды"
+      inputMode="textarea"
+      formControlName="usualOutfit"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Какой образ хотели бы реализовать?</mat-label>
-      <textarea matInput formControlName="desiredStyle" placeholder="Что вас вдохновляет? О чем этот образ?"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Какой образ хотели бы реализовать?"
+      inputMode="textarea"
+      placeholder="Что вас вдохновляет? О чем этот образ?"
+      formControlName="desiredStyle"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Какие цвета преобладают в гардеробе?</mat-label>
-      <textarea matInput formControlName="dominantColors"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Какие цвета преобладают в гардеробе?"
+      inputMode="textarea"
+      formControlName="dominantColors"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Какие марки/магазины предпочитаете?</mat-label>
-      <textarea matInput formControlName="preferredBrands"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Какие марки/магазины предпочитаете?"
+      inputMode="textarea"
+      formControlName="preferredBrands"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Какое впечатление хотите производить?</mat-label>
-      <textarea matInput formControlName="desiredImpression"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Какое впечатление хотите производить?"
+      inputMode="textarea"
+      formControlName="desiredImpression"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Стоп-лист вещей</mat-label>
-      <textarea matInput formControlName="stopList" placeholder="Вещи, которые вы никогда не добавите в гардероб"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Стоп-лист вещей"
+      inputMode="textarea"
+      placeholder="Вещи, которые вы никогда не добавите в гардероб"
+      formControlName="stopList"
+    ></app-form-element>
   </div>
 
   <!-- Дополнительная информация -->
   <div class="form-section mb-0" formGroupName="additional">
-    <h3>Дополнительная информация</h3>
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Следите за тенденциями в моде?</mat-label>
-      <textarea matInput formControlName="followsFashion" placeholder="Каких блогеров/инфлюенсеров смотрите?"></textarea>
-    </mat-form-field>
+    <div class="title">Дополнительная информация</div>
+    <app-form-element
+      label="Следите за тенденциями в моде?"
+      inputMode="textarea"
+      formControlName="followsFashion"
+      placeholder="Каких блогеров/инфлюенсеров смотрите?"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Чье мнение важно для вас?</mat-label>
-      <textarea matInput formControlName="importantOpinion"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Чье мнение важно для вас?"
+      inputMode="textarea"
+      formControlName="importantOpinion"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Опыт работы со стилистом</mat-label>
-      <textarea matInput formControlName="previousStylist" placeholder="Обращались ли ранее? Понравилось ли?"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Опыт работы со стилистом"
+      inputMode="textarea"
+      formControlName="previousStylist"
+      placeholder="Обращались ли ранее? Понравилось ли?"
+    ></app-form-element>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Что еще важно знать о вас?</mat-label>
-      <textarea matInput formControlName="additionalInfo"></textarea>
-    </mat-form-field>
+    <app-form-element
+      label="Что еще важно знать о вас?"
+      inputMode="textarea"
+      formControlName="additionalInfo"
+    ></app-form-element>
   </div>
 
   <!-- <button type="submit">Submit</button> -->

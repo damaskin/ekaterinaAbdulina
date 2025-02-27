@@ -32,7 +32,7 @@ export const validationConfig: { personalInfo: FormValidationConfig } = {
     location: {
       validators: [Validators.required],
       messages: {
-        required: 'Location is required.'
+        required: 'Укажите ваш город проживания'
       }
     },
     occupation: {
@@ -45,6 +45,24 @@ export const validationConfig: { personalInfo: FormValidationConfig } = {
       validators: [Validators.required],
       messages: {
         required: 'Введите ваши увлечения'
+      }
+    },
+    shoppingFrequency: {
+      validators: [Validators.required],
+      messages: {
+        required: 'Опишите, как часто вы покупаете вещи'
+      }
+    },
+    strongPoints: {
+      validators: [Validators.required],
+      messages: {
+        required: 'Укажите ваши сильные стороны внешности'
+      }
+    },
+    weakPoints: {
+      validators: [Validators.required],
+      messages: {
+        required: 'Укажите ваши слабые стороны внешности'
       }
     },
     height: {
@@ -86,6 +104,62 @@ export const validationConfig: { personalInfo: FormValidationConfig } = {
         min: 'Обхват бедер должен быть больше 30',
         max: 'Обхват бедер должен быть меньше 200'
       }
+    },
+    socialMedia: {
+      validators: [],
+      messages: {}
+    },
+    timeDistribution: {
+      validators: [],
+      messages: {}
+    },
+    usualOutfit: {
+      validators: [],
+      messages: {}
+    },
+    desiredStyle: {
+      validators: [],
+      messages: {}
+    },
+    dominantColors: {
+      validators: [],
+      messages: {}
+    },
+    preferredBrands: {
+      validators: [],
+      messages: {}
+    },
+    desiredImpression: {
+      validators: [],
+      messages: {}
+    },
+    stopList: {
+      validators: [],
+      messages: {}
+    },
+    followsFashion: {
+      validators: [],
+      messages: {}
+    },
+    importantOpinion: {
+      validators: [],
+      messages: {}
+    },
+    previousStylist: {
+      validators: [],
+      messages: {}
+    },
+    additionalInfo: {
+      validators: [],
+      messages: {}
+    },
+    image1: {
+      validators: [],
+      messages: {}
+    },
+    image2: {
+      validators: [],
+      messages: {}
     }
   }
 }; 

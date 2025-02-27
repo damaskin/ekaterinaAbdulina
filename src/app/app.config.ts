@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { firebaseConfig } from '../environments/firebase.config';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -32,6 +33,8 @@ appConfig = {
       })
     ),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage()),
   ]
 };
