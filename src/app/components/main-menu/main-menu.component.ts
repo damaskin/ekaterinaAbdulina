@@ -15,7 +15,7 @@ import { JsonPipe } from '@angular/common';
     <div class="menu-container">
       <mat-nav-list>
         @for (route of menuService.routes; track route.route) {
-          @if (route.isAdmin === telegramService.telegramUser.isAdmin || !route.isAdmin) {
+          @if (route?.isAdmin === telegramService.telegramUser?.isAdmin || !route?.isAdmin) {
             <a
             routerLinkActive
             #rla="routerLinkActive"
