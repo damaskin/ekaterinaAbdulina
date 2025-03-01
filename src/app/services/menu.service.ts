@@ -17,6 +17,12 @@ export class MenuService {
       icon: 'account_circle',
       isAdmin: true,
     },
+    {
+      label: 'Мои заказы',
+      route: 'my-orders',
+      icon: 'shopping_cart',
+      isAdmin: false,
+    },
     // {
     //   label: 'WebApp Data',
     //   route: 'web-app-data',

@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
       this.firebaseService.getUserData(user.id).then((firebaseUserData) => {
         this.user = { ...user, ...firebaseUserData };
         this.telegramService.telegramUser = this.user;
-        this.router.navigate(['/main']).then();
+        // this.router.navigate(['/main']).then();
       }).catch((error) => {
         console.error('Error fetching user data from Firebase:', error);
         this.router.navigate(['/auth']).then();

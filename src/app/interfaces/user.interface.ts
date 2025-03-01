@@ -21,8 +21,8 @@ export interface IUser {
    username?: string;
  
    /** Является ли пользователь администратором */
-   isAdmin: boolean;
+   isAdmin?: boolean;
  
    /** Является ли пользователь активным */
-   isActive: boolean;
+   isActive?: boolean;
 } 

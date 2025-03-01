@@ -1,0 +1,164 @@
+.orders-container {
+  display: flex;
+  justify-content: center;
+  // padding: 16px;
+  background-color: var(--tg-theme-bg-color);
+}
+
+.orders-card {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  background-color: var(--tg-theme-secondary-bg-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.main-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: var(--tg-theme-text-color);
+}
+
+.loading-container,
+.error-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.loading-text {
+  margin-top: 16px;
+  font-size: 16px;
+}
+
+mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+}
+
+.orders-list {
+  padding: 8px 0;
+}
+
+.order-card {
+  margin-bottom: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--tg-theme-bg-color);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.order-card.expanded {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+}
+
+.order-header-left,
+.order-header-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-title {
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.order-date {
+  font-size: 14px;
+}
+
+.order-price {
+  font-weight: 500;
+  font-size: 16px;
+  text-align: right;
+  margin-bottom: 4px;
+}
+
+.order-status-badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.order-details {
+  padding: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.order-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.order-info-label {
+  font-size: 14px;
+  color: var(--tg-theme-hint-color);
+}
+
+.order-info-value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Статусы заказов */
+.status-pending {
+  background-color: #FFF3E0;
+  color: #E65100;
+}
+
+.status-paid {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+
+.status-processing {
+  background-color: #E3F2FD;
+  color: #0D47A1;
+}
+
+.status-completed {
+  background-color: #E8EAF6;
+  color: #303F9F;
+}
+
+.status-cancelled {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+
+.status-unknown {
+  background-color: #F5F5F5;
+  color: #757575;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+} 

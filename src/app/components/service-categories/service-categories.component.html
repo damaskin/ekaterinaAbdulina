@@ -8,7 +8,17 @@
           class="category-icon"
         />
         <span class="category-title">{{ category.title }}</span>
+        <span class="category-price">{{ category.price }} руб</span>
       </button>
     }
+  </div>
+
+  <div class="my-orders-button-container">
+    <button class="my-orders-button" (click)="navigateToMyOrders()">
+      <span class="icon">
+        <mat-icon>receipt_long</mat-icon>
+      </span>
+      <span>История моих заказов</span>
+    </button>
   </div>
 </div>
