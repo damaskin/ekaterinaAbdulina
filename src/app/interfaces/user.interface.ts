@@ -25,4 +25,13 @@ export interface IUser {
  
    /** Является ли пользователь активным */
    isActive?: boolean;
+
+   /** Дата создания пользователя в виде Unix timestamp */
+   created_at?: string;
+
+   /** Язык пользователя */
+   language_code?: string;
+
+   /** Дата последнего входа в виде Unix timestamp */
+   lastLoginDate?: string;
 } 

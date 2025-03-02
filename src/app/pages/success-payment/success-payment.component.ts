@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -25,12 +25,15 @@ import { TelegramService } from '../../services/telegram.service';
     MatIconModule
   ]
 })
-export class SuccessPaymentComponent implements OnInit {
+export class SuccessPaymentComponent implements OnInit, OnDestroy {
   loading = true;
   error = false;
   success = false;
   paymentData: any = null;
   errorMessage = '';
+  
+  // Обработчик нажатия на главную кнопку
+  private mainButtonClickHandler: () => void = () => {};
 
   constructor(
     private route: ActivatedRoute,
@@ -52,6 +55,14 @@ export class SuccessPaymentComponent implements OnInit {
         this.errorMessage = 'Не найден идентификатор сессии оплаты';
       }
     });
+  }
+  
+  ngOnDestroy(): void {
+    // Очищаем обработчик кнопки Telegram при уничтожении компонента
+    if (this.telegramService.tg) {
+      this.telegramService.tg.offEvent('mainButtonClicked', this.mainButtonClickHandler);
+      this.telegramService.tg.MainButton.hide();
+    }
   }
 
   checkPaymentStatus(sessionId: string): void {
@@ -145,11 +156,37 @@ export class SuccessPaymentComponent implements OnInit {
         } else if (!result.isPaid) {
           this.errorMessage = 'Оплата не была завершена';
         }
+        
+        // Если оплата успешна, показываем кнопку "Заполнить анкету"
+        if (result.isPaid && result.order) {
+          this.setupFillFormButton(result.order.id);
+        }
       }
     });
   }
+  
+  // Настройка главной кнопки Telegram для перехода к анкете
+  setupFillFormButton(orderId: string): void {
+    if (this.telegramService.tg) {
+      this.telegramService.tg.MainButton.setText('Заполнить анкету');
+      this.telegramService.tg.MainButton.show();
+      
+      // Сохраняем обработчик для дальнейшей очистки
+      this.mainButtonClickHandler = () => this.navigateToForm(orderId);
+      this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+    }
+  }
+  
+  // Переход к форме анкеты с передачей ID заказа
+  navigateToForm(orderId: string): void {
+    this.router.navigate(['/form/1'], { queryParams: { orderId: orderId } });
+  }
 
   goToHome(): void {
+    // Скрываем главную кнопку перед возвращением на главную
+    if (this.telegramService.tg) {
+      this.telegramService.tg.MainButton.hide();
+    }
     this.router.navigate(['/']);
   }
 } 

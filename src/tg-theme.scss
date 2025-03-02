@@ -13,6 +13,52 @@
   --tg-theme-section-separator-color: #707579;
   --tg-theme-subtitle-text-color: #707579;
   --tg-theme-destructive-text-color: #ec3942;
+  
+  /* RGB значения для использования в rgba() */
+  --tg-theme-bg-color-rgb: 255, 255, 255;
+  --tg-theme-text-color-rgb: 0, 0, 0;
+  --tg-theme-hint-color-rgb: 112, 117, 121;
+  --tg-theme-link-color-rgb: 51, 144, 236;
+  --tg-theme-button-color-rgb: 51, 144, 236;
+  --tg-theme-button-text-color-rgb: 255, 255, 255;
+  --tg-theme-secondary-bg-color-rgb: 244, 244, 245;
+  --tg-theme-header-bg-color-rgb: 255, 255, 255;
+  --tg-theme-accent-text-color-rgb: 51, 144, 236;
+  --tg-theme-section-bg-color-rgb: 255, 255, 255;
+  --tg-theme-destructive-text-color-rgb: 236, 57, 66;
+}
+
+/* Темная тема */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tg-theme-bg-color: #191919;
+    --tg-theme-text-color: #ffffff;
+    --tg-theme-hint-color: #aaaaaa;
+    --tg-theme-link-color: #3390ec;
+    --tg-theme-button-color: #3390ec;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #2c2c2c;
+    --tg-theme-header-bg-color: #191919;
+    --tg-theme-accent-text-color: #3390ec;
+    --tg-theme-section-bg-color: #222222;
+    --tg-theme-section-header-text-color: #aaaaaa;
+    --tg-theme-section-separator-color: #404040;
+    --tg-theme-subtitle-text-color: #aaaaaa;
+    --tg-theme-destructive-text-color: #ec3942;
+    
+    /* RGB значения для темной темы */
+    --tg-theme-bg-color-rgb: 25, 25, 25;
+    --tg-theme-text-color-rgb: 255, 255, 255;
+    --tg-theme-hint-color-rgb: 170, 170, 170;
+    --tg-theme-link-color-rgb: 51, 144, 236;
+    --tg-theme-button-color-rgb: 51, 144, 236;
+    --tg-theme-button-text-color-rgb: 255, 255, 255;
+    --tg-theme-secondary-bg-color-rgb: 44, 44, 44;
+    --tg-theme-header-bg-color-rgb: 25, 25, 25;
+    --tg-theme-accent-text-color-rgb: 51, 144, 236;
+    --tg-theme-section-bg-color-rgb: 34, 34, 34;
+    --tg-theme-destructive-text-color-rgb: 236, 57, 66;
+  }
 }
 
 .theme-bg-color {

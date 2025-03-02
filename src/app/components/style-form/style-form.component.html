@@ -1,22 +1,13 @@
-<!--<app-user-greeting [user]="user"></app-user-greeting>-->
-
-<!-- Если идет загрузка, показываем loader -->
-<!--@if (isLoading) {-->
-<!--  <div class="loader-container">-->
-<!--    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>-->
-<!--  </div>-->
-<!--}-->
-
 <form [formGroup]="styleForm" (ngSubmit)="onSubmit()" class="style-form">
 
   <!-- Личная информация -->
-  <div formGroupName="personalInfo">
-    <div class="title">Личная информация</div>
+  <div formGroupName="personalInfo" class="form-section">
+    <div class="title theme-text-color">Личная информация</div>
     <div class="info-block full-width">
       <svg class="info-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11 11H13V17H11V11Z" fill="currentColor"/>
       </svg>
-      <span>Для наиболее эффективной работы прошу отвечать на вопросы анкеты развернуто и честно</span>
+      <span class="theme-hint-color">Для наиболее эффективной работы прошу отвечать на вопросы анкеты развернуто и честно</span>
     </div>
 
     <app-form-element
@@ -66,38 +57,100 @@
 
     <!-- Выбор статуса с использованием mat-slide-toggle -->
     <div class="form-field full-width">
-      <mat-slide-toggle formControlName="maritalStatus">В браке</mat-slide-toggle>
+      <mat-slide-toggle formControlName="maritalStatus" class="theme-accent-text-color">В браке</mat-slide-toggle>
     </div>
 
     <!-- Dropzone for Image #1 -->
+    <div class="title theme-text-color">Ваши реальные фото из жизни</div>
     <div class="custom-dropzone" ngx-dropzone [accept]="'image/*'" (change)="onSelect($event, 'lifePhotos')">
-      <ngx-dropzone-label>
-        <div>
+      <ngx-dropzone-label [ngClass]="{'hidden': lifePhotoUploads.length > 0}">
+        <div class="theme-hint-color">
           Пришлите пожалуйста, 10-15 фото «из жизни». (Не проф фото)
         </div>
       </ngx-dropzone-label>
       <div class="custom-dropzone-images">
-        @for (f of lifePhotoFiles; track f) {
-          <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" [file]="f" [removable]="true" (removed)="onRemove(f, 'lifePhotos')">
-            <!-- <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label> -->
-          </ngx-dropzone-image-preview>
+        @for (upload of lifePhotoUploads; track upload) {
+          <div class="image-upload-container">
+            <!-- Индикатор загрузки -->
+            @if (upload.uploading) {
+              <div class="upload-progress">
+                <mat-progress-spinner 
+                  [value]="upload.progress" 
+                  diameter="40" 
+                  mode="determinate">
+                </mat-progress-spinner>
+                <span class="progress-text">{{upload.progress}}%</span>
+              </div>
+            }
+            
+            <!-- Ошибка загрузки -->
+            @if (upload.error) {
+              <div class="upload-error">
+                <mat-icon color="warn">error</mat-icon>
+                <span>Ошибка</span>
+              </div>
+            }
+            
+            <!-- Превью изображения -->
+            @if (!upload.uploading && !upload.error) {
+              <div class="image-preview" (click)="openOriginalImage(upload)">
+                <img [src]="upload.thumbnailUrl || upload.thumbnail" alt="Превью" />
+                <div class="image-actions">
+                  <button type="button" (click)="onRemove(upload, 'lifePhotos'); $event.stopPropagation()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
         }
       </div>
     </div>
 
     <br>
     <!-- Dropzone for Image #2 -->
+    <div class="title theme-text-color">Образы, которые вас вдохновляют</div>
     <div class="custom-dropzone" ngx-dropzone [accept]="'image/*'" (change)="onSelect($event, 'inspirationPhotos')">
-      <ngx-dropzone-label>
-        <div>
+      <ngx-dropzone-label [ngClass]="{'hidden': inspirationPhotoUploads.length > 0}">
+        <div class="theme-hint-color">
           Пришлите 5-7 образов которые вас вдохновляют.
         </div>
       </ngx-dropzone-label>
       <div class="custom-dropzone-images">
-        @for (f of inspirationPhotoFiles; track f) {
-          <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" [file]="f" [removable]="true" (removed)="onRemove(f, 'inspirationPhotos')">
-            <!-- <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label> -->
-          </ngx-dropzone-image-preview>
+        @for (upload of inspirationPhotoUploads; track upload) {
+          <div class="image-upload-container">
+            <!-- Индикатор загрузки -->
+            @if (upload.uploading) {
+              <div class="upload-progress">
+                <mat-progress-spinner 
+                  [value]="upload.progress" 
+                  diameter="40" 
+                  mode="determinate">
+                </mat-progress-spinner>
+                <span class="progress-text">{{upload.progress}}%</span>
+              </div>
+            }
+            
+            <!-- Ошибка загрузки -->
+            @if (upload.error) {
+              <div class="upload-error">
+                <mat-icon color="warn">error</mat-icon>
+                <span>Ошибка</span>
+              </div>
+            }
+            
+            <!-- Превью изображения -->
+            @if (!upload.uploading && !upload.error) {
+              <div class="image-preview" (click)="openOriginalImage(upload)">
+                <img [src]="upload.thumbnailUrl || upload.thumbnail" alt="Превью" />
+                <div class="image-actions">
+                  <button type="button" (click)="onRemove(upload, 'inspirationPhotos'); $event.stopPropagation()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
         }
       </div>
     </div>
@@ -107,7 +160,7 @@
 
   <!-- Покупательские привычки -->
   <div class="form-section" formGroupName="shoppingHabits">
-    <div class="title">Покупательские привычки</div>
+    <div class="title theme-text-color">Покупательские привычки</div>
     <app-form-element
       label="Как часто вы покупаете вещи?"
       type="text"
@@ -119,7 +172,7 @@
 
   <!-- Внешность и параметры -->
   <div class="form-section" formGroupName="appearance">
-    <div class="title">Внешность и параметры</div>
+    <div class="title theme-text-color">Внешность и параметры</div>
     <app-form-element
       label="Ваши сильные стороны внешности"
       inputMode="textarea"
@@ -186,7 +239,7 @@
 
   <!-- Социальные сети -->
   <div class="form-section">
-    <div class="title">Социальные сети</div>
+    <div class="title theme-text-color">Социальные сети</div>
     <app-form-element
       label="Ваши социальные сети"
       inputMode="textarea"
@@ -198,7 +251,7 @@
 
   <!-- Распределение времени -->
   <div class="form-section">
-    <div class="title">Распределение времени</div>
+    <div class="title theme-text-color">Распределение времени</div>
     <app-form-element
       label="Диаграмма занятости"
       inputMode="textarea"
@@ -210,8 +263,8 @@
 
   <!-- Стиль и предпочтения -->
   <div class="form-section" formGroupName="style">
-    <div class="title">Стиль и предпочтения</div>
-    <app-form-element
+    <div class="title theme-text-color">Стиль и предпочтения</div>
+     <app-form-element
       label="Опишите ваш привычный комплект одежды"
       inputMode="textarea"
       formControlName="usualOutfit"
@@ -252,7 +305,7 @@
 
   <!-- Дополнительная информация -->
   <div class="form-section mb-0" formGroupName="additional">
-    <div class="title">Дополнительная информация</div>
+    <div class="title theme-text-color">Дополнительная информация</div>
     <app-form-element
       label="Следите за тенденциями в моде?"
       inputMode="textarea"
@@ -283,4 +336,4 @@
   <!-- <button type="submit">Submit</button> -->
 </form>
 
-<pre>{{styleForm.value | json}}</pre>
+<!-- <pre *ngIf="false">{{styleForm.value | json}}</pre> -->

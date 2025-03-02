@@ -12,16 +12,22 @@ export class MenuService {
       isAdmin: false,
     },
     {
+      label: 'Мои заказы',
+      route: 'my-orders',
+      icon: 'shopping_cart',
+      isAdmin: false,
+    },
+    {
       label: 'Клиенты',
       route: 'clients',
       icon: 'account_circle',
       isAdmin: true,
     },
     {
-      label: 'Мои заказы',
-      route: 'my-orders',
-      icon: 'shopping_cart',
-      isAdmin: false,
+      label: 'Все заказы',
+      route: 'admin/orders',
+      icon: 'receipt_long',
+      isAdmin: true,
     },
     // {
     //   label: 'WebApp Data',

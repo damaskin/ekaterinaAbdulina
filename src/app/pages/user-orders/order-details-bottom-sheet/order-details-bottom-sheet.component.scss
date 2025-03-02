@@ -1,17 +1,3 @@
-.user-details-sheet {
-  padding: 1rem;
-  background: var(--tg-theme-bg-color);
-  color: var(--tg-theme-text-color);
-
-  h2 {
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    margin: 0.25rem 0;
-  }
-}
-
 .bottom-sheet-container {
   background-color: var(--tg-theme-secondary-bg-color);
   color: var(--tg-theme-text-color);
@@ -32,14 +18,13 @@
 }
 
 .loading-container,
-.error-container,
-.empty-container {
+.error-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 16px;
+  padding: 24px 16px;
 }
 
 .loading-text {
@@ -48,50 +33,42 @@
 }
 
 .error-container mat-icon {
-  font-size: 24px;
-  height: 24px;
-  width: 24px;
-  margin-bottom: 8px;
+  font-size: 40px;
+  height: 40px;
+  width: 40px;
+  margin-bottom: 16px;
   color: var(--tg-theme-destructive-text-color);
 }
 
-.user-content {
+.order-content {
   padding: 8px 0;
 }
 
-.user-header {
-  display: flex;
-  align-items: center;
+.order-header {
   margin-bottom: 16px;
 }
 
-.user-avatar-container {
-  margin-right: 16px;
+.order-status {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-bottom: 8px;
 }
 
-.user-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.user-name-container {
-  flex: 1;
-}
-
-.user-name {
+.order-title {
   font-size: 18px;
   font-weight: 500;
-  margin: 0 0 4px;
+  margin: 8px 0;
 }
 
-.user-username {
-  font-size: 14px;
+.order-price {
+  font-size: 16px;
+  font-weight: 500;
 }
 
-.user-info-section,
-.user-orders-section {
+.order-info-section {
   margin: 16px 0;
 }
 
@@ -122,51 +99,76 @@ h4 {
   word-break: break-word;
 }
 
-// Стили для списка заказов
-.orders-list {
-  margin-top: 12px;
+.sheet-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0 0;
 }
 
-.order-item {
-  margin-bottom: 12px;
-  padding: 12px;
+/* Форма анкеты */
+.form-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.form-info {
+  padding: 8px 0;
+}
+
+.form-exists,
+.form-not-exists {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  
+  mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+  }
+}
+
+/* Отступ для MainButton */
+.main-button-spacer {
+  height: 56px; /* Высота MainButton + отступ */
+  width: 100%;
+}
+
+/* Админские элементы управления */
+.admin-controls {
+  background-color: rgba(var(--tg-theme-button-color-rgb), 0.08);
   border-radius: 8px;
-  background-color: var(--tg-theme-bg-color);
+  padding: 16px;
+  margin: 16px 0;
 }
 
-.order-item-header {
+.status-control {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 
-.order-item-title {
-  font-size: 16px;
-  font-weight: 500;
+.status-select {
+  width: 100%;
+  max-width: 300px;
 }
 
-.order-item-status {
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.order-item-details {
+.status-updating {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-.order-item-date {
-  font-size: 14px;
-}
-
-.order-item-price {
-  font-size: 14px;
-  font-weight: 500;
+  margin-left: 16px;
+  
+  mat-spinner {
+    margin-right: 8px;
+  }
+  
+  span {
+    font-size: 14px;
+    color: var(--tg-theme-hint-color);
+  }
 }
 
 /* Статусы заказов */

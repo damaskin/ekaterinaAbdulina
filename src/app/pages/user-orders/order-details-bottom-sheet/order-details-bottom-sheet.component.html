@@ -1,0 +1,123 @@
+<div class="bottom-sheet-container">
+  <div class="sheet-header">
+    <h2 class="sheet-title" style="color: var(--tg-theme-text-color);">Детали заказа</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Состояние загрузки -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner [diameter]="40"></mat-spinner>
+    <p class="loading-text" style="color: var(--tg-theme-text-color);">Загрузка деталей заказа...</p>
+  </div>
+
+  <!-- Сообщение об ошибке -->
+  <div *ngIf="!loading && error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <h3 style="color: var(--tg-theme-destructive-text-color);">Ошибка</h3>
+    <p style="color: var(--tg-theme-destructive-text-color);">{{ errorMessage }}</p>
+  </div>
+
+  <!-- Детали заказа -->
+  <div *ngIf="!loading && !error && order" class="order-content">
+    <div class="order-header">
+      <div class="order-status" [ngClass]="getStatusClass(order.status)">
+        {{ getStatusText(order.status) }}
+      </div>
+      <h3 class="order-title" style="color: var(--tg-theme-text-color);">{{ order.category.title }}</h3>
+      <div class="order-price" style="color: var(--tg-theme-text-color);">{{ formatPrice(order.category.price) }}</div>
+    </div>
+
+    <!-- Админская панель управления статусом заказа -->
+    <div *ngIf="isAdmin" class="admin-controls">
+      <h4 style="color: var(--tg-theme-text-color);">Управление заказом</h4>
+      
+      <div class="status-control">
+        <mat-form-field appearance="fill" class="status-select">
+          <mat-label>Статус заказа</mat-label>
+          <mat-select [value]="order.status" (selectionChange)="updateOrderStatus($event.value)">
+            <mat-option *ngFor="let status of statuses" [value]="status.value">
+              {{ status.text }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <div *ngIf="updatingStatus" class="status-updating">
+          <mat-spinner [diameter]="20"></mat-spinner>
+          <span>Обновление...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-info-section">
+      <h4 style="color: var(--tg-theme-text-color);">Информация о заказе</h4>
+      
+      <div class="info-row">
+        <span class="info-label">Номер заказа:</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ order.id }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="info-label">Дата создания:</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ formatDate(order.createdAt) }}</span>
+      </div>
+      
+      <div class="info-row" *ngIf="order.updatedAt">
+        <span class="info-label">Последнее обновление:</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ formatDate(order.updatedAt) }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="info-label">Метод оплаты:</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ order.paymentMethod === 'stripe' ? 'Банковская карта' : order.paymentMethod }}</span>
+      </div>
+    </div>
+
+    <!-- Информация о клиенте (если есть) -->
+    <div class="order-info-section" *ngIf="order.user">
+      <h4 style="color: var(--tg-theme-text-color);">Информация о клиенте</h4>
+      
+      <div class="info-row" *ngIf="order.user.firstName || order.user.lastName">
+        <span class="info-label">Имя:</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ order.user.firstName }} {{ order.user.lastName }}</span>
+      </div>
+      
+      <div class="info-row" *ngIf="order.user.username">
+        <span class="info-label">Имя пользователя:</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ order.user.username }}</span>
+      </div>
+      
+      <div class="info-row" *ngIf="order.user.id">
+        <span class="info-label">ID пользователя:</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ order.user.id }}</span>
+      </div>
+    </div>
+    
+    <!-- Информация об анкете -->
+    <div class="order-info-section">
+      <h4 style="color: var(--tg-theme-text-color);">Анкета</h4>
+      
+      <!-- Загрузка информации об анкете -->
+      <div *ngIf="formLoading" class="form-loading">
+        <mat-spinner [diameter]="20"></mat-spinner>
+        <span style="color: var(--tg-theme-text-color);">Проверка анкеты...</span>
+      </div>
+      
+      <!-- Результат проверки анкеты -->
+      <div *ngIf="!formLoading" class="form-info">
+        <div *ngIf="existingFormId" class="form-exists" style="color: var(--tg-theme-text-color);">
+          <mat-icon color="primary">description</mat-icon>
+          <span>Анкета заполнена</span>
+        </div>
+        <div *ngIf="!existingFormId" class="form-not-exists" style="color: var(--tg-theme-hint-color);">
+          <mat-icon>info</mat-icon>
+          <span>Анкета еще не заполнена</span>
+        </div>
+        <p style="color: var(--tg-theme-hint-color); font-size: 12px; margin-top: 8px;">
+          Используйте кнопку "Анкета" внизу экрана для {{ existingFormId ? 'просмотра' : 'заполнения' }} анкеты.
+        </p>
+      </div>
+    </div>
+  </div>
+</div> 

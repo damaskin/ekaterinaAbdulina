@@ -3,11 +3,13 @@ import {MainPageComponent} from "./pages/main-page/main-page.component";
 import {WebAppDataPageComponent} from "./pages/web-app-data-page/web-app-data-page.component";
 import {AuthComponent} from "./pages/auth-page/auth.component";
 import {StyleFormComponent} from "./components/style-form/style-form.component";
-import { ClientsPageComponent } from './components/clients-page/clients-page.component';
 import { OrderComponent } from './components/order/order.component';
 import { CategoryFormComponent } from './components/category-form/category-form.component';
 import { SuccessPaymentComponent } from './pages/success-payment/success-payment.component';
 import { UserOrdersComponent } from './pages/user-orders/user-orders.component';
+import { AdminOrdersComponent } from './pages/admin/admin-orders/admin-orders.component';
+import { ClientsComponent } from './pages/admin/clients/clients.component';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -28,9 +30,18 @@ export const routes: Routes = [
     component: WebAppDataPageComponent,
   },
   { path: 'form/:id', component: StyleFormComponent },
-  { path: 'clients', component: ClientsPageComponent },
+  { 
+    path: 'clients', 
+    component: ClientsComponent, 
+    canActivate: [adminGuard]
+  },
   { path: 'order/:id', component: OrderComponent },
   { path: 'category-form/:id', component: CategoryFormComponent },
   { path: 'payment-success', component: SuccessPaymentComponent },
   { path: 'my-orders', component: UserOrdersComponent },
+  { 
+    path: 'admin/orders', 
+    component: AdminOrdersComponent,
+    canActivate: [adminGuard]
+  },
 ];

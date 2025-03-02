@@ -10,20 +10,25 @@ import {
   DocumentData, 
   Query, 
   orderBy,
-  updateDoc
+  updateDoc,
+  limit
 } from '@angular/fire/firestore';
-import { Observable, from, of } from 'rxjs';
+import { Observable, from, of, throwError } from 'rxjs';
 import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { TelegramService } from './telegram.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrdersService {
+  // URL API для запросов заказов
+  private apiUrl = 'https://your-api-base-url.com/api'; // Замените на реальный URL вашего API
 
   constructor(
     private firestore: Firestore,
-    private telegramService: TelegramService
+    private telegramService: TelegramService,
+    private http: HttpClient
   ) { }
 
   // Получение всех заказов текущего пользователя
@@ -98,7 +103,7 @@ export class OrdersService {
   getStatusText(status: string): string {
     switch (status) {
       case 'pending':
-        return 'Ожидает оплату';
+        return 'Ожидает оплаты';
       case 'paid':
         return 'Оплачен';
       case 'processing':
@@ -108,7 +113,7 @@ export class OrdersService {
       case 'cancelled':
         return 'Отменен';
       default:
-        return 'Неизвестный статус';
+        return 'Неизвестно';
     }
   }
 
@@ -177,5 +182,19 @@ export class OrdersService {
         throw error;
       })
     );
+  }
+
+  // Метод для получения заказов пользователя по Telegram ID
+  getUserOrdersByTelegramId(telegramId: number | string): Observable<any[]> {
+    // Создаем запрос к коллекции orders, где user.id равен переданному telegramId
+    const ordersRef = collection(this.firestore, 'orders');
+    const q = query(
+      ordersRef,
+      where('user.id', '==', telegramId),
+      orderBy('createdAt', 'desc')
+    );
+
+    // Используем существующий метод getOrdersFromQuery для обработки результатов
+    return this.getOrdersFromQuery(q);
   }
 } 
