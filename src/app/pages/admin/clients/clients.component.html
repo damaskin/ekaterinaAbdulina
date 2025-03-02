@@ -1,0 +1,65 @@
+<div class="clients-container">
+  <!-- Поиск -->
+  <div class="search-container" *ngIf="!isLoading && !error && filteredUsers().length > 0">
+    <mat-form-field appearance="fill" class="search-field">
+      <mat-label>Поиск клиента</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="filterUsers()" placeholder="Имя, ID или username">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Состояние загрузки -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner [diameter]="50"></mat-spinner>
+      <p class="loading-text" style="color: var(--tg-theme-text-color);">Загрузка клиентов...</p>
+    </div>
+  }
+  
+
+  <!-- Сообщение об ошибке -->
+   @if (!isLoading && error) {
+    <div class="error-container">
+      <mat-icon color="warn" class="theme-destructive-text-color">error</mat-icon>
+      <h2 class="theme-destructive-text-color">Ошибка</h2>
+      <p class="theme-destructive-text-color">{{ errorMessage }}</p>
+    </div>
+   }
+
+  <!-- Нет клиентов -->
+   @if (!isLoading && !error && filteredUsers().length === 0) {
+    <div class="empty-container"> 
+      <mat-icon>people</mat-icon>
+      <h2 style="color: var(--tg-theme-text-color);">Клиенты не найдены</h2>
+      <p style="color: var(--tg-theme-text-color);">У вас пока нет клиентов или они не соответствуют поиску</p>
+    </div>
+   }
+
+  <!-- Список клиентов -->
+  <div *ngIf="!isLoading && !error && filteredUsers().length > 0" class="clients-list">
+    <div *ngFor="let user of filteredUsers()" class="client-card" (click)="openUserDetails(user)">
+      <div class="client-header">
+        <!-- Аватар пользователя -->
+        <div class="client-avatar-container" *ngIf="user.photo_url">
+          <img class="client-avatar" [src]="user.photo_url" alt="Аватар">
+        </div>
+        <div class="client-info">
+          <div class="client-header-top">
+            <div class="client-name" style="color: var(--tg-theme-text-color);">
+              {{ user.first_name }} {{ user.last_name }}
+            </div>
+            <div class="client-id" style="color: var(--tg-theme-text-color);">ID: {{ user.id }}</div>
+          </div>
+          <div class="client-header-bottom">
+            <div class="client-username" style="color: var(--tg-theme-hint-color);">
+              {{ user.username || 'нет username' }}
+            </div>
+            <div class="client-date" style="color: var(--tg-theme-hint-color);">
+              {{ formatDate(user.lastLoginDate) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

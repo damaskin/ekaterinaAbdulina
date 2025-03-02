@@ -26,7 +26,7 @@ import { validationConfig } from '../../../validation/validation-config';
     ReactiveFormsModule
   ],
   template: `
-    <mat-form-field appearance="fill" class="full-width mb-20">
+    <mat-form-field appearance="outline" class="full-width mb-20 telegram-form-field">
       <mat-label>{{ label }}</mat-label>
       @if (inputMode === 'text') {
         <input matInput
@@ -57,7 +57,59 @@ import { validationConfig } from '../../../validation/validation-config';
       width: 100%;
     }
     .mb-20 {
-      margin-bottom: 5px;
+      margin-bottom: 16px;
+    }
+    ::ng-deep .telegram-form-field {
+      .mat-mdc-form-field-flex {
+        background-color: var(--tg-theme-bg-color);
+      }
+      
+      .mat-mdc-text-field-wrapper {
+        background-color: var(--tg-theme-bg-color);
+      }
+      
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: var(--tg-theme-button-color) !important;
+        border-style: dashed !important;
+        border-width: 2px !important;
+      }
+
+      &:hover .mdc-notched-outline__leading,
+      &:hover .mdc-notched-outline__notch,
+      &:hover .mdc-notched-outline__trailing {
+        border-color: var(--tg-theme-accent-text-color) !important;
+      }
+      
+      .mdc-text-field--focused .mdc-notched-outline__leading,
+      .mdc-text-field--focused .mdc-notched-outline__notch,
+      .mdc-text-field--focused .mdc-notched-outline__trailing {
+        border-color: var(--tg-theme-accent-text-color) !important;
+        border-width: 2px !important;
+      }
+      
+      .mat-mdc-form-field-label {
+        color: var(--tg-theme-hint-color);
+      }
+      
+      .mdc-text-field--focused .mat-mdc-form-field-label {
+        color: var(--tg-theme-accent-text-color);
+      }
+      
+      input, textarea {
+        color: var(--tg-theme-text-color);
+        caret-color: var(--tg-theme-accent-text-color);
+      }
+      
+      .mat-mdc-form-field-error {
+        color: var(--tg-theme-destructive-text-color);
+      }
+
+      /* Ripple эффект */
+      .mat-mdc-form-field-focus-overlay {
+        background-color: rgba(var(--tg-theme-button-color-rgb), 0.1);
+      }
     }
   `],
   providers: [

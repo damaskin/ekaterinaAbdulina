@@ -1,74 +1,40 @@
 <div class="orders-container">
-  <mat-card class="orders-card">
-    <!-- <mat-card-header>
-      <mat-card-title class="main-title">История заказов</mat-card-title>
-    </mat-card-header> -->
-    
-    <mat-card-content>
-      <!-- Состояние загрузки -->
-      <div *ngIf="loading" class="loading-container">
-        <mat-spinner [diameter]="50"></mat-spinner>
-        <p class="loading-text" style="color: var(--tg-theme-text-color);">Загрузка заказов...</p>
-      </div>
+  <!-- Состояние загрузки -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner [diameter]="50"></mat-spinner>
+    <p class="loading-text" style="color: var(--tg-theme-text-color);">Загрузка заказов...</p>
+  </div>
 
-      <!-- Сообщение об ошибке -->
-      <div *ngIf="!loading && error" class="error-container">
-        <mat-icon color="warn" class="theme-destructive-text-color">error</mat-icon>
-        <h2 class="theme-destructive-text-color">Ошибка</h2>
-        <p class="theme-destructive-text-color">{{ errorMessage }}</p>
-      </div>
+  <!-- Сообщение об ошибке -->
+  <div *ngIf="!loading && error" class="error-container">
+    <mat-icon color="warn" class="theme-destructive-text-color">error</mat-icon>
+    <h2 class="theme-destructive-text-color">Ошибка</h2>
+    <p class="theme-destructive-text-color">{{ errorMessage }}</p>
+  </div>
 
-      <!-- Нет заказов -->
-      <div *ngIf="!loading && !error && orders.length === 0" class="empty-container">
-        <mat-icon>receipt_long</mat-icon>
-        <h2 style="color: var(--tg-theme-text-color);">У вас пока нет заказов</h2>
-        <p style="color: var(--tg-theme-text-color);">Вы можете сделать заказ на главной странице</p>
-      </div>
+  <!-- Нет заказов -->
+  <div *ngIf="!loading && !error && orders.length === 0" class="empty-container">
+    <mat-icon>receipt_long</mat-icon>
+    <h2 style="color: var(--tg-theme-text-color);">У вас пока нет заказов</h2>
+    <p style="color: var(--tg-theme-text-color);">Вы можете сделать заказ на главной странице</p>
+  </div>
 
-      <!-- Список заказов -->
-      <div *ngIf="!loading && !error && orders.length > 0" class="orders-list">
-        <div *ngFor="let order of orders" class="order-card" [ngClass]="{'expanded': isExpanded(order.id)}">
-          <div class="order-header" (click)="toggleExpand(order.id)">
-            <div class="order-header-left">
-              <div class="order-title" style="color: var(--tg-theme-text-color);">{{ order.category.title }}</div>
-              <div class="order-date" style="color: var(--tg-theme-hint-color);">{{ formatDate(order.createdAt) }}</div>
-            </div>
-            <div class="order-header-right">
-              <div class="order-price" style="color: var(--tg-theme-text-color);">{{ formatPrice(order.category.price) }}</div>
-              <div class="order-status-badge" [ngClass]="getStatusClass(order.status)">
-                {{ getStatusText(order.status) }}
-              </div>
-            </div>
-          </div>
-
-          <!-- Развернутая информация о заказе -->
-          <div class="order-details" *ngIf="isExpanded(order.id)">
-            <mat-divider></mat-divider>
-            <div class="order-info-row">
-              <span class="order-info-label">ID заказа:</span>
-              <span class="order-info-value" style="color: var(--tg-theme-text-color);">{{ order.id | slice:0:10 }}...</span>
-            </div>
-            <div class="order-info-row">
-              <span class="order-info-label">Метод оплаты:</span>
-              <span class="order-info-value" style="color: var(--tg-theme-text-color);">{{ order.paymentMethod === 'stripe' ? 'Карта' : order.paymentMethod }}</span>
-            </div>
-            <div class="order-info-row" *ngIf="order.updatedAt">
-              <span class="order-info-label">Обновлен:</span>
-              <span class="order-info-value" style="color: var(--tg-theme-text-color);">{{ formatDate(order.updatedAt) }}</span>
-            </div>
-            
-            <div class="order-actions">
-              <button mat-raised-button color="primary" (click)="openOrderDetails(order); $event.stopPropagation()">
-                Детали заказа
-              </button>
-            </div>
+  <!-- Список заказов -->
+  <div *ngIf="!loading && !error && orders.length > 0" class="orders-list">
+    <div class="title">Мои заказы</div>
+    <div *ngFor="let order of orders" class="order-card" (click)="openOrderDetails(order)">
+      <div class="order-header">
+        <div class="order-header-left">
+          <div class="order-title" style="color: var(--tg-theme-text-color);">{{ order.category.title }}</div>
+          <div class="order-date" style="color: var(--tg-theme-hint-color);">{{ formatDate(order.createdAt) }}</div>
+        </div>
+        <div class="order-header-right">
+          <div class="order-price" style="color: var(--tg-theme-text-color);">{{ formatPrice(order.category.price) }}</div>
+          <div class="order-status-badge" [ngClass]="getStatusClass(order.status)">
+            {{ getStatusText(order.status) }}
           </div>
         </div>
       </div>
-    </mat-card-content>
-<!--     
-    <mat-card-actions *ngIf="!loading">
-      <button mat-raised-button color="primary" (click)="goToHome()">Вернуться на главную</button>
-    </mat-card-actions> -->
-  </mat-card>
+    </div>
+  </div>
 </div> 

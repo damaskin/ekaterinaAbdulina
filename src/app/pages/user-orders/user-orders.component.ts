@@ -12,10 +12,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { OrdersService } from '../../services/orders.service';
 import { TelegramService } from '../../services/telegram.service';
-import { OrderDetailsComponent } from './order-details/order-details.component';
+import { OrderDetailsBottomSheetComponent } from './order-details-bottom-sheet/order-details-bottom-sheet.component';
 
 @Component({
   selector: 'app-user-orders',
@@ -36,7 +36,7 @@ import { OrderDetailsComponent } from './order-details/order-details.component';
     MatListModule,
     MatExpansionModule,
     MatChipsModule,
-    MatDialogModule
+    MatBottomSheetModule
   ]
 })
 export class UserOrdersComponent implements OnInit {
@@ -44,13 +44,12 @@ export class UserOrdersComponent implements OnInit {
   loading = true;
   error = false;
   errorMessage = '';
-  expandedOrder: string | null = null;
 
   constructor(
     private ordersService: OrdersService,
     private telegramService: TelegramService,
     private router: Router,
-    private dialog: MatDialog
+    private bottomSheet: MatBottomSheet
   ) { }
 
   ngOnInit(): void {
@@ -84,10 +83,9 @@ export class UserOrdersComponent implements OnInit {
   }
 
   openOrderDetails(order: any): void {
-    this.dialog.open(OrderDetailsComponent, {
-      width: '90%',
-      maxWidth: '500px',
-      data: { orderId: order.id }
+    this.bottomSheet.open(OrderDetailsBottomSheetComponent, {
+      data: { orderId: order.id },
+      panelClass: 'bottom-sheet-container'
     });
   }
 
@@ -113,14 +111,6 @@ export class UserOrdersComponent implements OnInit {
 
   formatPrice(price: number): string {
     return `${price} ₽`;
-  }
-
-  toggleExpand(orderId: string): void {
-    this.expandedOrder = this.expandedOrder === orderId ? null : orderId;
-  }
-
-  isExpanded(orderId: string): boolean {
-    return this.expandedOrder === orderId;
   }
 
   goToHome(): void {

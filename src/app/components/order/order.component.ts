@@ -28,6 +28,9 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   // Store reference to the main button click handler
   private mainButtonClickHandler: () => void = () => {};
+  
+  // Store reference to the back button click handler
+  private backButtonClickHandler: () => void = () => {};
 
   constructor(
     private route: ActivatedRoute,
@@ -40,23 +43,38 @@ export class OrderComponent implements OnInit, OnDestroy {
     const categoryId = Number(this.route.snapshot.paramMap.get('id'));
     this.category = this.categories.find(cat => cat.id === categoryId);
 
-    // Setup Telegram main button if available
-    const webApp = window.Telegram?.WebApp;
-    if (webApp && this.category) {
-      webApp.MainButton.setText(`Оплатить ${this.category.price} руб`);
-      webApp.MainButton.show();
-      this.mainButtonClickHandler = () => this.pay();
-      webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+    // Setup Telegram WebApp
+    if (this.telegramService.tg) {
+      // Setup Main Button
+      if (this.category) {
+        this.telegramService.tg.MainButton.setText(`Оплатить ${this.category.price} руб`);
+        this.telegramService.tg.MainButton.show();
+        this.mainButtonClickHandler = () => this.pay();
+        this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+      }
+      
+      // Setup Back Button
+      this.telegramService.tg.BackButton.show();
+      this.backButtonClickHandler = () => this.navigateBack();
+      this.telegramService.tg.onEvent('backButtonClicked', this.backButtonClickHandler);
     }
   }
 
   ngOnDestroy(): void {
-    // Clean up Telegram main button
-    const webApp = window.Telegram?.WebApp;
-    if (webApp) {
-      webApp.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-      webApp.MainButton.hide();
+    // Clean up Telegram buttons
+    if (this.telegramService.tg) {
+      // Clean up Main Button
+      this.telegramService.tg.offEvent('mainButtonClicked', this.mainButtonClickHandler);
+      this.telegramService.tg.MainButton.hide();
+      
+      // Clean up Back Button
+      this.telegramService.tg.offEvent('backButtonClicked', this.backButtonClickHandler);
+      this.telegramService.tg.BackButton.hide();
     }
+  }
+
+  navigateBack(): void {
+    this.router.navigate(['/main']);
   }
 
   pay() {
@@ -94,5 +112,9 @@ export class OrderComponent implements OnInit, OnDestroy {
     .subscribe((res) => {
         console.log(res);
     });
+  }
+
+  openSuccessPayment() {
+    this.router.navigate(['/payment-success'], { queryParams: { session_id: 'cs_test_a1Hqxl19SFlruMCCD5nlpCIbwKHcsGnyFyG1xgaiqLyQCmkA7SAJp4XFSu' } });
   }
 } 

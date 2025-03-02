@@ -1,0 +1,67 @@
+<div class="admin-orders-container">
+  <!-- Поиск -->
+  <div class="search-container" *ngIf="!isLoading && !error && orders.length > 0">
+    <mat-form-field appearance="fill" class="search-field">
+      <mat-label>Поиск заказа</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="ID заказа, имя клиента или статус">
+      <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Состояние загрузки -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner [diameter]="50"></mat-spinner>
+      <p class="loading-text" style="color: var(--tg-theme-text-color);">Загрузка заказов...</p>
+    </div>
+  }
+
+  <!-- Сообщение об ошибке -->
+  @if (!isLoading && error) {
+    <div class="error-container">
+      <mat-icon color="warn" class="theme-destructive-text-color">error_outline</mat-icon>
+      <h2 class="theme-destructive-text-color">Ошибка</h2>
+      <p class="theme-destructive-text-color">{{ errorMessage || 'Произошла ошибка при загрузке заказов' }}</p>
+      <button mat-raised-button color="primary" (click)="loadOrders()">Попробовать снова</button>
+    </div>
+  }
+
+  <!-- Нет заказов -->
+  @if (!isLoading && !error && filteredOrders.length === 0) {
+    <div class="empty-container">
+      <mat-icon>inbox</mat-icon>
+      <h2 style="color: var(--tg-theme-text-color);">Заказы не найдены</h2>
+      <p style="color: var(--tg-theme-text-color);">Пока нет заказов или они не соответствуют поиску</p>
+    </div>
+  }
+
+  <!-- Список заказов -->
+  <div *ngIf="!isLoading && !error && filteredOrders.length > 0" class="orders-list">
+    <div *ngFor="let order of filteredOrders" class="order-item" (click)="openOrderDetails(order)">
+      <div class="order-header">
+        <div class="order-header-left">
+          <div class="order-title">{{ order.category.title }}</div>
+          <div class="order-date">{{ order.createdAt | date:'dd.MM.yyyy HH:mm' }}</div>
+        </div>
+        <div class="order-header-right">
+          <div class="order-price">{{ order.category.price }} ₽</div>
+          <div class="status" [ngClass]="ordersService.getStatusClass(order.status)">
+            {{ ordersService.getStatusText(order.status) }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="order-info">
+        <div class="user-info">
+          <mat-icon>person</mat-icon>
+          <span>{{ getUserName(order.user) }}</span>
+        </div>
+        <div class="order-id">#{{ order.id.slice(-6) }}</div>
+      </div>
+    </div>
+  </div>
+  
+</div> 
