@@ -35,15 +35,15 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   errorMessage = '';
   isAdmin = false;
   updatingStatus = false;
-  
+
   // Загрузка данных анкеты
   formLoading = false;
   existingFormId: string | null = null;
-  
+
   // Обработчики для кнопок Telegram
   private mainButtonClickHandler: () => void = () => {};
   private backButtonClickHandler: () => void = () => {};
-  
+
   // Доступные статусы заказа
   statuses = [
     { value: 'pending', text: 'Ожидает оплаты' },
@@ -60,7 +60,7 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
     private firestore: Firestore,
     private bottomSheetRef: MatBottomSheetRef<OrderDetailsBottomSheetComponent>,
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: { orderId: string, isAdmin?: boolean }
-  ) { 
+  ) {
     this.isAdmin = data.isAdmin === true;
   }
 
@@ -71,50 +71,44 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // Очищаем обработчики и скрываем кнопки Telegram
-    if (this.telegramService.tg) {
-      // this.telegramService.tg?.MainButton?.hide();
-      this.telegramService.tg?.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-      
-      this.telegramService.tg?.BackButton?.hide();
-      this.telegramService.tg?.offEvent('backButtonClicked', this.backButtonClickHandler);
-    }
+
   }
 
   setupTelegramButtons(): void {
     if (this.telegramService.tg) {
       const tg = this.telegramService.tg;
-      
+
       // Настройка кнопки "Назад"
       tg.BackButton.show();
       this.backButtonClickHandler = () => this.close();
       tg.onEvent('backButtonClicked', this.backButtonClickHandler);
-      
+
       // Настройка MainButton "Анкета"
       tg.MainButton.setText('Анкета');
       tg.MainButton.show();
-      
+
       // Обработчик нажатия на "Анкета"
       this.mainButtonClickHandler = () => this.navigateToForm();
       tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
     }
   }
-  
+
   // Проверяем, существует ли уже анкета для этого заказа
   checkExistingForm(): void {
     if (!this.data.orderId) {
       return;
     }
-    
+
     this.formLoading = true;
-    
+
     // Создаем запрос к коллекции 'forms' для поиска анкеты по orderId
     const formsRef = collection(this.firestore, 'forms');
     const q = query(formsRef, where('orderId', '==', this.data.orderId));
-    
+
     from(getDocs(q)).subscribe({
       next: (querySnapshot) => {
         this.formLoading = false;
-        
+
         if (!querySnapshot.empty) {
           // Если нашли анкету, сохраняем ее ID
           this.existingFormId = querySnapshot.docs[0].id;
@@ -122,7 +116,7 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
         } else {
           console.log('Анкета для этого заказа не найдена');
         }
-        
+
         // После проверки настраиваем кнопки Telegram
         this.setupTelegramButtons();
       },
@@ -134,11 +128,11 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   // Навигация к анкете (существующей или новой)
   navigateToForm(): void {
     this.close(); // Закрываем шторку
-    
+
     // Запускаем навигацию напрямую, без подписки на событие
     if (this.existingFormId) {
       // Навигация к существующей или новой анкете (пока используем один и тот же путь)
@@ -169,6 +163,12 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.bottomSheetRef.dismiss();
+
+    this.telegramService.tg?.MainButton?.hide();
+    this.telegramService.tg?.offEvent('mainButtonClicked', this.mainButtonClickHandler);
+
+    this.telegramService.tg?.BackButton?.hide();
+    this.telegramService.tg?.offEvent('backButtonClicked', this.backButtonClickHandler);
   }
 
   getStatusText(status: string): string {
@@ -182,9 +182,9 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { 
-      day: '2-digit', 
-      month: '2-digit', 
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -194,14 +194,14 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   formatPrice(price: number): string {
     return `${price} ₽`;
   }
-  
+
   updateOrderStatus(newStatus: string): void {
     if (!this.isAdmin || !this.order || !newStatus || this.updatingStatus) {
       return;
     }
-    
+
     this.updatingStatus = true;
-    
+
     this.orderService.updateOrderStatus(this.order.id, newStatus).subscribe({
       next: (updatedOrder) => {
         this.order = updatedOrder;
@@ -229,4 +229,4 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
       }
     });
   }
-} 
+}

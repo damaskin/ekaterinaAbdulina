@@ -3,4 +3,4 @@ export interface ICategory {
   title: string;
   price: number;
   // Дополнительные свойства при необходимости
-} 
+}

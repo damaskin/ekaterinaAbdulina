@@ -163,49 +163,49 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
     // Настройка кнопок Telegram WebApp
     this.setupTelegramButtons();
 
-    this.styleForm.setValue({
-      personalInfo: {
-        fullName: 'Иванов Иван Иванович',
-        age: '25',
-        location: 'Москва',
-        occupation: 'Программист',
-        hobbies: 'Музыка, походы, чтение',
-        maritalStatus: true
-      },
-      shoppingHabits: {
-        shoppingFrequency: 'Раз в месяц',
-      },
-      appearance: {
-        strongPoints: 'Высокий рост, хорошие волосы',
-        weakPoints: 'Мешки под глазами',
-        parameters: {
-          height: '185',
-          shoeSize: '43',
-          bust: '100',
-          waist: '80',
-          hips: '100'
-        }
-      },
-      socialMedia: 'instagram.com/ivanov_ivan\nvk.com/ivan_ivanov',
-      timeDistribution: 'Работа - 30%, Сон - 30%, Спорт - 10%, Отдых - 30%',
-      style: {
-        usualOutfit: 'Джинсы и футболка, повседневный кэжуал',
-        desiredStyle: 'Более собранный и элегантный образ',
-        dominantColors: 'Синие и серые оттенки преобладают',
-        preferredBrands: 'Uniqlo, Zara, H&M',
-        lifePhotos: [],
-        inspirationPhotos: [],
-        desiredImpression: 'Стильный, уверенный, approachable',
-        stopList: 'Яркие неоновые вещи, оборки, строгие галстуки'
-      },
-      additional: {
-        followsFashion: 'Читаю пару блогеров и моду в TikTok',
-        fashionInfluencers: 'Анон, Streetwear аккаунты',
-        importantOpinion: 'Мнение жены, сестры',
-        previousStylist: 'Нет предыдущего опыта',
-        additionalInfo: 'Хочу найти свой стиль'
-      }
-    });
+    // this.styleForm.setValue({
+    //   personalInfo: {
+    //     fullName: 'Иванов Иван Иванович',
+    //     age: '25',
+    //     location: 'Москва',
+    //     occupation: 'Программист',
+    //     hobbies: 'Музыка, походы, чтение',
+    //     maritalStatus: true
+    //   },
+    //   shoppingHabits: {
+    //     shoppingFrequency: 'Раз в месяц',
+    //   },
+    //   appearance: {
+    //     strongPoints: 'Высокий рост, хорошие волосы',
+    //     weakPoints: 'Мешки под глазами',
+    //     parameters: {
+    //       height: '185',
+    //       shoeSize: '43',
+    //       bust: '100',
+    //       waist: '80',
+    //       hips: '100'
+    //     }
+    //   },
+    //   socialMedia: 'instagram.com/ivanov_ivan\nvk.com/ivan_ivanov',
+    //   timeDistribution: 'Работа - 30%, Сон - 30%, Спорт - 10%, Отдых - 30%',
+    //   style: {
+    //     usualOutfit: 'Джинсы и футболка, повседневный кэжуал',
+    //     desiredStyle: 'Более собранный и элегантный образ',
+    //     dominantColors: 'Синие и серые оттенки преобладают',
+    //     preferredBrands: 'Uniqlo, Zara, H&M',
+    //     lifePhotos: [],
+    //     inspirationPhotos: [],
+    //     desiredImpression: 'Стильный, уверенный, approachable',
+    //     stopList: 'Яркие неоновые вещи, оборки, строгие галстуки'
+    //   },
+    //   additional: {
+    //     followsFashion: 'Читаю пару блогеров и моду в TikTok',
+    //     fashionInfluencers: 'Анон, Streetwear аккаунты',
+    //     importantOpinion: 'Мнение жены, сестры',
+    //     previousStylist: 'Нет предыдущего опыта',
+    //     additionalInfo: 'Хочу найти свой стиль'
+    //   }
+    // });
   }
   
   // Настройка кнопок Telegram WebApp
@@ -582,6 +582,13 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
     
     if (this.styleForm.valid) {
       console.log('Form is valid, values:', this.styleForm.value);
+      
+      // Показываем индикатор загрузки и блокируем кнопку
+      if (this.telegramService.tg) {
+        this.telegramService.tg.MainButton.showProgress(true);
+        this.telegramService.tg.MainButton.disable();
+      }
+      
       const formData = {
         ...this.styleForm.value,
         category: this.categoryId,
@@ -619,31 +626,65 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         // Отправляем уведомление в Telegram через сервис
         this.telegramService.sendFormNotificationToAdmins(formData, formId, this.orderId)
           .subscribe({
-            next: (response) => console.log('Telegram notification sent:', response),
-            error: (error) => console.error('Error sending Telegram notification:', error)
+            next: (response) => {
+              console.log('Telegram notification sent:', response);
+              
+              // Скрываем индикатор загрузки
+              if (this.telegramService.tg) {
+                this.telegramService.tg.MainButton.hideProgress();
+              }
+              
+              // Показываем сообщение об успешной отправке
+              if (this.telegramService.tg) {
+                this.telegramService.tg.showPopup({
+                  title: this.existingFormId ? 'Анкета обновлена' : 'Анкета отправлена',
+                  message: this.existingFormId 
+                    ? 'Ваша анкета успешно обновлена. Спасибо!' 
+                    : 'Ваша анкета успешно отправлена. Спасибо!',
+                  buttons: [{
+                    id: 'ok',
+                    type: 'ok'
+                  }]
+                }, () => {
+                  // После закрытия попапа, возвращаемся на главную
+                  this.router.navigate(['/main']);
+                });
+              } else {
+                this.router.navigate(['/main']);
+              }
+            },
+            error: (error) => {
+              console.error('Error sending Telegram notification:', error);
+              
+              // Скрываем индикатор загрузки и разблокируем кнопку в случае ошибки
+              if (this.telegramService.tg) {
+                this.telegramService.tg.MainButton.hideProgress();
+                this.telegramService.tg.MainButton.enable();
+              }
+              
+              // Показываем сообщение об ошибке
+              if (this.telegramService.tg) {
+                this.telegramService.tg.showPopup({
+                  title: 'Ошибка',
+                  message: 'Произошла ошибка при отправке уведомления. Данные сохранены, но уведомление не отправлено.',
+                  buttons: [{
+                    id: 'ok',
+                    type: 'ok'
+                  }]
+                });
+              }
+            }
           });
-        
-        // Показываем сообщение об успешной отправке
-        if (this.telegramService.tg) {
-          this.telegramService.tg.showPopup({
-            title: this.existingFormId ? 'Анкета обновлена' : 'Анкета отправлена',
-            message: this.existingFormId 
-              ? 'Ваша анкета успешно обновлена. Спасибо!' 
-              : 'Ваша анкета успешно отправлена. Спасибо!',
-            buttons: [{
-              id: 'ok',
-              type: 'ok'
-            }]
-          }, () => {
-            // После закрытия попапа, возвращаемся на главную
-            this.router.navigate(['/main']);
-          });
-        } else {
-          this.router.navigate(['/main']);
-        }
       })
       .catch(error => {
         console.error('Error saving form data:', error);
+        
+        // Скрываем индикатор загрузки и разблокируем кнопку в случае ошибки
+        if (this.telegramService.tg) {
+          this.telegramService.tg.MainButton.hideProgress();
+          this.telegramService.tg.MainButton.enable();
+        }
+        
         // Показываем сообщение об ошибке
         if (this.telegramService.tg) {
           this.telegramService.tg.showPopup({

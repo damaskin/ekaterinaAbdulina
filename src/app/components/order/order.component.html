@@ -1,7 +1,6 @@
 <div *ngIf="category">
-  <div class="title">Заказ: {{ category?.title }}</div>
-  <p>Цена: {{ category?.price }} руб</p>
-  
+  <div class="title">Заказ: {{ category.title }}</div>
+  <p>Цена: {{ priceFormatter.formatPrice(category.price!) }}</p>
 
   <div class="info-block full-width mb-20">
     <svg class="info-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -10,8 +9,11 @@
     <span>После оплаты, мы направим вас на страницу с формой, где вы сможете заполнить анкету</span>
   </div>
 
-  <button mat-button (click)="openSuccessPayment()">Оплаченный заказ</button>
-  <button mat-button routerLink="/form/1">Анкета</button>
-  <button mat-button (click)="sendMessage()">сообщение</button>
-  <br>
-</div> 
+<!--  <button mat-button (click)="openSuccessPayment()">Оплаченный заказ</button>-->
+</div>
+<!--  <button mat-button routerLink="/form/1">Анкета</button>-->
+<!--  <button mat-button (click)="sendMessage()">сообщение</button>-->
+<!--  <br>-->
+
+
+<div id="payment-element"></div>

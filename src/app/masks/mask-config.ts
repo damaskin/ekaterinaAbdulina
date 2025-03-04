@@ -27,4 +27,16 @@ export const MASKS = {
 
   // Маска для частоты покупок (текст/числа/символы)
   shoppingFrequency: { mask: /^[А-Яа-яёЁA-Za-z0-9\s.,!?-]*$/ },
-}; 
+
+  // Маска для форматирования цены с разделением тысяч пробелами
+  price: {
+    mask: Number,
+    thousandsSeparator: ' ',
+    radix: ',',
+    mapToRadix: ['.'],
+    scale: 0,
+    signed: false,
+    normalizeZeros: true,
+    padFractionalZeros: false,
+  }
+};
