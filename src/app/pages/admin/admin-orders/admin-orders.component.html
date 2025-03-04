@@ -47,13 +47,14 @@
           <div class="order-date">{{ order.createdAt | date:'dd.MM.yyyy HH:mm' }}</div>
         </div>
         <div class="order-header-right">
-          <div class="order-price">{{ order.category.price }} ₽</div>
+          <!-- Замените отображение цены -->
+          <div class="order-price">{{ priceFormatter.formatPrice(order.category.price) }}</div>
           <div class="status" [ngClass]="ordersService.getStatusClass(order.status)">
             {{ ordersService.getStatusText(order.status) }}
           </div>
         </div>
       </div>
-      
+
       <div class="order-info">
         <div class="user-info">
           <mat-icon>person</mat-icon>
@@ -63,5 +64,5 @@
       </div>
     </div>
   </div>
-  
-</div> 
+
+</div>

@@ -1,18 +1,26 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ICategory } from '../../interfaces/icategory';
-import { PaymentService } from '../../services/payment.service';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { TelegramService } from '../../services/telegram.service';
+import { IMaskModule } from 'angular-imask';
+import { IMaskPipe } from 'angular-imask';
+import { MASKS } from '../../masks/mask-config';
+import {ICategory} from "../../interfaces/icategory";
+import {ActivatedRoute, Router} from "@angular/router";
+import {PaymentService} from "../../services/payment.service";
+import {TelegramService} from "../../services/telegram.service";
+import {PriceFormatterService} from "../../services/price-formatter.service";
+
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, RouterModule]
+  imports: [
+    CommonModule,
+    IMaskModule,
+    IMaskPipe
+  ]
 })
 export class OrderComponent implements OnInit, OnDestroy {
-  category: ICategory | undefined;
+  category!: ICategory;
 
   // Здесь для упрощения используется локальный массив категорий.
   // В реальном приложении стоит получать данные через специализированный сервис.
@@ -28,7 +36,7 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   // Store reference to the main button click handler
   private mainButtonClickHandler: () => void = () => {};
-  
+
   // Store reference to the back button click handler
   private backButtonClickHandler: () => void = () => {};
 
@@ -36,23 +44,24 @@ export class OrderComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private paymentService: PaymentService,
     private router: Router,
-    private telegramService: TelegramService
+    private telegramService: TelegramService,
+    public priceFormatter: PriceFormatterService
   ) {}
 
   ngOnInit(): void {
     const categoryId = Number(this.route.snapshot.paramMap.get('id'));
-    this.category = this.categories.find(cat => cat.id === categoryId);
+    this.category = this.categories.find(cat => cat.id === categoryId)!;
 
     // Setup Telegram WebApp
     if (this.telegramService.tg) {
       // Setup Main Button
       if (this.category) {
-        this.telegramService.tg.MainButton.setText(`Оплатить ${this.category.price} руб`);
+        this.telegramService.tg.MainButton.setText(`Оплатить ${this.priceFormatter.formatPrice(this.category.price)}`);
         this.telegramService.tg.MainButton.show();
         this.mainButtonClickHandler = () => this.pay();
         this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
       }
-      
+
       // Setup Back Button
       this.telegramService.tg.BackButton.show();
       this.backButtonClickHandler = () => this.navigateBack();
@@ -66,7 +75,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       // Clean up Main Button
       this.telegramService.tg.offEvent('mainButtonClicked', this.mainButtonClickHandler);
       this.telegramService.tg.MainButton.hide();
-      
+
       // Clean up Back Button
       this.telegramService.tg.offEvent('backButtonClicked', this.backButtonClickHandler);
       this.telegramService.tg.BackButton.hide();
@@ -79,6 +88,12 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   pay() {
     if (this.category) {
+      // Показываем индикатор загрузки и блокируем кнопку
+      if (this.telegramService.tg) {
+        this.telegramService.tg.MainButton.showProgress(true);
+        this.telegramService.tg.MainButton.disable();
+      }
+
       this.paymentService.createCheckoutSession(this.category).subscribe({
         next: (session: any) => {
           const stripe = (window as any).Stripe('pk_test_51Qx6v0QtKeJeSzyDCPmVC8Qy69HrXVU5eZvehaDu8oSQiTA1f3zkmhY8HMX73pnj3YDvhi7Wx9LQn50yPpNXhrkG003QjkJ3PW');
@@ -92,29 +107,52 @@ export class OrderComponent implements OnInit, OnDestroy {
           }).then((result: any) => {
             if (result.error) {
               console.error('Ошибка редиректа на Stripe:', result.error.message);
+
+              // В случае ошибки восстанавливаем кнопку
+              if (this.telegramService.tg) {
+                this.telegramService.tg.MainButton.hideProgress();
+                this.telegramService.tg.MainButton.enable();
+                this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+              }
             }
           });
         },
         error: (error: any) => {
           console.error('Ошибка при создании сессии оплаты:', error);
-          // Здесь можно добавить отображение ошибки пользователю
+
+          // В случае ошибки восстанавливаем кнопку
+          if (this.telegramService.tg) {
+            this.telegramService.tg.MainButton.hideProgress();
+            this.telegramService.tg.MainButton.enable();
+          }
+
+          // Показываем ошибку пользователю
+          if (this.telegramService.tg) {
+            this.telegramService.tg.showPopup({
+              title: 'Ошибка',
+              message: 'Произошла ошибка при создании сессии оплаты. Пожалуйста, попробуйте позже.',
+              buttons: [{ type: 'ok' }]
+            });
+          }
         }
       });
     }
   }
 
   sendMessage() {
-    this.telegramService.sendMessage(210311255, this.categories[0])
-    .subscribe((res) => {
-        console.log(res);
-    });
-    this.telegramService.sendMessage2(210311255, this.categories[0])
-    .subscribe((res) => {
-        console.log(res);
-    });
+    // this.telegramService.sendMessage(210311255, this.categories[0])
+    // .subscribe((res) => {
+    //     console.log(res);
+    // });
+    // this.telegramService.sendMessage2(210311255, this.categories[0])
+    // .subscribe((res) => {
+    //     console.log(res);
+    // });
   }
 
   openSuccessPayment() {
     this.router.navigate(['/payment-success'], { queryParams: { session_id: 'cs_test_a1Hqxl19SFlruMCCD5nlpCIbwKHcsGnyFyG1xgaiqLyQCmkA7SAJp4XFSu' } });
   }
-} 
+
+  protected readonly MASKS = MASKS;
+}
