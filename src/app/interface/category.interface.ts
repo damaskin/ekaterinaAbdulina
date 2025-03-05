@@ -8,4 +8,5 @@ export interface ICategory {
   createdAt?: Date;
   updatedAt?: Date;
   isActive?: boolean;
+  position?: number;
 } 

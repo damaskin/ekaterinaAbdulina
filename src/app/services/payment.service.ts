@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap, from } from 'rxjs';
-import { ICategory } from '../interfaces/icategory';
+import { ICategory } from '../interface/category.interface';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { TelegramService } from './telegram.service';
 

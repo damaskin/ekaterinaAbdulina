@@ -1,20 +1,22 @@
-<mat-toolbar>
-  <app-toolbar
-    [user]="user"
-    [(componentSelectorOpen)]="componentSelectorOpen"
-    [(themeSelectorOpen)]="themeSelectorOpen"
-  />
-</mat-toolbar>
-<mat-sidenav-container>
-  <mat-sidenav
-    class="component-selector"
-    [(opened)]="componentSelectorOpen"
-    [mode]="componentSelectorMode()"
-  >
-    <app-main-menu  (closeMenu)="closeMenu()" />
-  </mat-sidenav>
-  <div class="container main-container">
-    <!-- <pre>{{ user | json }}</pre> -->
-    <router-outlet />
-  </div>
-</mat-sidenav-container>
+<div class="app">
+  <mat-toolbar>
+    <app-toolbar
+      [user]="user"
+      [(componentSelectorOpen)]="componentSelectorOpen"
+      [(themeSelectorOpen)]="themeSelectorOpen"
+    />
+  </mat-toolbar>
+  <mat-sidenav-container>
+    <mat-sidenav
+      class="component-selector"
+      [(opened)]="componentSelectorOpen"
+      [mode]="componentSelectorMode()"
+    >
+      <app-main-menu  (closeMenu)="closeMenu()" />
+    </mat-sidenav>
+    <div class="container main-container">
+      <!-- <pre>{{ user | json }}</pre> -->
+      <router-outlet />
+    </div>
+  </mat-sidenav-container>
+</div>

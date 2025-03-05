@@ -1,24 +1,49 @@
 <div class="categories">
-  <div class="categories-grid">
+  <!-- Индикатор загрузки -->
+   @if (isLoading) {
+    <div class="loading-container">
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    </div>
+   }
+
+  <!-- Сообщение об ошибке -->
+   @if (error) {
+    <div class="error-message">
+      {{ error }}
+    </div>
+   }
+
+  <!-- Список категорий -->
+   @if (!isLoading && !error) {
+    <div class="categories-grid">
     @for (category of categories; track category.id) {
       <button class="category-item" (click)="selectCategory(category)">
-        <img 
-          src="assets/images/icons/{{ category.id }}.png" 
+    <img 
+          [src]="category.imageUrl || 'assets/images/icons/default.png'" 
           alt="{{ category.title }}"
           class="category-icon"
+          loading="lazy"
         />
         <span class="category-title">{{ category.title }}</span>
-        <span class="category-price">{{ category.price }} руб</span>
+        <span class="catego rice">{{ priceFormatterService.formatPrice(category.price || 0) }}</span>
       </button>
     }
-  </div>
+    </div>
+   }
 
-  <div class="my-orders-button-container">
+  <!-- Сообщение, если категории не найдены -->
+   @if (!isLoading && !error && categories.length === 0) {
+    <div class="no-categories">
+      Категории не найдены
+    </div>
+   }
+
+  <!-- <div class="my-orders-button-container">
     <button class="my-orders-button" (click)="navigateToMyOrders()">
       <span class="icon">
         <mat-icon>receipt_long</mat-icon>
       </span>
       <span>История моих заказов</span>
     </button>
-  </div>
+  </div> -->
 </div>

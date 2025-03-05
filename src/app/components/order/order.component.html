@@ -1,3 +1,17 @@
+<!-- Индикатор загрузки -->
+@if (isLoading) {
+  <div class="loading-container">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
+ }
+
+ <!-- Сообщение об ошибке -->
+ @if (error) {
+  <div class="error-message">
+    {{ error }}
+  </div>
+ }
+
 <div *ngIf="category">
   <div class="title">Заказ: {{ category.title }}</div>
   <p>Цена: {{ priceFormatter.formatPrice(category.price!) }}</p>
@@ -17,3 +31,5 @@
 
 
 <div id="payment-element"></div>
+
+<!-- <pre>{{ category | json }}</pre> -->

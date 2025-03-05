@@ -1,4 +1,26 @@
 .categories {
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+
+  .error-message {
+    text-align: center;
+    color: var(--tg-theme-destructive-text-color);
+    padding: 16px;
+    margin: 16px 0;
+    background-color: rgba(var(--tg-theme-destructive-text-color-rgb), 0.1);
+    border-radius: 8px;
+  }
+
+  .no-categories {
+    text-align: center;
+    color: var(--tg-theme-hint-color);
+    padding: 16px;
+    margin: 16px 0;
+  }
 }
 
 .categories-grid {
@@ -23,6 +45,10 @@
   
   &:hover {
     opacity: 0.8;
+  }
+
+  .category-price {
+    margin-top: 4px;
   }
 }
 

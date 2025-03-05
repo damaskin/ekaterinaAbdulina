@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, doc, setDoc, deleteDoc, query, where, getDoc, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, setDoc, deleteDoc, query, where, getDoc, getDocs, orderBy } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
 import { Observable, from, switchMap, of, map } from 'rxjs';
 import { ICategory } from '../interface/category.interface';
@@ -18,7 +18,8 @@ export class CategoriesService {
     let q;
 
     q = query(
-      categoriesRef
+      categoriesRef,
+      orderBy('position', 'asc')
     );
 
     return from(getDocs(q)).pipe(

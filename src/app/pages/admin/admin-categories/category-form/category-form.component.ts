@@ -35,6 +35,7 @@ import { TelegramService } from '../../../../services/telegram.service';
 export class CategoryFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   isLoading = false;
+  isFormLoading = false;
   categoryId: string | null = null;
   imagePreview: string | null = null;
   selectedFile: File | null = null;
@@ -57,7 +58,8 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
       price: [0],
       isActive: [true],
       imageUrl: [null],
-      imagePath: [null]
+      imagePath: [null],
+      position: [null]
     });
   }
 
@@ -114,16 +116,16 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   }
 
   loadCategory(): void {
-    this.isLoading = true;
+    this.isFormLoading = true;
     this.categoriesService.getCategory(this.categoryId!).subscribe({
       next: (category) => {
         this.form.patchValue(category);
         this.imagePreview = category.imageUrl || null;
-        this.isLoading = false;
+        this.isFormLoading = false;
       },
       error: (error) => {
         console.error('Error loading category:', error);
-        this.isLoading = false;
+        this.isFormLoading = false;
       }
     });
   }
@@ -152,14 +154,40 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.form.valid) {
       this.isLoading = true;
+      
+      // Показываем индикатор загрузки на главной кнопке
+      if (this.telegramService.tg) {
+        this.telegramService.tg.MainButton.showProgress(true);
+        this.telegramService.tg.MainButton.disable();
+      }
+
+      // Создаем объект категории без id для новых категорий
       const category: ICategory = {
         ...this.form.value,
-        id: this.categoryId || undefined
+        // Добавляем id только если это редактирование существующей категории
+        ...(this.categoryId ? { id: this.categoryId } : {})
       };
 
-      this.categoriesService.saveCategory(category, this.selectedFile || undefined).then(() => {
-        this.router.navigate(['/admin/categories']);
-      });
+      this.categoriesService.saveCategory(category, this.selectedFile || undefined)
+        .then(() => {
+          // Скрываем индикатор загрузки
+          if (this.telegramService.tg) {
+            this.telegramService.tg.MainButton.hideProgress();
+            this.telegramService.tg.MainButton.enable();
+          }
+          this.router.navigate(['/admin/categories']);
+        })
+        .catch(error => {
+          console.error('Error saving category:', error);
+          // В случае ошибки также скрываем индикатор и разблокируем кнопку
+          if (this.telegramService.tg) {
+            this.telegramService.tg.MainButton.hideProgress();
+            this.telegramService.tg.MainButton.enable();
+          }
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     }
   }
 

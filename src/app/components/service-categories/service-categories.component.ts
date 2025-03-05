@@ -1,28 +1,50 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ICategory } from '../../interfaces/icategory';
+import { ICategory } from '../../interface/category.interface';
 import { MatIconModule } from '@angular/material/icon';
+import { CategoriesService } from '../../services/categories.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PriceFormatterService } from '../../services/price-formatter.service';
 
 @Component({
   selector: 'app-service-categories',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './service-categories.component.html',
   styleUrls: ['./service-categories.component.scss']
 })
-export class ServiceCategoriesComponent {
-  categories: ICategory[] = [
-    { id: 1, title: 'Онлайн/офлайн консультации', price: 1000 },
-    { id: 2, title: 'Консультации + разбор гардероба', price: 1500 },
-    { id: 3, title: 'Консультация + шоппинг', price: 2000 },
-    { id: 4, title: 'Комплексная работа по стилю', price: 3000 },
-    { id: 5, title: 'Подбор образа под мероприятие', price: 1800 },
-    { id: 6, title: 'Подготовка к съемке', price: 2200 },
-    { id: 7, title: 'Ознакомительный шоппинг', price: 1200 }
-  ];
+export class ServiceCategoriesComponent implements OnInit {
+  categories: ICategory[] = [];
+  isLoading = false;
+  error: string | null = null;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private categoriesService: CategoriesService,
+    public priceFormatterService: PriceFormatterService,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.isLoading = true;
+    this.error = null;
+    
+    this.categoriesService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories.filter(category => category.isActive);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        this.error = 'Ошибка загрузки категорий';
+        this.isLoading = false;
+      }
+    });
+  }
 
   selectCategory(category: ICategory) {
     this.router.navigate(['/order', category.id]);

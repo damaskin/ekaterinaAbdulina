@@ -3,63 +3,79 @@
   <div class="title theme-text-color">{{categoryId ? 'Редактировать категорию' : 'Новая категория'}}</div>
   <br>
 
-  <!-- Основная информация -->
-  <app-form-element
-  label="Название"
-  type="text"
-  formControlName="title"
-  placeholder="Введите название категории"
-  [isLoading]="isLoading"
-  [required]="true"
-  ></app-form-element>
-
-  <!-- Цена и статус -->
-  <app-form-element
-  label="Цена"
-  type="number"
-  formControlName="price"
-  placeholder="Введите цену"
-  [isLoading]="isLoading"
-  ></app-form-element>
-
-  <!-- Статус активности -->
-  <div class="form-field">
-    <mat-slide-toggle formControlName="isActive" class="theme-accent-text-color">
-      Активна
-    </mat-slide-toggle>
+  <!-- Индикатор загрузки формы -->
+  <div *ngIf="isFormLoading" class="form-loading">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
 
-  <!-- Изображение -->
-  <div class="custom-dropzone" (click)="fileInput.click()">
-    <input
-      #fileInput
-      type="file"
-      accept="image/*"
-      (change)="onFileSelected($event)"
-      style="display: none"
-    >
-    <div class="theme-hint-color">
-      Кликните для загрузки изображения
+  <!-- Основная информация -->
+  <div *ngIf="!isFormLoading">
+    <app-form-element
+    label="Название"
+    type="text"
+    formControlName="title"
+    placeholder="Введите название категории"
+    [isLoading]="isLoading"
+    [required]="true"
+    ></app-form-element>
+
+    <!-- Цена и статус -->
+    <app-form-element
+    label="Цена"
+    type="number"
+    formControlName="price"
+    placeholder="Введите цену"
+    [isLoading]="isLoading"
+    ></app-form-element>
+
+    <!-- Позиция -->
+    <app-form-element
+    label="Позиция"
+    type="number"
+    formControlName="position"
+    placeholder="Введите позицию"
+    [isLoading]="isLoading"
+    ></app-form-element>
+
+    <!-- Статус активности -->
+    <div class="form-field">
+      <mat-slide-toggle formControlName="isActive" class="theme-accent-text-color">
+        Активна
+      </mat-slide-toggle>
     </div>
-    <div class="custom-dropzone-images">
-      <div *ngIf="imagePreview" class="image-upload-container">
-        <!-- Индикатор загрузки -->
-        <div *ngIf="isLoading" class="upload-progress">
-          <mat-progress-spinner 
-            [value]="100" 
-            diameter="40" 
-            mode="determinate">
-          </mat-progress-spinner>
-          <span class="progress-text">Загрузка...</span>
-        </div>
-        
-        <!-- Превью изображения -->
-        <div *ngIf="!isLoading" class="image-preview">
-          <img [src]="imagePreview" alt="Preview">
-          <div class="image-actions">
-            <button type="button" (click)="onRemoveFile()">
-              <mat-icon>close</mat-icon>
-            </button>
+
+    <!-- Изображение -->
+    <div class="custom-dropzone" (click)="fileInput.click()">
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        style="display: none"
+      >
+      <div class="theme-hint-color">
+        Кликните для загрузки изображения
+      </div>
+      <div class="custom-dropzone-images">
+        <div *ngIf="imagePreview" class="image-upload-container">
+          <!-- Индикатор загрузки -->
+          <div *ngIf="isLoading" class="upload-progress">
+            <mat-progress-spinner 
+              [value]="100" 
+              diameter="40" 
+              mode="determinate">
+            </mat-progress-spinner>
+            <span class="progress-text">Загрузка...</span>
+          </div>
+          
+          <!-- Превью изображения -->
+          <div *ngIf="!isLoading" class="image-preview">
+            <img [src]="imagePreview" alt="Preview">
+            <div class="image-actions">
+              <button type="button" (click)="onRemoveFile()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
       </div>
