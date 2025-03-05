@@ -35,6 +35,12 @@ export class MenuService {
     //   icon: 'web_asset',
     //   isAdmin: false,
     // },
+    {
+      label: 'Категории',
+      route: 'admin/categories',
+      icon: 'category',
+      isAdmin: true,
+    }
   ];
 
   addRoute(route: { label: string; route: string; icon: string, isAdmin: boolean }) {
