@@ -1,0 +1,55 @@
+<div class="categories-container">
+
+  <!-- Состояние загрузки -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner [diameter]="50"></mat-spinner>
+      <p class="loading-text" style="color: var(--tg-theme-text-color);">Загрузка категорий...</p>
+    </div>
+  }
+
+  <!-- Сообщение об ошибке -->
+  @if (!isLoading && error) {
+    <div class="error-container">
+      <mat-icon color="warn" class="theme-destructive-text-color">error</mat-icon>
+      <h2 class="theme-destructive-text-color">Ошибка</h2>
+      <p class="theme-destructive-text-color">{{ errorMessage }}</p>
+    </div>
+  }
+
+  <!-- Нет категорий -->
+  @if (!isLoading && !error && categories.length === 0) {
+    <div class="empty-container">
+      <mat-icon>category</mat-icon>
+      <h2 style="color: var(--tg-theme-text-color);">Категории не найдены</h2>
+      <p style="color: var(--tg-theme-text-color);">У вас пока нет категорий или они не соответствуют поиску</p>
+    </div>
+  }
+
+  <!-- Список категорий -->
+  <div *ngIf="!isLoading && !error && categories.length > 0" class="categories-list">
+    <div class="title">Категории</div>
+    <div *ngFor="let category of categories" class="category-card">
+      <div class="category-header" (click)="onEditCategory(category)">
+        <!-- Изображение категории -->
+        <div class="category-image-container">
+          <img class="category-image" [src]="category.imageUrl" [alt]="category.title">
+        </div>
+        <div class="category-info">
+          <div class="category-header-top">
+            <div class="category-title" style="color: var(--tg-theme-text-color);">
+              {{ category.title }}
+            </div>
+            <div class="category-price theme-link-color">
+              {{ priceFormatterService.formatPrice(category.price || 0) }}
+            </div>
+            <div class="category-status" [class.active]="category.isActive" [class.inactive]="!category.isActive">
+              {{category.isActive ? 'Активна' : 'Неактивна'}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div> 
