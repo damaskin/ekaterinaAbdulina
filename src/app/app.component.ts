@@ -75,19 +75,37 @@ export class AppComponent implements OnInit {
   }
 
   private initUser(): void {
-    const user = this.telegramService.initUser();
+    let user = this.telegramService.initUser();
+    
+    // Если данных нет в Telegram WebApp, загружаем из sessionStorage
+    if (!user || !user.id) {
+      const storedUser = sessionStorage.getItem('telegramUser');
+      if (storedUser) {
+        this.user = JSON.parse(storedUser);
+        console.log('Loaded user from sessionStorage:', this.user);
+        return;
+      } else {
+        this.router.navigate(['/auth']).then();
+        return;
+      }
+    }
+  
+    // Сохраняем пользователя в sessionStorage
     this.user = user;
-    if (user && user.id) {
-      this.firebaseService.getUserData(user.id).then((firebaseUserData) => {
+    sessionStorage.setItem('telegramUser', JSON.stringify(user));
+  
+    this.firebaseService.getUserData(user.id)
+      .then((firebaseUserData) => {
         this.user = { ...user, ...firebaseUserData };
+        console.log('User data from Firebase:', this.user);
+        
         this.telegramService.telegramUser = this.user;
-        // this.router.navigate(['/main']).then();
-      }).catch((error) => {
+        sessionStorage.setItem('telegramUser', JSON.stringify(this.user));
+      })
+      .catch((error) => {
         console.error('Error fetching user data from Firebase:', error);
         this.router.navigate(['/auth']).then();
       });
-    } else {
-      this.router.navigate(['/auth']).then();
-    }
   }
+
 }

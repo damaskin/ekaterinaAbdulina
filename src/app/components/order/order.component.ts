@@ -3,36 +3,34 @@ import { CommonModule } from '@angular/common';
 import { IMaskModule } from 'angular-imask';
 import { IMaskPipe } from 'angular-imask';
 import { MASKS } from '../../masks/mask-config';
-import {ICategory} from "../../interfaces/icategory";
+import { ICategory } from "../../interface/category.interface";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PaymentService} from "../../services/payment.service";
 import {TelegramService} from "../../services/telegram.service";
 import {PriceFormatterService} from "../../services/price-formatter.service";
+import { CategoriesService } from '../../services/categories.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
+  styleUrls: ['./order.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
     IMaskModule,
-    IMaskPipe
+    IMaskPipe,
+    MatProgressSpinnerModule
   ]
 })
 export class OrderComponent implements OnInit, OnDestroy {
-  category!: ICategory;
+  category: ICategory | null = null;
+  isLoading = false;
+  error: string | null = null;
 
   // Здесь для упрощения используется локальный массив категорий.
   // В реальном приложении стоит получать данные через специализированный сервис.
-  categories: ICategory[] = [
-      { id: 1, title: 'Онлайн/офлайн консультации', price: 1000 },
-      { id: 2, title: 'Консультации + разбор гардероба', price: 1500 },
-      { id: 3, title: 'Консультация + шоппинг', price: 2000 },
-      { id: 4, title: 'Комплексная работа по стилю', price: 3000 },
-      { id: 5, title: 'Подбор образа под мероприятие', price: 1800 },
-      { id: 6, title: 'Подготовка к съемке', price: 2200 },
-      { id: 7, title: 'Ознакомительный шоппинг', price: 1200 }
-  ];
+  categories: ICategory[] = [];
 
   // Store reference to the main button click handler
   private mainButtonClickHandler: () => void = () => {};
@@ -45,22 +43,40 @@ export class OrderComponent implements OnInit, OnDestroy {
     private paymentService: PaymentService,
     private router: Router,
     private telegramService: TelegramService,
+    private categoriesService: CategoriesService,
     public priceFormatter: PriceFormatterService
   ) {}
 
   ngOnInit(): void {
-    const categoryId = Number(this.route.snapshot.paramMap.get('id'));
-    this.category = this.categories.find(cat => cat.id === categoryId)!;
+    const categoryId = this.route.snapshot.paramMap.get('id');
+    if (categoryId) {
+      this.loadCategory(categoryId);
+    }
+  }
 
-    // Setup Telegram WebApp
-    if (this.telegramService.tg) {
-      // Setup Main Button
-      if (this.category) {
-        this.telegramService.tg.MainButton.setText(`Оплатить ${this.priceFormatter.formatPrice(this.category.price)}`);
-        this.telegramService.tg.MainButton.show();
-        this.mainButtonClickHandler = () => this.pay();
-        this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+  loadCategory(categoryId: string): void {
+    this.isLoading = true;
+    this.categoriesService.getCategory(categoryId).subscribe({
+      next: (category) => {
+        this.category = category;
+        this.setupTelegramButtons();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading category:', error);
+        this.error = 'Ошибка загрузки категории';
+        this.isLoading = false;
       }
+    });
+  }
+
+  setupTelegramButtons(): void {
+    if (this.telegramService.tg && this.category) {
+      // Setup Main Button
+      this.telegramService.tg.MainButton.setText(`Оплатить ${this.priceFormatter.formatPrice(this.category.price || 0)}`);
+      this.telegramService.tg.MainButton.show();
+      this.mainButtonClickHandler = () => this.pay();
+      this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
 
       // Setup Back Button
       this.telegramService.tg.BackButton.show();
