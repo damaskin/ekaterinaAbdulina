@@ -11,6 +11,9 @@ import { ClientsComponent } from './pages/admin/clients/clients.component';
 import { adminGuard } from './guards/admin.guard';
 import { AdminCategoriesComponent } from './pages/admin/admin-categories/admin-categories.component';
 import { CategoryFormComponent } from './pages/admin/admin-categories/category-form/category-form.component';
+import { AdminFormFieldsComponent } from './pages/admin/admin-form-fields/admin-form-fields.component';
+import { FormFieldFormComponent } from './pages/admin/admin-form-fields/form-field-form/form-field-form.component';
+import { OrderFormComponent } from './components/order-form/order-form.component';
 
 export const routes: Routes = [
   {
@@ -31,16 +34,16 @@ export const routes: Routes = [
     component: WebAppDataPageComponent,
   },
   { path: 'form/:id', component: StyleFormComponent },
-  { 
-    path: 'clients', 
-    component: ClientsComponent, 
+  {
+    path: 'clients',
+    component: ClientsComponent,
     canActivate: [adminGuard]
   },
   { path: 'order/:id', component: OrderComponent },
   { path: 'payment-success', component: SuccessPaymentComponent },
   { path: 'my-orders', component: UserOrdersComponent },
-  { 
-    path: 'admin/orders', 
+  {
+    path: 'admin/orders',
     component: AdminOrdersComponent,
     canActivate: [adminGuard]
   },
@@ -50,7 +53,11 @@ export const routes: Routes = [
     children: [
       { path: 'categories', component: AdminCategoriesComponent },
       { path: 'categories/new', component: CategoryFormComponent },
-      { path: 'categories/edit/:id', component: CategoryFormComponent }
+      { path: 'categories/edit/:id', component: CategoryFormComponent },
+      { path: 'form-fields', component: AdminFormFieldsComponent },
+      { path: 'form-fields/new', component: FormFieldFormComponent },
+      { path: 'form-fields/edit/:id', component: FormFieldFormComponent }
     ]
   },
+  { path: 'order/:id/form', component: OrderFormComponent }
 ];

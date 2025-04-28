@@ -1,14 +1,16 @@
 import {Injectable, signal, inject} from '@angular/core';
 import {TelegramService} from "./telegram.service";
 
+type ColorHex = `#${string}`;
+
 type Theme = {
   name: string;
-  background: string;
-  primary: string;
-  primaryLight: string;
-  ripple: string;
-  primaryDark: string;
-  error: string;
+  background: ColorHex;
+  primary: ColorHex;
+  primaryLight: ColorHex;
+  ripple: ColorHex;
+  primaryDark: ColorHex;
+  error: ColorHex;
 };
 
 @Injectable({
@@ -17,24 +19,23 @@ type Theme = {
 export class ThemingService {
 
   telegramService = inject(TelegramService);
-  primary = signal(this.telegramService.tg.themeParams?.button_color);
-  primaryLight = signal(this.telegramService.tg.themeParams?.secondary_bg_color);
-  primaryDark = signal(this.telegramService.tg.themeParams?.hint_color);
-  background = signal(this.telegramService.tg.themeParams?.bg_color);
-  ripple = signal(this.telegramService.tg.themeParams?.link_color + '1e');
-  error = signal('#ba1a1a');
+  primary = signal<ColorHex>(this.telegramService.webApp.themeParams?.button_color as ColorHex);
+  primaryLight = signal<ColorHex>(this.telegramService.webApp.themeParams?.secondary_bg_color as ColorHex);
+  primaryDark = signal<ColorHex>(this.telegramService.webApp.themeParams?.hint_color as ColorHex);
+  background = signal<ColorHex>(this.telegramService.webApp.themeParams?.bg_color as ColorHex);
+  ripple = signal<ColorHex>((this.telegramService.webApp.themeParams?.link_color + '1e') as ColorHex);
+  error = signal<ColorHex>('#ba1a1a');
 
   constructor() {
     if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.onEvent('themeChanged', () => {
-        this.primary.set(this.telegramService.tg.themeParams?.button_color);
-        this.primaryLight.set(this.telegramService.tg.themeParams?.secondary_bg_color);
-        this.primaryDark.set(this.telegramService.tg.themeParams?.hint_color);
-        this.background.set(this.telegramService.tg.themeParams?.bg_color);
-        this.ripple.set(this.telegramService.tg.themeParams?.link_color + '1e');
+      this.telegramService.webApp?.onEvent('themeChanged', () => {
+        this.primary.set(this.telegramService.webApp.themeParams?.button_color as ColorHex);
+        this.primaryLight.set(this.telegramService.webApp.themeParams?.secondary_bg_color as ColorHex);
+        this.primaryDark.set(this.telegramService.webApp.themeParams?.hint_color as ColorHex);
+        this.background.set(this.telegramService.webApp.themeParams?.bg_color as ColorHex);
+        this.ripple.set((this.telegramService?.webApp?.themeParams?.link_color + '1e') as ColorHex);
         this.error.set('#ba1a1a');
       });
-
     }
   }
 
@@ -45,7 +46,7 @@ export class ThemingService {
       primary: '#046e8f',
       primaryLight: '#dce3e9',
       ripple: '#005cbb1e',
-      primaryDark: 'black',
+      primaryDark: '#000000',
       error: '#ba1a1a',
     },
     {
@@ -54,7 +55,7 @@ export class ThemingService {
       primary: '#073763',
       primaryLight: '#E6EBEF',
       ripple: '#0737631e',
-      primaryDark: 'black',
+      primaryDark: '#000000',
       error: '#ba1a1a',
     },
     {
@@ -63,7 +64,7 @@ export class ThemingService {
       primary: '#7d1135',
       primaryLight: '#f2e7ea',
       ripple: '#7d11351e',
-      primaryDark: 'black',
+      primaryDark: '#000000',
       error: '#ba1a1a',
     },
     {
@@ -77,33 +78,32 @@ export class ThemingService {
     },
   ];
 
-  setPrimary(color: string) {
+  setPrimary(color: ColorHex) {
     this.primary.set(color);
   }
 
-  setPrimaryLight(color: string) {
+  setPrimaryLight(color: ColorHex) {
     this.primaryLight.set(color);
   }
 
-  setPrimaryDark(color: string) {
+  setPrimaryDark(color: ColorHex) {
     this.primaryDark.set(color);
   }
 
-  setRipple(color: string) {
+  setRipple(color: ColorHex) {
     this.ripple.set(color);
   }
 
-  setBackground(color: string) {
+  setBackground(color: ColorHex) {
     this.background.set(color);
   }
 
-  setError(color: string) {
+  setError(color: ColorHex) {
     this.error.set(color);
   }
 
   applyTheme(theme: Theme) {
-    const { primary, primaryLight, primaryDark, ripple, background, error } =
-      theme;
+    const { primary, primaryLight, primaryDark, ripple, background, error } = theme;
     this.primary.set(primary);
     this.primaryLight.set(primaryLight);
     this.primaryDark.set(primaryDark);

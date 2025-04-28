@@ -78,15 +78,15 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
   router = inject(Router);
   isLoading: boolean = true; // флаг загрузки
   MASKS = MASKS;
-  
+
   // Массивы для отслеживания загрузки файлов
   lifePhotoUploads: FileUpload[] = [];
   inspirationPhotoUploads: FileUpload[] = [];
-  
+
   // Флаги для проверки завершения загрузки всех файлов
   allLifePhotosUploaded: boolean = true;
   allInspirationPhotosUploaded: boolean = true;
-  
+
   // Обработчики для кнопок Telegram
   private mainButtonClickHandler: () => void = () => {};
   private backButtonClickHandler: () => void = () => {};
@@ -148,12 +148,12 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.categoryId = Number(this.route.snapshot.paramMap.get('id'));
     this.user = this.telegramService.telegramUser;
-    
+
     // Получаем ID заказа из query параметров
     this.route.queryParams.subscribe(params => {
       this.orderId = params['orderId'] || null;
       console.log('Order ID from query params:', this.orderId);
-      
+
       // Если есть ID заказа, проверяем наличие существующей анкеты
       if (this.orderId) {
         this.checkExistingForm();
@@ -207,53 +207,52 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
     //   }
     // });
   }
-  
+
   // Настройка кнопок Telegram WebApp
   setupTelegramButtons(): void {
-    if (this.telegramService.tg) {
-      const tg = this.telegramService.tg;
-      
+    if (this.telegramService.webApp) {
+
       // Настройка MainButton с текстом "Сохранить"
-      tg.MainButton.setText("Сохранить");
-      tg.MainButton.show();
-      
+      this.telegramService.webApp.MainButton.setText("Сохранить");
+      this.telegramService.webApp.MainButton.show();
+
       // Определяем обработчик для MainButton
       this.mainButtonClickHandler = () => this.onSubmit();
-      tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
-      
+      this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+
       // Настройка кнопки "Назад"
-      tg.BackButton.show();
-      
+      this.telegramService.webApp.BackButton.show();
+
       // Определяем обработчик для BackButton
       this.backButtonClickHandler = () => this.navigateToMain();
-      tg.onEvent('backButtonClicked', this.backButtonClickHandler);
+      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
     }
   }
-  
+
   // Метод для навигации на главную
   navigateToMain(): void {
     this.router.navigate(['/main']);
   }
-  
+
   // Проверяем, существует ли уже анкета для этого заказа
   checkExistingForm(): void {
     if (!this.orderId) return;
-    
+
     this.formLoading = true;
-    
+
     // Проверяем по orderId в коллекции forms
     const formsRef = collection(this.firestore, 'forms');
     const q = query(formsRef, where('orderId', '==', this.orderId));
-    
+
     getDocs(q).then(querySnapshot => {
       this.formLoading = false;
-      
+
       if (!querySnapshot.empty) {
         // Если нашли анкету, сохраняем её ID и загружаем данные
         const formDoc = querySnapshot.docs[0];
         this.existingFormId = formDoc.id;
         console.log('Найдена существующая анкета с ID:', this.existingFormId);
-        
+
         // Загружаем данные анкеты в форму
         this.loadFormData(formDoc.data());
       } else {
@@ -264,11 +263,11 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
       this.formLoading = false;
     });
   }
-  
+
   // Загружаем данные анкеты в форму
   loadFormData(formData: any): void {
     if (!formData) return;
-    
+
     try {
       // Заполняем форму данными из базы
       this.styleForm.patchValue({
@@ -285,33 +284,33 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         additional: formData.additional || {}
       });
-      
+
       // Загружаем изображения
       if (formData.style?.lifePhotos?.length) {
         this.loadSavedImages(formData.style.lifePhotos, 'lifePhotos');
       }
-      
+
       if (formData.style?.inspirationPhotos?.length) {
         this.loadSavedImages(formData.style.inspirationPhotos, 'inspirationPhotos');
       }
-      
+
       console.log('Данные формы загружены успешно');
     } catch (error) {
       console.error('Ошибка при загрузке данных формы:', error);
     }
   }
-  
+
   // Загрузка сохраненных изображений для отображения
   loadSavedImages(images: any[], fieldName: 'lifePhotos' | 'inspirationPhotos'): void {
     const targetArray = fieldName === 'lifePhotos' ? this.lifePhotoUploads : this.inspirationPhotoUploads;
     const control = this.styleForm.get(['style', fieldName]);
     const currentValue = control?.value || [];
-    
+
     // Добавляем сохраненные изображения в форму и в массив для отображения
     images.forEach(image => {
       // Добавляем в форму данные об изображении
       currentValue.push(image);
-      
+
       // Создаем объект для отображения
       const fileUpload: FileUpload = {
         file: new File([], image.name || 'image.jpg'),
@@ -323,10 +322,10 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         path: image.path,
         thumbnailPath: image.thumbnailPath
       };
-      
+
       targetArray.push(fileUpload);
     });
-    
+
     control?.setValue(currentValue);
   }
 
@@ -336,16 +335,10 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Убираем кнопки Telegram WebApp при уничтожении компонента
-    if (this.telegramService.tg) {
-      this.telegramService.tg.MainButton.hide();
-      this.telegramService.tg.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-      
-      this.telegramService.tg.BackButton.hide();
-      this.telegramService.tg.offEvent('backButtonClicked', this.backButtonClickHandler);
-    }
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
-  
+
   // Создание миниатюры изображения
   createThumbnail(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -357,10 +350,10 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
           const canvas = document.createElement('canvas');
           const MAX_WIDTH = 200;
           const MAX_HEIGHT = 200;
-          
+
           let width = img.width;
           let height = img.height;
-          
+
           // Вычисляем размеры миниатюры с сохранением пропорций
           if (width > height) {
             if (width > MAX_WIDTH) {
@@ -373,13 +366,13 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
               height = MAX_HEIGHT;
             }
           }
-          
+
           canvas.width = width;
           canvas.height = height;
-          
+
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
-          
+
           // Конвертируем canvas в Data URL формата JPG с качеством 0.7
           const thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.7);
           resolve(thumbnailDataUrl);
@@ -391,7 +384,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
       reader.readAsDataURL(file);
     });
   }
-  
+
   // Конвертация Data URL в File объект
   dataURLtoFile(dataUrl: string, filename: string): File {
     const arr = dataUrl.split(',');
@@ -399,35 +392,35 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const bstr = atob(arr[1]);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
-    
+
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
     }
-    
+
     return new File([u8arr], filename, { type: mime });
   }
 
   onSelect(event: any, fieldName: 'lifePhotos' | 'inspirationPhotos'): void {
     const addedFiles: File[] = event.addedFiles;
     if (!addedFiles?.length) return;
-    
+
     // Обновляем флаг загрузки для всех изображений
     if (fieldName === 'lifePhotos') {
       this.allLifePhotosUploaded = false;
     } else {
       this.allInspirationPhotosUploaded = false;
     }
-    
+
     // Определяем массивы для хранения данных
     const uploadArray = fieldName === 'lifePhotos' ? this.lifePhotoUploads : this.inspirationPhotoUploads;
-    
+
     // Проходим по каждому файлу
     addedFiles.forEach(async (file) => {
       if (!this.orderId) {
         console.error('Order ID is not available');
         return;
       }
-      
+
       // Создаем объект для отслеживания загрузки
       const fileUpload: FileUpload = {
         file,
@@ -435,39 +428,39 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         uploading: true,
         error: false
       };
-      
+
       // Добавляем в массив загрузок
       uploadArray.push(fileUpload);
-      
+
       try {
         // 1) Создаем миниатюру
         const thumbnailDataUrl = await this.createThumbnail(file);
         fileUpload.thumbnail = thumbnailDataUrl;
-        
+
         // 2) Конвертируем миниатюру в File
         const thumbnailFilename = `thumb_${file.name}`;
         const thumbnailFile = this.dataURLtoFile(thumbnailDataUrl, thumbnailFilename);
-        
+
         // 3) Определяем пути в Storage для оригинала и миниатюры
         const originalPath = `forms/${this.orderId}/original_${Date.now()}_${file.name}`;
         const thumbnailPath = `forms/${this.orderId}/thumb_${Date.now()}_${file.name}`;
-        
+
         // 4) Загружаем оригинал и миниатюру в Storage
         const originalRef = ref(this.storage, originalPath);
         const thumbnailRef = ref(this.storage, thumbnailPath);
-        
+
         // 5) Загружаем оригинал
         await uploadBytes(originalRef, file);
         fileUpload.progress = 50;
-        
+
         // 6) Загружаем миниатюру
         await uploadBytes(thumbnailRef, thumbnailFile);
         fileUpload.progress = 80;
-        
+
         // 7) Получаем URL для загруженных файлов
         const originalUrl = await getDownloadURL(originalRef);
         const thumbnailUrl = await getDownloadURL(thumbnailRef);
-        
+
         // 8) Обновляем объект FileUpload
         fileUpload.originalUrl = originalUrl;
         fileUpload.thumbnailUrl = thumbnailUrl;
@@ -475,7 +468,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         fileUpload.thumbnailPath = thumbnailPath;
         fileUpload.progress = 100;
         fileUpload.uploading = false;
-        
+
         // 9) Обновляем значение в форме
         const control = this.styleForm.get(['style', fieldName]);
         if (control) {
@@ -489,10 +482,10 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
           });
           control.setValue(currentValue);
         }
-        
+
         // 10) Проверяем, все ли файлы загружены
         this.checkAllFilesUploaded(fieldName);
-        
+
       } catch (error) {
         console.error('Error uploading file:', error);
         fileUpload.error = true;
@@ -501,12 +494,12 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-  
+
   // Проверка, все ли файлы загружены
   checkAllFilesUploaded(fieldName: 'lifePhotos' | 'inspirationPhotos'): void {
     const uploadArray = fieldName === 'lifePhotos' ? this.lifePhotoUploads : this.inspirationPhotoUploads;
     const allUploaded = uploadArray.every(item => !item.uploading);
-    
+
     if (fieldName === 'lifePhotos') {
       this.allLifePhotosUploaded = allUploaded;
     } else {
@@ -517,14 +510,14 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
   onRemove(fileUpload: FileUpload, fieldName: 'lifePhotos' | 'inspirationPhotos'): void {
     // Определяем массив для удаления
     const uploadArray = fieldName === 'lifePhotos' ? this.lifePhotoUploads : this.inspirationPhotoUploads;
-    
+
     // Находим индекс файла в массиве
     const index = uploadArray.indexOf(fileUpload);
     if (index === -1) return;
-    
+
     // Удаляем из массива
     uploadArray.splice(index, 1);
-    
+
     // Обновляем значение в форме, удаляя соответствующий элемент
     const control = this.styleForm.get(['style', fieldName]);
     if (control?.value) {
@@ -537,7 +530,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       control.setValue(newValue);
     }
-    
+
     // Если файл уже загружен в Storage, удаляем его оттуда
     if (fileUpload.path) {
       const originalRef = ref(this.storage, fileUpload.path);
@@ -545,7 +538,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         .then(() => console.log('Original file deleted:', fileUpload.path))
         .catch(err => console.error('Error deleting original file:', err));
     }
-    
+
     // Если есть миниатюра, удаляем её тоже
     if (fileUpload.thumbnailPath) {
       const thumbnailRef = ref(this.storage, fileUpload.thumbnailPath);
@@ -553,11 +546,11 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         .then(() => console.log('Thumbnail file deleted:', fileUpload.thumbnailPath))
         .catch(err => console.error('Error deleting thumbnail file:', err));
     }
-    
+
     // Проверяем, все ли файлы загружены
     this.checkAllFilesUploaded(fieldName);
   }
-  
+
   // Открытие оригинального изображения в новой вкладке
   openOriginalImage(fileUpload: FileUpload): void {
     if (fileUpload.originalUrl) {
@@ -567,11 +560,11 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit(): void {
     console.log('Form submitted:', this.styleForm);
-    
+
     // Проверяем, все ли файлы загружены
     if (!this.allLifePhotosUploaded || !this.allInspirationPhotosUploaded) {
-      if (this.telegramService.tg) {
-        this.telegramService.tg.showPopup({
+      if (this.telegramService.webApp) {
+        this.telegramService.webApp.showPopup({
           title: 'Загрузка файлов',
           message: 'Пожалуйста, дождитесь окончания загрузки всех изображений.',
           buttons: [{ type: 'ok' }]
@@ -579,16 +572,16 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return;
     }
-    
+
     if (this.styleForm.valid) {
       console.log('Form is valid, values:', this.styleForm.value);
-      
+
       // Показываем индикатор загрузки и блокируем кнопку
-      if (this.telegramService.tg) {
-        this.telegramService.tg.MainButton.showProgress(true);
-        this.telegramService.tg.MainButton.disable();
+      if (this.telegramService.webApp) {
+        this.telegramService.webApp.MainButton.showProgress(true);
+        this.telegramService.webApp.MainButton.disable();
       }
-      
+
       const formData = {
         ...this.styleForm.value,
         category: this.categoryId,
@@ -602,7 +595,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Определяем, создаем новую анкету или обновляем существующую
       let savePromise;
-      
+
       if (this.orderId && !this.existingFormId) {
         // Если есть ID заказа, но нет существующей анкеты - создаем документ с ID заказа
         const formDoc = doc(this.firestore, `forms/${this.orderId}`);
@@ -622,72 +615,72 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         // При создании с автогенерируемым ID у docRef будет id, при setDoc нет
         const formId = (docRef as any)?.id || this.existingFormId || this.orderId;
         console.log('Form data saved with ID:', formId);
-        
+
         // Отправляем уведомление в Telegram через сервис
-        this.telegramService.sendFormNotificationToAdmins(formData, formId, this.orderId)
-          .subscribe({
-            next: (response) => {
-              console.log('Telegram notification sent:', response);
-              
-              // Скрываем индикатор загрузки
-              if (this.telegramService.tg) {
-                this.telegramService.tg.MainButton.hideProgress();
-              }
-              
-              // Показываем сообщение об успешной отправке
-              if (this.telegramService.tg) {
-                this.telegramService.tg.showPopup({
-                  title: this.existingFormId ? 'Анкета обновлена' : 'Анкета отправлена',
-                  message: this.existingFormId 
-                    ? 'Ваша анкета успешно обновлена. Спасибо!' 
-                    : 'Ваша анкета успешно отправлена. Спасибо!',
-                  buttons: [{
-                    id: 'ok',
-                    type: 'ok'
-                  }]
-                }, () => {
-                  // После закрытия попапа, возвращаемся на главную
-                  this.router.navigate(['/main']);
-                });
-              } else {
-                this.router.navigate(['/main']);
-              }
-            },
-            error: (error) => {
-              console.error('Error sending Telegram notification:', error);
-              
-              // Скрываем индикатор загрузки и разблокируем кнопку в случае ошибки
-              if (this.telegramService.tg) {
-                this.telegramService.tg.MainButton.hideProgress();
-                this.telegramService.tg.MainButton.enable();
-              }
-              
-              // Показываем сообщение об ошибке
-              if (this.telegramService.tg) {
-                this.telegramService.tg.showPopup({
-                  title: 'Ошибка',
-                  message: 'Произошла ошибка при отправке уведомления. Данные сохранены, но уведомление не отправлено.',
-                  buttons: [{
-                    id: 'ok',
-                    type: 'ok'
-                  }]
-                });
-              }
-            }
-          });
+        // this.telegramService.sendFormNotificationToAdmins(formData, formId, this.orderId)
+        //   .subscribe({
+        //     next: (response) => {
+        //       console.log('Telegram notification sent:', response);
+        //
+        //       // Скрываем индикатор загрузки
+        //       if (this.telegramService.webApp) {
+        //         this.telegramService.webApp.MainButton.hideProgress();
+        //       }
+        //
+        //       // Показываем сообщение об успешной отправке
+        //       if (this.telegramService.webApp) {
+        //         this.telegramService.webApp.showPopup({
+        //           title: this.existingFormId ? 'Анкета обновлена' : 'Анкета отправлена',
+        //           message: this.existingFormId
+        //             ? 'Ваша анкета успешно обновлена. Спасибо!'
+        //             : 'Ваша анкета успешно отправлена. Спасибо!',
+        //           buttons: [{
+        //             id: 'ok',
+        //             type: 'ok'
+        //           }]
+        //         }, () => {
+        //           // После закрытия попапа, возвращаемся на главную
+        //           this.router.navigate(['/main']);
+        //         });
+        //       } else {
+        //         this.router.navigate(['/main']);
+        //       }
+        //     },
+        //     error: (error) => {
+        //       console.error('Error sending Telegram notification:', error);
+        //
+        //       // Скрываем индикатор загрузки и разблокируем кнопку в случае ошибки
+        //       if (this.telegramService.webApp) {
+        //         this.telegramService.webApp.MainButton.hideProgress();
+        //         this.telegramService.webApp.MainButton.enable();
+        //       }
+        //
+        //       // Показываем сообщение об ошибке
+        //       if (this.telegramService.webApp) {
+        //         this.telegramService.webApp.showPopup({
+        //           title: 'Ошибка',
+        //           message: 'Произошла ошибка при отправке уведомления. Данные сохранены, но уведомление не отправлено.',
+        //           buttons: [{
+        //             id: 'ok',
+        //             type: 'ok'
+        //           }]
+        //         });
+        //       }
+        //     }
+        //   });
       })
       .catch(error => {
         console.error('Error saving form data:', error);
-        
+
         // Скрываем индикатор загрузки и разблокируем кнопку в случае ошибки
-        if (this.telegramService.tg) {
-          this.telegramService.tg.MainButton.hideProgress();
-          this.telegramService.tg.MainButton.enable();
+        if (this.telegramService.webApp) {
+          this.telegramService.webApp.MainButton.hideProgress();
+          this.telegramService.webApp.MainButton.enable();
         }
-        
+
         // Показываем сообщение об ошибке
-        if (this.telegramService.tg) {
-          this.telegramService.tg.showPopup({
+        if (this.telegramService.webApp) {
+          this.telegramService.webApp.showPopup({
             title: 'Ошибка',
             message: 'Произошла ошибка при отправке анкеты. Пожалуйста, попробуйте еще раз.',
             buttons: [{
@@ -700,8 +693,8 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       console.error('Form is invalid');
       // Показываем сообщение о необходимости заполнить обязательные поля
-      if (this.telegramService.tg) {
-        this.telegramService.tg.showPopup({
+      if (this.telegramService.webApp) {
+        this.telegramService.webApp.showPopup({
           title: 'Форма не заполнена',
           message: 'Пожалуйста, заполните все обязательные поля анкеты.',
           buttons: [{
@@ -712,13 +705,13 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
-  
+
   async deleteForm(docId: string, formData: any): Promise<void> {
     // 1) Удаляем все файлы из Storage
     const lifePhotoRefs = formData?.style?.lifePhotos || [];
     const inspirationRefs = formData?.style?.inspirationPhotos || [];
     const allRefs = [...lifePhotoRefs, ...inspirationRefs];
-    
+
     for (const refObj of allRefs) {
       // Удаляем оригинал
       if (refObj.path) {
@@ -729,7 +722,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
           console.error('Error deleting original file:', err);
         }
       }
-      
+
       // Удаляем миниатюру
       if (refObj.thumbnailPath) {
         try {
@@ -740,7 +733,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     }
-    
+
     // 2) Удаляем документ из Firestore
     await deleteDoc(doc(this.firestore, `forms/${docId}`));
     console.log('Form document deleted:', docId);

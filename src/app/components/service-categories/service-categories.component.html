@@ -18,8 +18,8 @@
     <div class="categories-grid">
     @for (category of categories; track category.id) {
       <button class="category-item" (click)="selectCategory(category)">
-    <img 
-          [src]="category.imageUrl || 'assets/images/icons/default.png'" 
+    <img
+          [src]="category.imageUrl || 'assets/images/icons/default.png'"
           alt="{{ category.title }}"
           class="category-icon"
           loading="lazy"

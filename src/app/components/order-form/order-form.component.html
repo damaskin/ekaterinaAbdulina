@@ -1,0 +1,21 @@
+<div class="order-form">
+  <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
+  
+  <form *ngIf="!isLoading" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="userPhone">Телефон</label>
+      <input 
+        type="tel" 
+        id="userPhone" 
+        [(ngModel)]="formData.userPhone" 
+        name="userPhone"
+        required
+        placeholder="Введите ваш телефон"
+      >
+    </div>
+
+    <button type="submit" [disabled]="isLoading">
+      Отправить
+    </button>
+  </form>
+</div> 

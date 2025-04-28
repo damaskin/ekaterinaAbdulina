@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {Component, OnInit, Inject, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OrdersService } from '../../../services/orders.service';
+import {TelegramService} from "../../../services/telegram.service";
 
 @Component({
   selector: 'app-order-details',
@@ -21,7 +22,7 @@ import { OrdersService } from '../../../services/orders.service';
     MatProgressSpinnerModule
   ]
 })
-export class OrderDetailsComponent implements OnInit {
+export class OrderDetailsComponent implements OnInit, OnDestroy {
   order: any = null;
   loading = true;
   error = false;
@@ -29,12 +30,18 @@ export class OrderDetailsComponent implements OnInit {
 
   constructor(
     private orderService: OrdersService,
+    private telegramService: TelegramService,
     public dialogRef: MatDialogRef<OrderDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { orderId: string }
   ) { }
 
   ngOnInit(): void {
     this.loadOrderDetails();
+  }
+
+  ngOnDestroy(): void {
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
 
   loadOrderDetails(): void {
@@ -56,6 +63,7 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   close(): void {
+    this.telegramService.cleanup();
     this.dialogRef.close();
   }
 
@@ -70,9 +78,9 @@ export class OrderDetailsComponent implements OnInit {
   formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { 
-      day: '2-digit', 
-      month: '2-digit', 
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -82,4 +90,4 @@ export class OrderDetailsComponent implements OnInit {
   formatPrice(price: number): string {
     return `${price} ₽`;
   }
-} 
+}

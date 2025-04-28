@@ -23,5 +23,12 @@ export interface ITelegramUser {
   /** Является ли пользователь активным */
   isActive?: boolean;
 
-  
+  /** Фамилия пользователя */
+  last_name?: string;
+
+  /** Язык пользователя */
+  language_code?: string;
+
+  /** Номер телефона пользователя */
+  phone_number?: string;
 }

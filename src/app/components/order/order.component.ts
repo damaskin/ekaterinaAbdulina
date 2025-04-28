@@ -71,31 +71,23 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   setupTelegramButtons(): void {
-    if (this.telegramService.tg && this.category) {
+    if (this.telegramService.webApp && this.category) {
       // Setup Main Button
-      this.telegramService.tg.MainButton.setText(`Оплатить ${this.priceFormatter.formatPrice(this.category.price || 0)}`);
-      this.telegramService.tg.MainButton.show();
+      this.telegramService.webApp.MainButton.setText(`Оплатить ${this.priceFormatter.formatPrice(this.category.price || 0)}`);
+      this.telegramService.webApp.MainButton.show();
       this.mainButtonClickHandler = () => this.pay();
-      this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+      this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
 
       // Setup Back Button
-      this.telegramService.tg.BackButton.show();
+      this.telegramService.webApp.BackButton.show();
       this.backButtonClickHandler = () => this.navigateBack();
-      this.telegramService.tg.onEvent('backButtonClicked', this.backButtonClickHandler);
+      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
     }
   }
 
   ngOnDestroy(): void {
-    // Clean up Telegram buttons
-    if (this.telegramService.tg) {
-      // Clean up Main Button
-      this.telegramService.tg.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-      this.telegramService.tg.MainButton.hide();
-
-      // Clean up Back Button
-      this.telegramService.tg.offEvent('backButtonClicked', this.backButtonClickHandler);
-      this.telegramService.tg.BackButton.hide();
-    }
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
 
   navigateBack(): void {
@@ -105,17 +97,17 @@ export class OrderComponent implements OnInit, OnDestroy {
   pay() {
     if (this.category) {
       // Показываем индикатор загрузки и блокируем кнопку
-      if (this.telegramService.tg) {
-        this.telegramService.tg.MainButton.showProgress(true);
-        this.telegramService.tg.MainButton.disable();
+      if (this.telegramService.webApp) {
+        this.telegramService.webApp.MainButton.showProgress(true);
+        this.telegramService.webApp.MainButton.disable();
       }
 
       this.paymentService.createCheckoutSession(this.category).subscribe({
         next: (session: any) => {
+          console.log('session, ', session);
           const stripe = (window as any).Stripe('pk_test_51Qx6v0QtKeJeSzyDCPmVC8Qy69HrXVU5eZvehaDu8oSQiTA1f3zkmhY8HMX73pnj3YDvhi7Wx9LQn50yPpNXhrkG003QjkJ3PW');
 
-          this.telegramService.tg?.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-          this.telegramService.tg?.MainButton.hide();
+          this.telegramService.hideAllButtons();
 
           // Теперь переходим на страницу оплаты Stripe
           stripe.redirectToCheckout({
@@ -125,10 +117,10 @@ export class OrderComponent implements OnInit, OnDestroy {
               console.error('Ошибка редиректа на Stripe:', result.error.message);
 
               // В случае ошибки восстанавливаем кнопку
-              if (this.telegramService.tg) {
-                this.telegramService.tg.MainButton.hideProgress();
-                this.telegramService.tg.MainButton.enable();
-                this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+              if (this.telegramService.webApp) {
+                this.telegramService.webApp.MainButton.hideProgress();
+                this.telegramService.webApp.MainButton.enable();
+                this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
               }
             }
           });
@@ -137,14 +129,14 @@ export class OrderComponent implements OnInit, OnDestroy {
           console.error('Ошибка при создании сессии оплаты:', error);
 
           // В случае ошибки восстанавливаем кнопку
-          if (this.telegramService.tg) {
-            this.telegramService.tg.MainButton.hideProgress();
-            this.telegramService.tg.MainButton.enable();
+          if (this.telegramService.webApp) {
+            this.telegramService.webApp.MainButton.hideProgress();
+            this.telegramService.webApp.MainButton.enable();
           }
 
           // Показываем ошибку пользователю
-          if (this.telegramService.tg) {
-            this.telegramService.tg.showPopup({
+          if (this.telegramService.webApp) {
+            this.telegramService.webApp.showPopup({
               title: 'Ошибка',
               message: 'Произошла ошибка при создании сессии оплаты. Пожалуйста, попробуйте позже.',
               buttons: [{ type: 'ok' }]

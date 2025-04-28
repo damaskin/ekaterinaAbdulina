@@ -54,9 +54,9 @@ export class UserOrdersComponent implements OnInit {
 
   ngOnInit(): void {
     // Настраиваем заголовок в Telegram WebApp
-    if (this.telegramService.tg) {
-      this.telegramService.tg.BackButton.show();
-      this.telegramService.tg.BackButton.onClick(() => {
+    if (this.telegramService.webApp) {
+      this.telegramService.webApp.BackButton.show();
+      this.telegramService.webApp.BackButton.onClick(() => {
         this.router.navigate(['/main']);
       });
     }
@@ -100,9 +100,9 @@ export class UserOrdersComponent implements OnInit {
   formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { 
-      day: '2-digit', 
-      month: '2-digit', 
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -116,4 +116,4 @@ export class UserOrdersComponent implements OnInit {
   goToHome(): void {
     this.router.navigate(['/main']);
   }
-} 
+}

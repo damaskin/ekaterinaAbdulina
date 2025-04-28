@@ -70,26 +70,24 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Очищаем обработчики и скрываем кнопки Telegram
-
+    this.telegramService.cleanup();
+    // this.telegramService.hideAllButtons();
   }
 
   setupTelegramButtons(): void {
-    if (this.telegramService.tg) {
-      const tg = this.telegramService.tg;
-
+    if (this.telegramService.webApp) {
       // Настройка кнопки "Назад"
-      tg.BackButton.show();
+      this.telegramService.webApp.BackButton.show();
       this.backButtonClickHandler = () => this.close();
-      tg.onEvent('backButtonClicked', this.backButtonClickHandler);
+      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
 
       // Настройка MainButton "Анкета"
-      tg.MainButton.setText('Анкета');
-      tg.MainButton.show();
+      this.telegramService.webApp.MainButton.setText('Анкета');
+      this.telegramService.webApp.MainButton.show();
 
       // Обработчик нажатия на "Анкета"
       this.mainButtonClickHandler = () => this.navigateToForm();
-      tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+      this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
     }
   }
 
@@ -136,10 +134,10 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
     // Запускаем навигацию напрямую, без подписки на событие
     if (this.existingFormId) {
       // Навигация к существующей или новой анкете (пока используем один и тот же путь)
-      this.router.navigate(['/form', 1], { queryParams: { orderId: this.data.orderId } });
+      this.router.navigate([`/order/${this.order.category.id}/form`], { queryParams: { orderId: this.data.orderId } });
     } else {
       // Создаем новую анкету
-      this.router.navigate(['/form', 1], { queryParams: { orderId: this.data.orderId } });
+      this.router.navigate([`/order/${this.order.category.id}/form`], { queryParams: { orderId: this.data.orderId } });
     }
   }
 
@@ -162,13 +160,8 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   }
 
   close(): void {
+    // this.telegramService.cleanup();
     this.bottomSheetRef.dismiss();
-
-    this.telegramService.tg?.MainButton?.hide();
-    this.telegramService.tg?.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-
-    this.telegramService.tg?.BackButton?.hide();
-    this.telegramService.tg?.offEvent('backButtonClicked', this.backButtonClickHandler);
   }
 
   getStatusText(status: string): string {
@@ -207,8 +200,8 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
         this.order = updatedOrder;
         this.updatingStatus = false;
         // Показываем уведомление об успешном обновлении
-        if (this.telegramService.tg) {
-          this.telegramService.tg.showPopup({
+        if (this.telegramService.webApp) {
+          this.telegramService.webApp.showPopup({
             title: 'Статус обновлен',
             message: `Статус заказа изменен на "${this.getStatusText(newStatus)}"`,
             buttons: [{ type: 'ok' }]
@@ -219,8 +212,8 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
         console.error('Ошибка при обновлении статуса заказа:', error);
         this.updatingStatus = false;
         // Показываем уведомление об ошибке
-        if (this.telegramService.tg) {
-          this.telegramService.tg.showPopup({
+        if (this.telegramService.webApp) {
+          this.telegramService.webApp.showPopup({
             title: 'Ошибка',
             message: 'Не удалось обновить статус заказа',
             buttons: [{ type: 'ok' }]

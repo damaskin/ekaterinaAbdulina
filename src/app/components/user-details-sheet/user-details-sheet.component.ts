@@ -41,23 +41,18 @@ export class UserDetailsSheetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Скрываем MainButton при закрытии компонента
-    if (this.telegramService.tg) {
-      this.telegramService.tg.MainButton.hide();
-      this.telegramService.tg.MainButton.offClick();
-    }
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
 
   setupMainButton(): void {
-    if (this.telegramService.tg) {
-      const tg = this.telegramService.tg;
-      
+    if (this.telegramService.webApp) {
       // Настройка MainButton
-      tg.MainButton.setText('ОК');
-      tg.MainButton.show();
-      
+      this.telegramService.webApp.MainButton.setText('ОК');
+      this.telegramService.webApp.MainButton.show();
+
       // Обработчик нажатия
-      tg.MainButton.onClick(() => {
+      this.telegramService.webApp.MainButton.onClick(() => {
         this.close();
       });
     }
@@ -82,25 +77,26 @@ export class UserDetailsSheetComponent implements OnInit, OnDestroy {
   }
 
   close(): void {
+    this.telegramService.cleanup();
     this.bottomSheetRef.dismiss();
   }
 
   formatDate(dateString: string | undefined): string {
     if (!dateString) return 'Не указано';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
     });
   }
 
   formatDateTime(dateString: string): string {
     if (!dateString) return 'Не указано';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { 
-      day: '2-digit', 
-      month: '2-digit', 
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -118,4 +114,4 @@ export class UserDetailsSheetComponent implements OnInit, OnDestroy {
   getStatusClass(status: string): string {
     return this.ordersService.getStatusClass(status);
   }
-} 
+}
