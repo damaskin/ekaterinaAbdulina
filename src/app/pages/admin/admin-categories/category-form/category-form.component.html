@@ -19,6 +19,14 @@
     [required]="true"
     ></app-form-element>
 
+    <app-form-element
+    label="Описание"
+    type="textarea"
+    formControlName="description"
+    placeholder="Введите описание"
+    [isLoading]="isLoading"
+    ></app-form-element>
+
     <!-- Цена и статус -->
     <app-form-element
     label="Цена"
@@ -37,6 +45,15 @@
     [isLoading]="isLoading"
     ></app-form-element>
 
+    <mat-form-field>
+      <mat-label>Поля формы</mat-label>
+      <mat-select formControlName="formFields" multiple>
+        <mat-option *ngFor="let field of formFields" [value]="field.id">
+          {{ field.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <!-- Статус активности -->
     <div class="form-field">
       <mat-slide-toggle formControlName="isActive" class="theme-accent-text-color">
@@ -45,40 +62,13 @@
     </div>
 
     <!-- Изображение -->
-    <div class="custom-dropzone" (click)="fileInput.click()">
-      <input
-        #fileInput
-        type="file"
-        accept="image/*"
-        (change)="onFileSelected($event)"
-        style="display: none"
-      >
-      <div class="theme-hint-color">
-        Кликните для загрузки изображения
-      </div>
-      <div class="custom-dropzone-images">
-        <div *ngIf="imagePreview" class="image-upload-container">
-          <!-- Индикатор загрузки -->
-          <div *ngIf="isLoading" class="upload-progress">
-            <mat-progress-spinner 
-              [value]="100" 
-              diameter="40" 
-              mode="determinate">
-            </mat-progress-spinner>
-            <span class="progress-text">Загрузка...</span>
-          </div>
-          
-          <!-- Превью изображения -->
-          <div *ngIf="!isLoading" class="image-preview">
-            <img [src]="imagePreview" alt="Preview">
-            <div class="image-actions">
-              <button type="button" (click)="onRemoveFile()">
-                <mat-icon>close</mat-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="image-upload">
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" #fileInput style="display: none">
+      <button mat-button type="button" (click)="fileInput.click()">
+        <mat-icon>cloud_upload</mat-icon>
+        Загрузить изображение
+      </button>
+      <img *ngIf="imagePreview" [src]="imagePreview" alt="Preview">
     </div>
   </div>
 </form>

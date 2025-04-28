@@ -48,9 +48,9 @@ export class AdminOrdersComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Настраиваем Telegram WebApp
-    if (this.telegramService.tg) {
-      this.telegramService.tg.BackButton.show();
-      this.telegramService.tg.BackButton.onClick(() => {
+    if (this.telegramService.webApp) {
+      this.telegramService.webApp.BackButton.show();
+      this.telegramService.webApp.BackButton.onClick(() => {
         this.router.navigate(['/']);
       });
 
@@ -77,8 +77,8 @@ export class AdminOrdersComponent implements OnInit, OnDestroy {
     }
 
     // Скрываем кнопку "Назад" в Telegram WebApp
-    if (this.telegramService.tg) {
-      this.telegramService.tg.BackButton.hide();
+    if (this.telegramService.webApp) {
+      this.telegramService.hideBackButton();
     }
   }
 

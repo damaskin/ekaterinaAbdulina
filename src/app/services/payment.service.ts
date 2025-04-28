@@ -20,7 +20,7 @@ export class PaymentService {
   createCheckoutSession(category: ICategory): Observable<any> {
     // Формируем URL успешной оплаты с учетом нашего хоста
     const successUrl = `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
-    
+
     return this.http.post(`${this.apiUrl}/create-checkout-session`, {
       categoryId: category.id,
       price: category.price,
@@ -38,10 +38,10 @@ export class PaymentService {
 
   private saveOrderToFirebase(session: any, category: ICategory): Promise<void> {
     const orderRef = doc(this.firestore, `orders/${session.id}`);
-    
+
     // Получаем информацию о пользователе из Telegram, если доступно
-    const user = this.telegramService.tg?.initDataUnsafe?.user || {};
-    
+    const user = this.telegramService.webApp?.initDataUnsafe?.user;
+
     const orderData = {
       orderId: session.id,
       status: 'pending', // Начальный статус заказа
@@ -52,14 +52,14 @@ export class PaymentService {
         price: category.price
       },
       user: {
-        id: user.id || null,
-        username: user.username || null,
-        firstName: user.first_name || null,
-        lastName: user.last_name || null
+        id: user?.id || null,
+        username: user?.username || null,
+        firstName: user?.first_name || null,
+        lastName: user?.last_name || null
       },
       paymentMethod: 'stripe'
     };
-    
+
     return setDoc(orderRef, orderData);
   }
-} 
+}

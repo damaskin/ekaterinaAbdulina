@@ -11,6 +11,7 @@ import {TelegramService} from "./services/telegram.service";
 import {UserGreetingComponent} from "./components/user-greeting/user-greeting.component";
 import {FirebaseService} from "./services/firebase.service";
 import { JsonPipe } from '@angular/common';
+import {ITelegramUser} from "./interface/telegram-user";
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -19,7 +20,7 @@ import { JsonPipe } from '@angular/common';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  user: any;
+  user!: ITelegramUser;
   telegramService = inject(TelegramService);
   translate = inject(TranslateService);
   router = inject(Router);
@@ -68,6 +69,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.translate.setDefaultLang('en');
     this.initUser();
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
   }
 
   switchLanguage(language: string) {
@@ -76,7 +80,7 @@ export class AppComponent implements OnInit {
 
   private initUser(): void {
     let user = this.telegramService.initUser();
-    
+
     // Если данных нет в Telegram WebApp, загружаем из sessionStorage
     if (!user || !user.id) {
       const storedUser = sessionStorage.getItem('telegramUser');
@@ -88,17 +92,18 @@ export class AppComponent implements OnInit {
         this.router.navigate(['/auth']).then();
         return;
       }
+    } else if (user) {
+      this.user = user;
     }
-  
+
     // Сохраняем пользователя в sessionStorage
-    this.user = user;
     sessionStorage.setItem('telegramUser', JSON.stringify(user));
-  
+
     this.firebaseService.getUserData(user.id)
       .then((firebaseUserData) => {
         this.user = { ...user, ...firebaseUserData };
         console.log('User data from Firebase:', this.user);
-        
+
         this.telegramService.telegramUser = this.user;
         sessionStorage.setItem('telegramUser', JSON.stringify(this.user));
       })

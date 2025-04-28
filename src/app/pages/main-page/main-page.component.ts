@@ -23,6 +23,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.telegramService.hideMainBtn();
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
 }

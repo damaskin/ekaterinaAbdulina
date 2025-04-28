@@ -46,13 +46,8 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.telegramService.tg) {
-      this.telegramService.tg.MainButton.hide();
-      this.telegramService.tg.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-
-      this.telegramService.tg.BackButton.hide();
-      this.telegramService.tg.offEvent('backButtonClicked', this.onCancel);
-    }
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
 
   loadCategories(): void {
@@ -70,19 +65,18 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
   }
 
   setupTelegramButtons(): void {
-    if (this.telegramService.tg) {
-      const tg = this.telegramService.tg;
-      tg.MainButton.setText("Добавить категорию");
-      tg.MainButton.show();
+    if (this.telegramService.webApp) {
+      this.telegramService.webApp.MainButton.setText("Добавить категорию");
+      this.telegramService.webApp.MainButton.show();
 
-      tg.onEvent('mainButtonClicked', () => this.onAddCategory());  
+      this.telegramService.webApp.onEvent('mainButtonClicked', () => this.onAddCategory());
 
       // Настройка кнопки "Назад"
-      tg.BackButton.show();
-            
+      this.telegramService.webApp.BackButton.show();
+
       // Определяем обработчик для BackButton
       this.backButtonClickHandler = () => this.onCancel();
-      tg.onEvent('backButtonClicked', this.backButtonClickHandler);
+      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
     }
   }
 
@@ -108,9 +102,9 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
 
   filterCategories(): void {
     if (!this.searchTerm) return;
-    this.categories = this.categories.filter(category => 
+    this.categories = this.categories.filter(category =>
       category.title?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       category.description?.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
-} 
+}

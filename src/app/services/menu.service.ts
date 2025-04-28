@@ -40,6 +40,12 @@ export class MenuService {
       route: 'admin/categories',
       icon: 'category',
       isAdmin: true,
+    },
+    {
+      label: 'Поля форм',
+      route: 'admin/form-fields',
+      icon: 'edit_note',
+      isAdmin: true,
     }
   ];
 

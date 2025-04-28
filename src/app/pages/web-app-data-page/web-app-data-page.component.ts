@@ -19,7 +19,8 @@ export class WebAppDataPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.telegramService.hideMainBtn();
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
 
 }

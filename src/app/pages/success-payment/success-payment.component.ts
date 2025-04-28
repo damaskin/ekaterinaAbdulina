@@ -10,6 +10,7 @@ import { Firestore, doc, getDoc, updateDoc, DocumentReference, DocumentData } fr
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { Observable, from, of } from 'rxjs';
 import { TelegramService } from '../../services/telegram.service';
+import {ICategory} from "../../interfaces/icategory";
 
 @Component({
   selector: 'app-success-payment',
@@ -31,7 +32,8 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
   success = false;
   paymentData: any = null;
   errorMessage = '';
-  
+  category!: ICategory;
+
   // Обработчик нажатия на главную кнопку
   private mainButtonClickHandler: () => void = () => {};
 
@@ -56,41 +58,40 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   ngOnDestroy(): void {
-    // Очищаем обработчик кнопки Telegram при уничтожении компонента
-    if (this.telegramService.tg) {
-      this.telegramService.tg.offEvent('mainButtonClicked', this.mainButtonClickHandler);
-      this.telegramService.tg.MainButton.hide();
-    }
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
   }
 
   checkPaymentStatus(sessionId: string): void {
     // 1. Сначала получаем заказ из Firebase
     const orderRef = doc(this.firestore, `orders/${sessionId}`) as DocumentReference<DocumentData>;
-    
+
     // Используем from() для преобразования Promise в Observable
     from(getDoc(orderRef)).pipe(
       switchMap(orderSnapshot => {
         console.log('sessionId, ', sessionId);
         console.log('orderSnapshot, ', orderSnapshot);
-        
+
         if (!orderSnapshot.exists()) {
           throw new Error('Заказ не найден');
         }
-        
+
         const orderData = orderSnapshot.data();
         console.log('orderData, ', orderData);
-        
+
+        this.category = orderData['category'];
+
         // Сохраняем предыдущий статус заказа
         const previousStatus = orderData['status'];
-        
+
         // 2. Проверяем статус оплаты через API
         return this.http.get(`https://million-sales.ru/api/stripe-check-status/${sessionId}`).pipe(
           switchMap((checkResult: any) => {
             // 3. Обновляем статус в Firebase
             let newStatus = checkResult.status === 'complete' ? 'paid' : 'pending';
-            
+
             // Если статус не изменился, не делаем обновление
             if (previousStatus === newStatus) {
               return of({
@@ -104,10 +105,10 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
                 statusChanged: false
               });
             }
-            
-            return from(updateDoc(orderRef, { 
+
+            return from(updateDoc(orderRef, {
               status: newStatus,
-              updatedAt: new Date().toISOString() 
+              updatedAt: new Date().toISOString()
             })).pipe(
               switchMap(() => {
                 // Возвращаем объединенные данные
@@ -133,14 +134,14 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
       })
     ).subscribe((result: any) => {
       this.loading = false;
-      
+
       if (result.error) {
         this.error = true;
         this.errorMessage = result.message || 'Произошла ошибка при проверке статуса оплаты';
       } else {
         this.paymentData = result;
         this.success = result.isPaid;
-        
+
         // Если оплата успешна И статус изменился с не "paid" на "paid"
         if (result.isPaid && result.order && result.statusChanged && result.previousStatus !== 'paid') {
           console.log('Отправка уведомлений администраторам о успешной оплате', result.order);
@@ -156,7 +157,7 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
         } else if (!result.isPaid) {
           this.errorMessage = 'Оплата не была завершена';
         }
-        
+
         // Если оплата успешна, показываем кнопку "Заполнить анкету"
         if (result.isPaid && result.order) {
           this.setupFillFormButton(result.order.id);
@@ -164,29 +165,29 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   // Настройка главной кнопки Telegram для перехода к анкете
   setupFillFormButton(orderId: string): void {
-    if (this.telegramService.tg) {
-      this.telegramService.tg.MainButton.setText('Заполнить анкету');
-      this.telegramService.tg.MainButton.show();
-      
+    if (this.telegramService.webApp) {
+      this.telegramService.webApp.MainButton.setText('Заполнить анкету');
+      this.telegramService.webApp.MainButton.show();
+
       // Сохраняем обработчик для дальнейшей очистки
       this.mainButtonClickHandler = () => this.navigateToForm(orderId);
-      this.telegramService.tg.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+      this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
     }
   }
-  
+
   // Переход к форме анкеты с передачей ID заказа
   navigateToForm(orderId: string): void {
-    this.router.navigate(['/form/1'], { queryParams: { orderId: orderId } });
+    this.router.navigate([`/order/${this.category.id}/form`], { queryParams: { orderId: orderId } });
   }
 
   goToHome(): void {
     // Скрываем главную кнопку перед возвращением на главную
-    if (this.telegramService.tg) {
-      this.telegramService.tg.MainButton.hide();
+    if (this.telegramService.webApp) {
+      this.telegramService.hideAllButtons();
     }
     this.router.navigate(['/']);
   }
-} 
+}

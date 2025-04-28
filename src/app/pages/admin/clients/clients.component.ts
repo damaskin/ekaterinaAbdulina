@@ -22,12 +22,12 @@ import { MatDividerModule } from '@angular/material/divider';
   templateUrl: './clients.component.html',
   styleUrls: ['./clients.component.scss'],
   imports: [
-    CommonModule, 
-    FormsModule, 
-    MatInputModule, 
-    MatBottomSheetModule, 
-    MatIconModule, 
-    MatButtonModule, 
+    CommonModule,
+    FormsModule,
+    MatInputModule,
+    MatBottomSheetModule,
+    MatIconModule,
+    MatButtonModule,
     MatProgressSpinnerModule,
     MatCardModule,
     MatFormFieldModule,
@@ -44,7 +44,7 @@ export class ClientsComponent implements OnInit {
   admin: boolean = false;
   users: IUser[] = [];
   searchTerm: string = '';
-  
+
   filteredUsers = signal<IUser[]>([]);
   isLoading = true;
   error = false;
@@ -56,9 +56,9 @@ export class ClientsComponent implements OnInit {
 
   ngOnInit(): void {
     // Настраиваем заголовок в Telegram WebApp
-    if (this.telegramService.tg) {
-      this.telegramService.tg.BackButton.show();
-      this.telegramService.tg.BackButton.onClick(() => {
+    if (this.telegramService.webApp) {
+      this.telegramService.webApp.BackButton.show();
+      this.telegramService.webApp.BackButton.onClick(() => {
         this.router.navigate(['/main']);
       });
     }
@@ -104,9 +104,9 @@ export class ClientsComponent implements OnInit {
       const lastName = (u.last_name || '').toLowerCase();
       const id = String(u.id || '').toLowerCase();
       const username = (u.username || '').toLowerCase();
-      return firstName.includes(term) || 
-             lastName.includes(term) || 
-             id.includes(term) || 
+      return firstName.includes(term) ||
+             lastName.includes(term) ||
+             id.includes(term) ||
              username.includes(term);
     });
     this.filteredUsers.set(filtered);
@@ -130,10 +130,10 @@ export class ClientsComponent implements OnInit {
   formatDate(dateString: string | undefined): string {
     if (!dateString) return 'Не указано';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { 
-      day: '2-digit', 
-      month: '2-digit', 
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
       year: 'numeric'
     });
   }
-} 
+}
