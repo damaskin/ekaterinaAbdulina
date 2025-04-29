@@ -161,18 +161,22 @@ export class FormFieldFormComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
+    this.telegramService.clearTelegramHandlers();
   }
 
   setupTelegramButtons(): void {
-    // Настраиваем основную кнопку для сохранения
-    this.telegramService.showSecondaryButton('Отмена', () => this.onCancel());
-    this.telegramService.showMainButton('Сохранить', () => this.onSubmit());
+    if (this.telegramService.webApp) {
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.onCancel.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
 
-    // Настраиваем кнопку "Назад" для отмены
-    this.telegramService.showBackButton(() => {
-      this.telegramService.cleanup();
-      this.router.navigate(['/admin/form-fields']);
-    });
+      // Обработчик нажатия на "Анкета"
+      this.telegramService.mainButtonClickHandler = this.onSubmit.bind(this);
+      this.telegramService.showMainButton('Сохранить', this.telegramService.mainButtonClickHandler);
+
+      this.telegramService.showSecondaryButton('Отмена', () => this.onCancel());
+    }
   }
 
   get options(): FormArray {

@@ -42,6 +42,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+    this.telegramService.clearTelegramHandlers();
   }
 
   loadOrderDetails(): void {

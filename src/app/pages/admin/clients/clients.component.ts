@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Firestore } from '@angular/fire/firestore';
@@ -34,7 +34,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDividerModule
   ]
 })
-export class ClientsComponent implements OnInit {
+export class ClientsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private firestore = inject(Firestore);
   private telegramService = inject(TelegramService);
@@ -55,22 +55,35 @@ export class ClientsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Настраиваем заголовок в Telegram WebApp
-    if (this.telegramService.webApp) {
-      this.telegramService.webApp.BackButton.show();
-      this.telegramService.webApp.BackButton.onClick(() => {
-        this.router.navigate(['/main']);
-      });
-    }
-
     const user = this.telegramService.telegramUser || {};
     this.admin = Boolean(user.isAdmin);
+
     if (!this.admin) {
-      this.router.navigate(['/']);
+      this.navigateToBack();
       return;
     }
 
+    this.setupTelegramButtons();
+    // Настраиваем заголовок в Telegram WebApp
     this.loadUsers();
+  }
+
+  ngOnDestroy() {
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
+  }
+
+  setupTelegramButtons(): void {
+    if (this.telegramService.webApp) {
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.navigateToBack.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
+    }
+  }
+
+  private navigateToBack(): void {
+    this.router.navigate(['/main']).then(r => {});
   }
 
   loadUsers(): void {
@@ -117,6 +130,7 @@ export class ClientsComponent implements OnInit {
   }
 
   openUserDetails(user: IUser): void {
+    this.telegramService.cleanup();
     this.bottomSheet.open(UserDetailsSheetComponent, {
       data: user,
       panelClass: 'bottom-sheet-container'

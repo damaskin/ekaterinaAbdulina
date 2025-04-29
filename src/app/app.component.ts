@@ -70,7 +70,7 @@ export class AppComponent implements OnInit {
     this.translate.setDefaultLang('en');
     this.initUser();
     this.telegramService.cleanup();
-    this.telegramService.hideAllButtons();
+    this.telegramService.hideAllButtons();this.telegramService.clearTelegramHandlers();
     this.telegramService.hideBackButton();
   }
 

@@ -47,24 +47,14 @@ export class AdminOrdersComponent implements OnInit, OnDestroy {
   private ordersSubscription?: Subscription;
 
   ngOnInit(): void {
-    // Настраиваем Telegram WebApp
-    if (this.telegramService.webApp) {
-      this.telegramService.webApp.BackButton.show();
-      this.telegramService.webApp.BackButton.onClick(() => {
-        this.router.navigate(['/']);
-      });
+    const user = this.telegramService.telegramUser || {};
 
-      // Скрываем основную кнопку Telegram, если она была показана
-      this.telegramService.hideMainBtn();
-    }
-
-    // Проверяем, является ли пользователь администратором
-    const user = this.telegramService.telegramUser;
-    if (!user?.isAdmin) {
-      console.log('Доступ запрещен: пользователь не является администратором');
-      this.router.navigate(['/']);
+    if (!user.isAdmin) {
+      this.navigateToBack();
       return;
     }
+
+    this.setupTelegramButtons();
 
     // Загружаем все заказы
     this.loadOrders();
@@ -80,6 +70,22 @@ export class AdminOrdersComponent implements OnInit, OnDestroy {
     if (this.telegramService.webApp) {
       this.telegramService.hideBackButton();
     }
+
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
+  }
+
+  setupTelegramButtons(): void {
+    if (this.telegramService.webApp) {
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.navigateToBack.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
+    }
+  }
+
+  private navigateToBack(): void {
+    this.router.navigate(['/main']).then(r => {});
   }
 
   loadOrders(): void {
@@ -153,19 +159,18 @@ export class AdminOrdersComponent implements OnInit, OnDestroy {
   }
 
   openOrderDetails(order: any): void {
+    this.telegramService.cleanup();
     // Открываем bottom sheet с деталями заказа
     const bottomSheetRef = this.bottomSheet.open(OrderDetailsBottomSheetComponent, {
       data: { orderId: order.id, isAdmin: true },
       panelClass: 'bottom-sheet-container'
     });
 
-    // Показываем главную кнопку Telegram при открытии панели
-    this.telegramService.showMainBtn('Закрыть');
 
     // Обрабатываем событие закрытия панели
     bottomSheetRef.afterDismissed().subscribe(() => {
       // Скрываем главную кнопку Telegram после закрытия панели
-      this.telegramService.hideMainBtn();
+      // this.telegramService.hideMainBtn();
     });
   }
 }

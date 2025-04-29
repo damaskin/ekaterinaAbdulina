@@ -34,7 +34,6 @@ appConfig = {
     ),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
-    provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
   ]
 };

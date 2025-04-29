@@ -23,18 +23,35 @@
   <div *ngIf="!loading && !error && orders.length > 0" class="orders-list">
     <div class="title">Мои заказы</div>
     <div *ngFor="let order of orders" class="order-card" (click)="openOrderDetails(order)">
-      <div class="order-header">
-        <div class="order-header-left">
-          <div class="order-title" style="color: var(--tg-theme-text-color);">{{ order.category.title }}</div>
-          <div class="order-date" style="color: var(--tg-theme-hint-color);">{{ formatDate(order.createdAt) }}</div>
-        </div>
-        <div class="order-header-right">
-          <div class="order-price" style="color: var(--tg-theme-text-color);">{{ formatPrice(order.category.price) }}</div>
-          <div class="order-status-badge" [ngClass]="getStatusClass(order.status)">
-            {{ getStatusText(order.status) }}
+      @if (order.paymentMethod === 'stripe') {
+        <div class="order-header">
+          <div class="order-header-left">
+            <div class="order-title" style="color: var(--tg-theme-text-color);">{{ order.category.title }}</div>
+            <div class="order-date" style="color: var(--tg-theme-hint-color);">{{ formatDate(order.createdAt) }}</div>
+          </div>
+          <div class="order-header-right">
+            <div class="order-price" style="color: var(--tg-theme-text-color);">{{ formatPrice(order.category.price) }}</div>
+            <div class="order-status-badge" [ngClass]="getStatusClass(order.status)">
+              {{ getStatusText(order.status) }}
+            </div>
           </div>
         </div>
-      </div>
+      } @else if (order.paymentMethod === 'yookassa') {
+        <div class="order-header">
+          <div class="order-header-left">
+            <div class="order-title" style="color: var(--tg-theme-text-color);">{{ order.category.title }}</div>
+            <div class="order-date" style="color: var(--tg-theme-hint-color);">{{ formatDate(order.createdAt) }}</div>
+          </div>
+          <div class="order-header-right">
+            <div class="order-price" style="color: var(--tg-theme-text-color);">{{ formatPrice(order.category.price || 0) }}</div>
+            <div class="order-status-badge" [ngClass]="getStatusClass(order.status)">
+              {{ getStatusText(order.status) }}
+            </div>
+          </div>
+        </div>
+      }
+
     </div>
   </div>
-</div> 
+</div>
+<!--<pre>{{orders|json}}</pre>-->

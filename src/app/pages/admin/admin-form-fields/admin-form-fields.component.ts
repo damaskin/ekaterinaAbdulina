@@ -121,10 +121,19 @@ export class AdminFormFieldsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+    this.telegramService.clearTelegramHandlers();
   }
 
   setupTelegramButtons(): void {
-    this.telegramService.showMainButton('Добавить поле', () => this.onAddField());
+    if (this.telegramService.webApp) {
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.onCancel.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
+
+      // Обработчик нажатия на "Анкета"
+      this.telegramService.mainButtonClickHandler = this.onAddField.bind(this);
+      this.telegramService.showMainButton('Добавить поле ввода', this.telegramService.mainButtonClickHandler);
+    }
   }
 
   loadFormFields(): void {
@@ -153,5 +162,9 @@ export class AdminFormFieldsComponent implements OnInit, OnDestroy {
         this.loadFormFields();
       });
     }
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/main']);
   }
 }

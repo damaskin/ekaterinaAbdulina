@@ -253,32 +253,22 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Логируем события перед очисткой
-    console.log('MainButton events before cleanup:', window.Telegram?.WebApp?.MainButton);
-
-    // Очищаем все обработчики событий и скрываем кнопки
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
-
-    // Логируем события после очистки
-    console.log('MainButton events after cleanup:', window.Telegram?.WebApp?.MainButton);
+    this.telegramService.hideBackButton();
+    this.telegramService.clearTelegramHandlers();
   }
 
   setupTelegramButtons(): void {
-    // Сначала очищаем старые обработчики
-    // this.telegramService.cleanup();
+    if (this.telegramService.webApp) {
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.onCancel.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
 
-    // Логируем текущие события кнопок
-    console.log('MainButton events before setup:', window.Telegram?.WebApp?.MainButton);
-
-    // Затем устанавливаем новые
-    this.telegramService.showMainButton('Отправить', () => this.onSubmit());
-    this.telegramService.showBackButton(() => {
-      this.router.navigate(['/order', this.category?.id]);
-    });
-
-    // Логируем события после установки
-    console.log('MainButton events after setup:', window.Telegram?.WebApp?.MainButton);
+      // Обработчик нажатия на "Анкета"
+      this.telegramService.mainButtonClickHandler = this.onSubmit.bind(this);
+      this.telegramService.showMainButton('Отправить', this.telegramService.mainButtonClickHandler);
+    }
   }
 
   loadCategory(): void {
@@ -490,7 +480,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         }
 
         console.log(this.categoryFields);
-        
+
 
         // Отправляем уведомление в Telegram через сервис
         this.telegramService.sendFormNotificationToAdmins(formData.formData, formId, this.orderId, this.categoryFields)
@@ -719,5 +709,9 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     if (fileUpload.url?.originalUrl) {
       window.open(fileUpload.url.originalUrl, '_blank');
     }
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/my-orders']);
   }
 }

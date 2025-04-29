@@ -1,16 +1,69 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import { YookassaService } from '../../services/yookassa.service';
+import { TelegramService } from '../../services/telegram.service';
+import { FirebaseService } from '../../services/firebase.service';
+import { firstValueFrom } from 'rxjs';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { HttpClient } from '@angular/common/http';
-import { Firestore, doc, getDoc, updateDoc, DocumentReference, DocumentData } from '@angular/fire/firestore';
-import { switchMap, catchError, tap } from 'rxjs/operators';
-import { Observable, from, of } from 'rxjs';
-import { TelegramService } from '../../services/telegram.service';
-import {ICategory} from "../../interfaces/icategory";
+import { MatButtonModule } from '@angular/material/button';
+
+interface PaymentDetails {
+  id: string;
+  description: string;
+  orderId: string;
+  userId: string;
+  categoryId: string;
+  createdAt: string;
+  amount: {
+    value: string;
+    currency: string;
+  };
+  paymentId: string;
+  status: string;
+  updatedAt: string;
+  paymentData: {
+    refunded_amount: {
+      value: string;
+      currency: string;
+    };
+    id: string;
+    amount: {
+      value: string;
+      currency: string;
+    };
+    captured_at: string;
+    description: string;
+    test: boolean;
+    status: string;
+    payment_method: {
+      saved: boolean;
+      account_number: string;
+      title: string;
+      type: string;
+      id: string;
+      status: string;
+    };
+    refundable: boolean;
+    income_amount: {
+      value: string;
+      currency: string;
+    };
+    recipient: {
+      account_id: string;
+      gateway_id: string;
+    };
+    paid: boolean;
+    metadata: {
+      userId: string;
+      categoryId: string;
+      orderId: string;
+    };
+    created_at: string;
+  };
+}
 
 @Component({
   selector: 'app-success-payment',
@@ -19,175 +72,106 @@ import {ICategory} from "../../interfaces/icategory";
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
     MatCardModule,
-    MatButtonModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule,
+    DatePipe
   ]
 })
 export class SuccessPaymentComponent implements OnInit, OnDestroy {
-  loading = true;
-  error = false;
-  success = false;
-  paymentData: any = null;
-  errorMessage = '';
-  category!: ICategory;
+  paymentId: string = '';
+  paymentDetails: PaymentDetails | null = null;
+  loading: boolean = true;
+  error: string = '';
 
-  // Обработчик нажатия на главную кнопку
+  // Store reference to the main button click handler
   private mainButtonClickHandler: () => void = () => {};
+
+  // Store reference to the back button click handler
+  private backButtonClickHandler: () => void = () => {};
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient,
-    private firestore: Firestore,
-    private telegramService: TelegramService
-  ) { }
+    private telegramService: TelegramService,
+    private firebaseService: FirebaseService
+  ) {}
 
   ngOnInit(): void {
-    // Получаем session_id из URL
-    this.route.queryParams.subscribe(params => {
-      const sessionId = params['session_id'];
-      if (sessionId) {
-        this.checkPaymentStatus(sessionId);
-      } else {
-        this.error = true;
-        this.loading = false;
-        this.errorMessage = 'Не найден идентификатор сессии оплаты';
-      }
+    this.paymentId = this.route.snapshot.queryParams['payment_id'];
+    if (this.paymentId) {
+      this.getPaymentDetails();
+    } else {
+      this.error = 'ID платежа не найден';
+      this.loading = false;
+    }
+
+    // Показываем главную кнопку Telegram
+    this.telegramService.showMainButton('Заполнить анкету', () => {
+      window.location.href = '/';
     });
   }
 
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+this.telegramService.clearTelegramHandlers();
   }
 
-  checkPaymentStatus(sessionId: string): void {
-    // 1. Сначала получаем заказ из Firebase
-    const orderRef = doc(this.firestore, `orders/${sessionId}`) as DocumentReference<DocumentData>;
+  async getPaymentDetails(): Promise<void> {
+    try {
+      const orderData = await this.firebaseService.getOrder(this.paymentId);
+      console.log('Данные заказа:', orderData);
 
-    // Используем from() для преобразования Promise в Observable
-    from(getDoc(orderRef)).pipe(
-      switchMap(orderSnapshot => {
-        console.log('sessionId, ', sessionId);
-        console.log('orderSnapshot, ', orderSnapshot);
+      if (orderData) {
+        this.paymentDetails = orderData;
 
-        if (!orderSnapshot.exists()) {
-          throw new Error('Заказ не найден');
+        if (orderData.categoryId) {
+          // Отправляем уведомление в Telegram
+          this.telegramService.sendOrderPaidNotificationsToAdmins({
+            id: this.paymentId,
+            paymentData: this.paymentDetails,
+            user: this.telegramService.getUser()
+          }).subscribe();
+
+          // Если оплата успешна, показываем кнопку "Заполнить анкету"
+          this.setupTelegramButtons(this.paymentId);
         }
-
-        const orderData = orderSnapshot.data();
-        console.log('orderData, ', orderData);
-
-        this.category = orderData['category'];
-
-        // Сохраняем предыдущий статус заказа
-        const previousStatus = orderData['status'];
-
-        // 2. Проверяем статус оплаты через API
-        return this.http.get(`https://million-sales.ru/api/stripe-check-status/${sessionId}`).pipe(
-          switchMap((checkResult: any) => {
-            // 3. Обновляем статус в Firebase
-            let newStatus = checkResult.status === 'complete' ? 'paid' : 'pending';
-
-            // Если статус не изменился, не делаем обновление
-            if (previousStatus === newStatus) {
-              return of({
-                order: {
-                  id: sessionId,
-                  ...orderData,
-                  status: newStatus
-                },
-                paymentStatus: checkResult.status,
-                isPaid: checkResult.status === 'complete',
-                statusChanged: false
-              });
-            }
-
-            return from(updateDoc(orderRef, {
-              status: newStatus,
-              updatedAt: new Date().toISOString()
-            })).pipe(
-              switchMap(() => {
-                // Возвращаем объединенные данные
-                return of({
-                  order: {
-                    id: sessionId,
-                    ...orderData,
-                    status: newStatus
-                  },
-                  paymentStatus: checkResult.status,
-                  isPaid: checkResult.status === 'complete',
-                  statusChanged: true,
-                  previousStatus: previousStatus
-                });
-              })
-            );
-          })
-        );
-      }),
-      catchError(error => {
-        console.error('Ошибка при проверке статуса оплаты:', error);
-        return of({ error: true, message: error.message });
-      })
-    ).subscribe((result: any) => {
-      this.loading = false;
-
-      if (result.error) {
-        this.error = true;
-        this.errorMessage = result.message || 'Произошла ошибка при проверке статуса оплаты';
       } else {
-        this.paymentData = result;
-        this.success = result.isPaid;
-
-        // Если оплата успешна И статус изменился с не "paid" на "paid"
-        if (result.isPaid && result.order && result.statusChanged && result.previousStatus !== 'paid') {
-          console.log('Отправка уведомлений администраторам о успешной оплате', result.order);
-          this.telegramService.sendOrderPaidNotificationsToAdmins(result.order)
-            .subscribe({
-              next: (responses) => {
-                console.log('Уведомления успешно отправлены', responses);
-              },
-              error: (err) => {
-                console.error('Ошибка при отправке уведомлений:', err);
-              }
-            });
-        } else if (!result.isPaid) {
-          this.errorMessage = 'Оплата не была завершена';
-        }
-
-        // Если оплата успешна, показываем кнопку "Заполнить анкету"
-        if (result.isPaid && result.order) {
-          this.setupFillFormButton(result.order.id);
-        }
+        this.error = 'Данные заказа не найдены';
       }
-    });
+    } catch (error) {
+      console.error('Ошибка при получении данных заказа:', error);
+      this.error = 'Ошибка при получении данных заказа';
+    } finally {
+      this.loading = false;
+    }
   }
 
-  // Настройка главной кнопки Telegram для перехода к анкете
-  setupFillFormButton(orderId: string): void {
-    if (this.telegramService.webApp) {
-      this.telegramService.webApp.MainButton.setText('Заполнить анкету');
+  setupTelegramButtons(orderId: string): void {
+    if (this.telegramService.webApp && orderId) {
+      // Setup Main Button
+      this.telegramService.webApp.MainButton.setText(`Заполнить анкету`);
       this.telegramService.webApp.MainButton.show();
-
-      // Сохраняем обработчик для дальнейшей очистки
       this.mainButtonClickHandler = () => this.navigateToForm(orderId);
       this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+
+      // Setup Back Button
+      this.telegramService.webApp.BackButton.show();
+      this.backButtonClickHandler = () => this.navigateBack();
+      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
     }
   }
 
   // Переход к форме анкеты с передачей ID заказа
   navigateToForm(orderId: string): void {
-    this.router.navigate([`/order/${this.category.id}/form`], { queryParams: { orderId: orderId } });
+    console.log('Переход к форме анкеты с передачей ID заказа:', orderId);
+    console.log('Переход к форме анкеты с передачей ID заказа:', this.paymentId);
+    // this.router.navigate([`/order/${this.paymentId}/form`], { queryParams: { orderId: orderId } });
   }
 
-  goToHome(): void {
-    // Скрываем главную кнопку перед возвращением на главную
-    if (this.telegramService.webApp) {
-      this.telegramService.hideAllButtons();
-    }
-    this.router.navigate(['/']);
+  navigateBack(): void {
+    this.router.navigate(['/main']);
   }
 }

@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { 
-  Firestore, 
-  collection, 
-  query, 
-  where, 
-  getDocs, 
-  doc, 
-  getDoc, 
-  DocumentData, 
-  Query, 
+import {
+  Firestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  DocumentData,
+  Query,
   orderBy,
   updateDoc,
   limit
@@ -34,7 +34,7 @@ export class OrdersService {
   // Получение всех заказов текущего пользователя
   getUserOrders(): Observable<any[]> {
     const userId = this.telegramService.telegramUser?.id;
-    
+
     if (!userId) {
       console.error('Пользователь не авторизован');
       return of([]);
@@ -43,8 +43,7 @@ export class OrdersService {
     const ordersRef = collection(this.firestore, 'orders');
     const q = query(
       ordersRef,
-      where('user.id', '==', userId),
-      orderBy('createdAt', 'desc')
+      where('user.id', '==', userId)
     );
 
     return this.getOrdersFromQuery(q);
@@ -54,14 +53,14 @@ export class OrdersService {
   getAllOrders(): Observable<any[]> {
     const ordersRef = collection(this.firestore, 'orders');
     const q = query(ordersRef, orderBy('createdAt', 'desc'));
-    
+
     return this.getOrdersFromQuery(q);
   }
 
   // Получение детальной информации о заказе
   getOrderDetails(orderId: string): Observable<any> {
     const orderRef = doc(this.firestore, `orders/${orderId}`);
-    
+
     return from(getDoc(orderRef)).pipe(
       map(docSnap => {
         if (docSnap.exists()) {
@@ -81,8 +80,6 @@ export class OrdersService {
   private getOrdersFromQuery(q: Query<DocumentData>): Observable<any[]> {
     return from(getDocs(q)).pipe(
       map(querySnapshot => {
-        console.log(querySnapshot);
-        
         const orders: any[] = [];
         querySnapshot.forEach(doc => {
           orders.push({
@@ -104,6 +101,8 @@ export class OrdersService {
     switch (status) {
       case 'pending':
         return 'Ожидает оплаты';
+      case 'succeeded':
+        return 'Оплачен';
       case 'paid':
         return 'Оплачен';
       case 'processing':
@@ -122,6 +121,8 @@ export class OrdersService {
     switch (status) {
       case 'pending':
         return 'status-pending';
+      case 'succeeded':
+        return 'status-paid';
       case 'paid':
         return 'status-paid';
       case 'processing':
@@ -138,28 +139,28 @@ export class OrdersService {
   // Обновить статус заказа
   updateOrderStatus(orderId: string, newStatus: string): Observable<any> {
     const orderRef = doc(this.firestore, `orders/${orderId}`);
-    
+
     // Сначала получаем текущий заказ, чтобы проверить его статус
     return from(getDoc(orderRef)).pipe(
       switchMap(docSnap => {
         if (!docSnap.exists()) {
           throw new Error('Заказ не найден');
         }
-        
+
         const orderData = docSnap.data();
         const currentStatus = orderData['status'];
-        
+
         // Если статус не меняется, просто возвращаем текущие данные заказа
         if (currentStatus === newStatus) {
           return of({ id: orderId, ...orderData });
         }
-        
+
         // Обновляем статус заказа
         const updateData = {
           status: newStatus,
           updatedAt: new Date().toISOString()
         };
-        
+
         return from(updateDoc(orderRef, updateData)).pipe(
           switchMap(() => this.getOrderDetails(orderId)),
           tap(order => {
@@ -191,10 +192,9 @@ export class OrdersService {
     const q = query(
       ordersRef,
       where('user.id', '==', telegramId),
-      orderBy('createdAt', 'desc')
     );
 
     // Используем существующий метод getOrdersFromQuery для обработки результатов
     return this.getOrdersFromQuery(q);
   }
-} 
+}

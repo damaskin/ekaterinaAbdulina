@@ -84,4 +84,10 @@ export class FirebaseService {
     const userRef = doc(this.firestore, `users/${userId}`);
     await setDoc(userRef, data, { merge: true });
   }
+
+  async getOrder(orderId: string): Promise<any> {
+    const orderRef = doc(this.firestore, `orders/${orderId}`);
+    const orderSnapshot = await getDoc(orderRef);
+    return orderSnapshot.exists() ? { id: orderSnapshot.id, ...orderSnapshot.data() } : null;
+  }
 }

@@ -6,9 +6,7 @@
 }
 
 .payment-card {
-  max-width: 500px;
   width: 100%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: var(--tg-theme-secondary-bg-color);
 }
@@ -22,7 +20,6 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 15px 5px;
 }
 
 .loading-text {
@@ -47,7 +44,6 @@ h2 {
   width: 100%;
   text-align: left;
   margin-top: 20px;
-  padding: 15px;
   background-color: var(--tg-theme-secondary-bg-color);
   border-radius: 8px;
 
@@ -82,4 +78,83 @@ mat-card-actions {
 
 .pending-container mat-icon {
   color: var(--tg-theme-warning-color);
-} 
+}
+
+.payment-success-container {
+
+  .loading-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+
+    mat-spinner {
+      margin-bottom: 20px;
+      color: var(--tg-theme-button-color);
+    }
+
+    p {
+      color: var(--tg-theme-hint-color);
+    }
+  }
+
+  .error-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    background-color: var(--tg-theme-secondary-bg-color);
+
+    mat-icon {
+      font-size: 48px;
+      height: 48px;
+      width: 48px;
+      color: var(--tg-theme-destructive-text-color);
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: var(--tg-theme-text-color);
+    }
+  }
+
+  .success-card {
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--tg-theme-button-color);
+    }
+
+    .payment-details {
+      background-color: var(--tg-theme-bg-color);
+      color: var(--tg-theme-text-color);
+      border-radius: 8px;
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--tg-theme-hint-color);
+        align-items: center;
+
+        .label {
+          font-weight: 500;
+          color: var(--tg-theme-hint-color);
+        }
+
+        .value {
+          font-size: 12px;
+          color: var(--tg-theme-text-color);
+        }
+      }
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+    }
+  }
+}

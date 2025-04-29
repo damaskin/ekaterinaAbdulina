@@ -37,13 +37,15 @@ export class TelegramService {
   private backButtonHandler: VoidFunction | null = null;
   private settingsButtonHandler: VoidFunction | null = null;
 
+  public mainButtonClickHandler: () => void = () => {};
+  public backButtonClickHandler: () => void = () => {};
+
   constructor(
     @Inject(DOCUMENT) private _document: Document,
     private translate: TranslateService,
     private readonly firebaseService: FirebaseService,
     private http: HttpClient
   ) {
-
     // Если мы запускаемся внутри Telegram, сохраняем данные пользователя
     if (this.webApp && this.webApp.initDataUnsafe && this.webApp.initDataUnsafe.user) {
       // Расширяем окно, отключаем вертикальные свайпы и включаем подтверждение закрытия
@@ -60,11 +62,30 @@ export class TelegramService {
 
     // Инициализируем данные пользователя: если запустились вне Telegram, попробуем восстановить их из localStorage
     this.initUser();
+
+    this.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+    this.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
   }
 
   init(): void {
     this.webApp.ready();
     this.webApp.expand();
+  }
+
+  clearTelegramHandlers(): void {
+    if (this.webApp) {
+      // Удаляем обработчики событий
+      this.webApp.offEvent('mainButtonClicked', this.mainButtonClickHandler);
+      this.webApp.offEvent('backButtonClicked', this.backButtonClickHandler);
+
+      // Скрываем кнопки
+      // this.telegramService.webApp.MainButton.hide();
+      // this.telegramService.webApp.BackButton.hide();
+
+      // Очищаем ссылки на обработчики
+      this.mainButtonClickHandler = () => {};
+      this.backButtonClickHandler = () => {};
+    }
   }
 
   cleanup(): void {
@@ -116,7 +137,7 @@ export class TelegramService {
     this.mainButtonHandler = callback;
     this.webApp.MainButton.setText(text);
     this.webApp.MainButton.show();
-    this.webApp.MainButton.onClick(callback);
+    this.webApp.MainButton.onClick(this.mainButtonHandler);
   }
 
   showSecondaryButton(text: string, callback: VoidFunction): void {
@@ -149,23 +170,6 @@ export class TelegramService {
     this.webApp.BackButton.hide();
   }
 
-  showSettingsButton(callback: VoidFunction): void {
-    this.settingsButtonHandler = callback;
-    this.webApp.SettingsButton.show();
-    this.webApp.SettingsButton.onClick(callback);
-  }
-
-  hideSettingsButton(): void {
-    this.webApp.SettingsButton.hide();
-  }
-
-  getTelegramWebAppData(): any {
-    if (this.webApp && this.webApp.initDataUnsafe) {
-      return this.webApp.initDataUnsafe.user || null;
-    }
-    return null;
-  }
-
   showMainBtn(text: string = 'Main button text') {
     if (this.webApp) {
       this.webApp.MainButton.setText(text);
@@ -187,8 +191,6 @@ export class TelegramService {
     const clientPlatform = this.getClientPlatform();
     const userData = localStorage.getItem('userData');
 
-    console.log(this.webApp);
-
     // Если клиентская платформа неизвестна (например, после редиректа с платежной системы),
     // пытаемся восстановить данные из localStorage
     if (clientPlatform === 'unknown') {
@@ -200,10 +202,8 @@ export class TelegramService {
         return this.telegramUser;
       }
     } else {
-      console.log(2);
       // Если мы внутри Telegram, берем данные напрямую
       this.telegramUser = this.webApp?.initDataUnsafe?.user! as ITelegramUser;
-      console.log(this.webApp?.initDataUnsafe?.user);
 
       const storedUser = sessionStorage.getItem('telegramUser');
       if (storedUser && !this.telegramUser) {
@@ -218,40 +218,9 @@ export class TelegramService {
   }
 
   saveTelegramUser(user: ITelegramUser) {
-    console.log(user);
     this.firebaseService.saveUser(user).catch((err) => {
       console.error('Error saving user:', err);
     });
-  }
-
-  // Отправляем сообщение пользователю
-  public sendMessage(chat_id: number, category: { title: string, price: number }): Observable<any> {
-    const text = `Здравствуйте, ${this.telegramUser.first_name}!
-
-Ваш платёж за услугу «${category.title}», стоимостью ${category.price} руб, успешно выполнен.
-
-Благодарим за использование наших услуг!`;
-
-    const body = {
-      chat_id,
-      text,
-      parse_mode: 'HTML'
-    };
-    console.log('Отправка сообщения:', body);
-    return this.http.post(`${this.telegramApiUrl}/sendMessage`, body);
-  }
-
-  public sendMessage2(chat_id: number, category: { title: string, price: number }): Observable<any> {
-    const text = `Здравствуйте, Екатерина!
-Ваш клиент "Raynor" оплатил услугу «${category.title}», стоимостью ${category.price} руб.`;
-
-    const body = {
-      chat_id,
-      text,
-      parse_mode: 'HTML'
-    };
-    console.log('Отправка сообщения:', body);
-    return this.http.post(`${this.telegramApiUrl}/sendMessage`, body);
   }
 
   // Отправляем уведомление администраторам о статусе заказа "оплачен"
@@ -262,25 +231,24 @@ export class TelegramService {
     }
 
     const user = order.user || this.telegramUser;
-    const category = order.category;
+    const paymentData = order.paymentData;
+    const orderData = order.orderData;
     const orderId = order.id;
-    const paymentMethod = order.paymentMethod;
-    const paymentAmount = category ? category.price : 'Неизвестно';
 
     // Формируем текст сообщения с деталями заказа
     const text = `🔔 Новый оплаченный заказ!
 
-📋 Детали заказа:
-ID: ${orderId}
-Услуга: ${category ? category.title : 'Неизвестно'}
-Сумма: ${paymentAmount} ₽
-Метод оплаты: ${paymentMethod || 'Неизвестно'}
-Дата: ${new Date().toLocaleString('ru-RU')}
+    📋 Детали заказа:
+    ID: ${orderId}
+    Услуга: ${orderData?.category?.title || 'Неизвестно'}
+    Сумма: ${paymentData?.amount?.value || '0'} ₽
+    Номер заказа: ${orderId}
+    Дата: ${new Date().toLocaleString('ru-RU')}
 
-👤 Информация о клиенте:
-ID: ${user.id || 'Неизвестно'}
-Имя: ${user.first_name || ''} ${user.last_name || ''}
-Имя пользователя: ${user.username ? '@' + user.username : 'Не указано'}`;
+    👤 Информация о клиенте:
+    ID: ${user.id || 'Неизвестно'}
+    Имя: ${user.first_name || ''} ${user.last_name || ''}
+    Имя пользователя: ${user.username ? '@' + user.username : 'Не указано'}`;
 
     // Отправляем сообщения всем администраторам
     const notifications = this.adminUserIds.map(adminId => {
@@ -289,11 +257,9 @@ ID: ${user.id || 'Неизвестно'}
         text,
         parse_mode: 'HTML'
       };
-      console.log(`Отправка уведомления администратору ID ${adminId}:`, body);
       return this.http.post(`${this.telegramApiUrl}/sendMessage`, body);
     });
 
-    // Возвращаем наблюдаемый объект, который завершится после отправки всех уведомлений
     return forkJoin(notifications);
   }
 
@@ -336,13 +302,13 @@ ID: ${user.id || 'Неизвестно'}
 
     // Сортируем поля по позиции
     const sortedFields = [...fields].sort((a, b) => a.position - b.position);
-    
+
     sortedFields.forEach(field => {
       const value = formData[field.id];
-      
+
       // Пропускаем пустые значения и неактивные поля
       if (value === null || value === undefined || !field.isActive) return;
-      
+
       if (field.type === 'separator') {
         result += `\n${field.label}\n`;
       } else if (field.type === 'file' && Array.isArray(value) && value.length > 0) {
@@ -365,36 +331,6 @@ ID: ${user.id || 'Неизвестно'}
     });
 
     return { text: result, photos };
-  }
-
-  // Извлечение URL фотографий из формы
-  private extractPhotoUrlsFromForm(formData: any): string[] {
-    const lifePhotos = formData.style?.lifePhotos || [];
-    const inspirationPhotos = formData.style?.inspirationPhotos || [];
-
-    // Собираем все URL оригинальных изображений
-    const photoUrls: string[] = [];
-
-    // Добавляем URL из lifePhotos
-    lifePhotos.forEach((photo: any) => {
-      if (photo.originalUrl) {
-        photoUrls.push(photo.originalUrl);
-      } else if (photo.url) {
-        photoUrls.push(photo.url);
-      }
-    });
-
-    // Добавляем URL из inspirationPhotos
-    inspirationPhotos.forEach((photo: any) => {
-      if (photo.originalUrl) {
-        photoUrls.push(photo.originalUrl);
-      } else if (photo.url) {
-        photoUrls.push(photo.url);
-      }
-    });
-
-    // Возвращаем не более 10 фотографий
-    return photoUrls.slice(0, 10);
   }
 
   // Отправка данных формы администраторам
@@ -452,5 +388,24 @@ ID: ${user.id || 'Неизвестно'}
 
     // Объединяем все уведомления в один Observable
     return forkJoin(notifications);
+  }
+
+  checkMainButtonEvents(): void {
+    if (this.webApp) {
+      console.log('MainButton события:', {
+        mainButtonHandler: this.mainButtonHandler,
+        mainButtonClickHandler: this.mainButtonClickHandler,
+        isVisible: this.webApp.MainButton.isVisible,
+        text: this.webApp.MainButton.text,
+        color: this.webApp.MainButton.color,
+        textColor: this.webApp.MainButton.textColor,
+        isActive: this.webApp.MainButton.isActive,
+        isProgressVisible: this.webApp.MainButton.isProgressVisible
+      });
+      console.log('BackButton события:', {
+        backButtonHandler: this.backButtonHandler,
+        backButtonClickHandler: this.backButtonClickHandler
+      });
+    }
   }
 }

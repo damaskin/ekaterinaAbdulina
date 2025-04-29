@@ -48,6 +48,8 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
+    this.telegramService.clearTelegramHandlers();
   }
 
   loadCategories(): void {
@@ -66,17 +68,13 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
 
   setupTelegramButtons(): void {
     if (this.telegramService.webApp) {
-      this.telegramService.webApp.MainButton.setText("Добавить категорию");
-      this.telegramService.webApp.MainButton.show();
-
-      this.telegramService.webApp.onEvent('mainButtonClicked', () => this.onAddCategory());
-
       // Настройка кнопки "Назад"
-      this.telegramService.webApp.BackButton.show();
+      this.telegramService.backButtonClickHandler = this.onCancel.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
 
-      // Определяем обработчик для BackButton
-      this.backButtonClickHandler = () => this.onCancel();
-      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
+      // Обработчик нажатия на "Анкета"
+      this.telegramService.mainButtonClickHandler = this.onAddCategory.bind(this);
+      this.telegramService.showMainButton('Добавить категорию', this.telegramService.mainButtonClickHandler);
     }
   }
 

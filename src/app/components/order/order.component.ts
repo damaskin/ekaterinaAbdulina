@@ -10,6 +10,9 @@ import {TelegramService} from "../../services/telegram.service";
 import {PriceFormatterService} from "../../services/price-formatter.service";
 import { CategoriesService } from '../../services/categories.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { YookassaService } from '../../services/yookassa.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-order',
@@ -20,7 +23,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     CommonModule,
     IMaskModule,
     IMaskPipe,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatIconModule
   ]
 })
 export class OrderComponent implements OnInit, OnDestroy {
@@ -41,8 +46,9 @@ export class OrderComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private paymentService: PaymentService,
+    private yookassaService: YookassaService,
     private router: Router,
-    private telegramService: TelegramService,
+    public telegramService: TelegramService,
     private categoriesService: CategoriesService,
     public priceFormatter: PriceFormatterService
   ) {}
@@ -52,6 +58,14 @@ export class OrderComponent implements OnInit, OnDestroy {
     if (categoryId) {
       this.loadCategory(categoryId);
     }
+  }
+
+  ngOnDestroy(): void {
+    // this.telegramService.cleanup();
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
+    this.telegramService.clearTelegramHandlers();
   }
 
   loadCategory(categoryId: string): void {
@@ -72,22 +86,14 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   setupTelegramButtons(): void {
     if (this.telegramService.webApp && this.category) {
-      // Setup Main Button
-      this.telegramService.webApp.MainButton.setText(`Оплатить ${this.priceFormatter.formatPrice(this.category.price || 0)}`);
-      this.telegramService.webApp.MainButton.show();
-      this.mainButtonClickHandler = () => this.pay();
-      this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.navigateBack.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
 
-      // Setup Back Button
-      this.telegramService.webApp.BackButton.show();
-      this.backButtonClickHandler = () => this.navigateBack();
-      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
+      // Обработчик нажатия на "Анкета"
+      this.telegramService.mainButtonClickHandler = this.pay.bind(this);
+      this.telegramService.showMainButton(`Оплатить ${this.priceFormatter.formatPrice(this.category.price || 0)}`, this.telegramService.mainButtonClickHandler);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.telegramService.cleanup();
-    this.telegramService.hideAllButtons();
   }
 
   navigateBack(): void {
@@ -102,31 +108,19 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.telegramService.webApp.MainButton.disable();
       }
 
-      this.paymentService.createCheckoutSession(this.category).subscribe({
-        next: (session: any) => {
-          console.log('session, ', session);
-          const stripe = (window as any).Stripe('pk_test_51Qx6v0QtKeJeSzyDCPmVC8Qy69HrXVU5eZvehaDu8oSQiTA1f3zkmhY8HMX73pnj3YDvhi7Wx9LQn50yPpNXhrkG003QjkJ3PW');
-
+      this.yookassaService.createPayment(this.category, this.telegramService.getUserId()).subscribe({
+        next: (payment: any) => {
+          console.log('payment, ', payment);
           this.telegramService.hideAllButtons();
+          this.telegramService.clearTelegramHandlers();
 
-          // Теперь переходим на страницу оплаты Stripe
-          stripe.redirectToCheckout({
-            sessionId: session.id
-          }).then((result: any) => {
-            if (result.error) {
-              console.error('Ошибка редиректа на Stripe:', result.error.message);
-
-              // В случае ошибки восстанавливаем кнопку
-              if (this.telegramService.webApp) {
-                this.telegramService.webApp.MainButton.hideProgress();
-                this.telegramService.webApp.MainButton.enable();
-                this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
-              }
-            }
-          });
+          // Редирект на страницу оплаты ЮKassa
+          if (payment.confirmation && payment.confirmation.confirmation_url) {
+            window.location.href = payment.confirmation.confirmation_url;
+          }
         },
         error: (error: any) => {
-          console.error('Ошибка при создании сессии оплаты:', error);
+          console.error('Ошибка при создании платежа:', error);
 
           // В случае ошибки восстанавливаем кнопку
           if (this.telegramService.webApp) {
@@ -138,7 +132,7 @@ export class OrderComponent implements OnInit, OnDestroy {
           if (this.telegramService.webApp) {
             this.telegramService.webApp.showPopup({
               title: 'Ошибка',
-              message: 'Произошла ошибка при создании сессии оплаты. Пожалуйста, попробуйте позже.',
+              message: 'Произошла ошибка при создании платежа. Пожалуйста, попробуйте позже.',
               buttons: [{ type: 'ok' }]
             });
           }
@@ -146,21 +140,4 @@ export class OrderComponent implements OnInit, OnDestroy {
       });
     }
   }
-
-  sendMessage() {
-    // this.telegramService.sendMessage(210311255, this.categories[0])
-    // .subscribe((res) => {
-    //     console.log(res);
-    // });
-    // this.telegramService.sendMessage2(210311255, this.categories[0])
-    // .subscribe((res) => {
-    //     console.log(res);
-    // });
-  }
-
-  openSuccessPayment() {
-    this.router.navigate(['/payment-success'], { queryParams: { session_id: 'cs_test_a1Hqxl19SFlruMCCD5nlpCIbwKHcsGnyFyG1xgaiqLyQCmkA7SAJp4XFSu' } });
-  }
-
-  protected readonly MASKS = MASKS;
 }

@@ -337,6 +337,7 @@ export class StyleFormComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+this.telegramService.clearTelegramHandlers();
   }
 
   // Создание миниатюры изображения

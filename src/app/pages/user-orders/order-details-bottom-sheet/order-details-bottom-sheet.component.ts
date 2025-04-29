@@ -40,13 +40,10 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   formLoading = false;
   existingFormId: string | null = null;
 
-  // Обработчики для кнопок Telegram
-  private mainButtonClickHandler: () => void = () => {};
-  private backButtonClickHandler: () => void = () => {};
-
   // Доступные статусы заказа
   statuses = [
     { value: 'pending', text: 'Ожидает оплаты' },
+    { value: 'succeeded', text: 'Оплачен' },
     { value: 'paid', text: 'Оплачен' },
     { value: 'processing', text: 'В обработке' },
     { value: 'completed', text: 'Выполнен' },
@@ -71,23 +68,25 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.telegramService.cleanup();
-    // this.telegramService.hideAllButtons();
+    this.telegramService.hideAllButtons();
+
+    this.telegramService.backButtonClickHandler = this.navigateToBack.bind(this);
+    this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
+  }
+
+  private navigateToBack(): void {
+    this.router.navigate(['/main']).then(r => {});
   }
 
   setupTelegramButtons(): void {
     if (this.telegramService.webApp) {
       // Настройка кнопки "Назад"
-      this.telegramService.webApp.BackButton.show();
-      this.backButtonClickHandler = () => this.close();
-      this.telegramService.webApp.onEvent('backButtonClicked', this.backButtonClickHandler);
-
-      // Настройка MainButton "Анкета"
-      this.telegramService.webApp.MainButton.setText('Анкета');
-      this.telegramService.webApp.MainButton.show();
+      this.telegramService.backButtonClickHandler = this.close.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
 
       // Обработчик нажатия на "Анкета"
-      this.mainButtonClickHandler = () => this.navigateToForm();
-      this.telegramService.webApp.onEvent('mainButtonClicked', this.mainButtonClickHandler);
+      this.telegramService.mainButtonClickHandler = this.navigateToForm.bind(this);
+      this.telegramService.showMainButton(this.isAdmin ? 'Закрыть' : 'Анкета', this.telegramService.mainButtonClickHandler);
     }
   }
 
@@ -129,7 +128,12 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
 
   // Навигация к анкете (существующей или новой)
   navigateToForm(): void {
+    this.telegramService.checkMainButtonEvents();
     this.close(); // Закрываем шторку
+
+    if (this.isAdmin) {
+      return;
+    }
 
     // Запускаем навигацию напрямую, без подписки на событие
     if (this.existingFormId) {
@@ -160,7 +164,7 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   }
 
   close(): void {
-    // this.telegramService.cleanup();
+    this.telegramService.cleanup();
     this.bottomSheetRef.dismiss();
   }
 

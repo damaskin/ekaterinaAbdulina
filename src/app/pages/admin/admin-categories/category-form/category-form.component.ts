@@ -144,14 +144,20 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
+    this.telegramService.clearTelegramHandlers();
   }
 
   setupTelegramButtons(): void {
-    this.telegramService.showMainButton('Сохранить', () => this.onSubmit());
-    this.telegramService.showBackButton(() => {
-      this.telegramService.cleanup();
-      this.router.navigate(['/admin/categories']);
-    });
+    if (this.telegramService.webApp) {
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.onCancel.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
+
+      // Обработчик нажатия на "Анкета"
+      this.telegramService.mainButtonClickHandler = this.onSubmit.bind(this);
+      this.telegramService.showMainButton('Сохранить', this.telegramService.mainButtonClickHandler);
+    }
   }
 
   loadFormFields(): void {

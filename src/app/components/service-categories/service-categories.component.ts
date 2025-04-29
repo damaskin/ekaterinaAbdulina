@@ -35,6 +35,7 @@ export class ServiceCategoriesComponent implements OnInit, OnDestroy {
     // Очищаем все обработчики событий и скрываем кнопки
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+    this.telegramService.clearTelegramHandlers();
   }
 
   loadCategories(): void {

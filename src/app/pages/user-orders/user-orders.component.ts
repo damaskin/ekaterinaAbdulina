@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -39,7 +39,7 @@ import { OrderDetailsBottomSheetComponent } from './order-details-bottom-sheet/o
     MatBottomSheetModule
   ]
 })
-export class UserOrdersComponent implements OnInit {
+export class UserOrdersComponent implements OnInit, OnDestroy {
   orders: any[] = [];
   loading = true;
   error = false;
@@ -53,15 +53,27 @@ export class UserOrdersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Настраиваем заголовок в Telegram WebApp
-    if (this.telegramService.webApp) {
-      this.telegramService.webApp.BackButton.show();
-      this.telegramService.webApp.BackButton.onClick(() => {
-        this.router.navigate(['/main']);
-      });
-    }
+    this.setupTelegramButtons();
 
     this.loadOrders();
+  }
+
+  ngOnDestroy() {
+    this.telegramService.cleanup();
+    this.telegramService.hideAllButtons();
+    this.telegramService.hideBackButton();
+  }
+
+  setupTelegramButtons(): void {
+    if (this.telegramService.webApp) {
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.navigateToBack.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
+    }
+  }
+
+  private navigateToBack(): void {
+    this.router.navigate(['/main']).then(r => {});
   }
 
   loadOrders(): void {
@@ -83,6 +95,7 @@ export class UserOrdersComponent implements OnInit {
   }
 
   openOrderDetails(order: any): void {
+    this.telegramService.cleanup();
     this.bottomSheet.open(OrderDetailsBottomSheetComponent, {
       data: { orderId: order.id },
       panelClass: 'bottom-sheet-container'

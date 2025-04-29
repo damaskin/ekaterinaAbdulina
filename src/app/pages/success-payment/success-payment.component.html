@@ -1,37 +1,54 @@
-<div class="success-payment-container">
-  <mat-card class="payment-card">
-    <mat-card-content>
-      <div *ngIf="loading" class="loading-container">
-        <mat-spinner [diameter]="50"></mat-spinner>
-        <p class="loading-text" style="color: var(--tg-theme-text-color);">Проверяем статус оплаты...</p>
-      </div>
-
-      <div *ngIf="!loading && error" class="error-container">
-        <mat-icon color="warn" class="theme-destructive-text-color">error</mat-icon>
-        <h2 class="theme-destructive-text-color">Ошибка</h2>
-        <p class="theme-destructive-text-color">{{ errorMessage }}</p>
-      </div>
-
-      <div *ngIf="!loading && !error && success" class="success-container">
-        <mat-icon color="primary">check_circle</mat-icon>
-        <h2 style="color: var(--tg-theme-text-color);">Оплата успешно выполнена!</h2>
-        
-        <div class="payment-details" *ngIf="paymentData?.order">
-          <div class="title">Детали заказа:</div>
-          <div style="color: var(--tg-theme-text-color);"><span class="theme-hint-color">Услуга:</span> {{ paymentData.order.category.title }}</div>
-          <div style="color: var(--tg-theme-text-color);"><span class="theme-hint-color">Сумма:</span> {{ paymentData.order.category.price }} руб.</div>
-          <div style="color: var(--tg-theme-text-color);"><span class="theme-hint-color">Номер заказа:</span> {{ paymentData.order.orderId | slice:0:10 }}...</div>
-          <div style="color: var(--tg-theme-text-color);"><span class="theme-hint-color">Дата:</span> {{ paymentData.order.createdAt | date:'dd.MM.yyyy HH:mm' }}</div>
-        </div>
-      </div>
-
-      <div *ngIf="!loading && !error && !success" class="pending-container">
-        <mat-icon color="accent">pending</mat-icon>
-        <h2 style="color: var(--tg-theme-text-color);">Оплата не завершена</h2>
-        <p style="color: var(--tg-theme-text-color);">{{ errorMessage }}</p>
-        <p style="color: var(--tg-theme-text-color);">Если вы уверены, что оплата была произведена, пожалуйста, свяжитесь с нами.</p>
-      </div>
-    </mat-card-content>
- 
+<div class="payment-success-container">
+  <mat-card *ngIf="loading" class="loading-card">
+    <mat-spinner></mat-spinner>
+    <p>Загрузка данных платежа...</p>
   </mat-card>
-</div> 
+
+  <mat-card *ngIf="error" class="error-card">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+  </mat-card>
+
+  <mat-card *ngIf="paymentDetails" class="success-card">
+    <h2>Платеж успешно выполнен</h2>
+    
+    <div class="payment-details">
+      <div class="detail-row">
+        <span class="label">ID заказа:</span>
+        <span class="value">{{ paymentDetails?.id }}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="label">Статус:</span>
+        <span class="value">{{ paymentDetails?.status === 'succeeded' ? 'Оплачено' : 'Не оплачено' }}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="label">Сумма:</span>
+        <span class="value">{{ paymentDetails?.amount?.value }} {{ paymentDetails?.amount?.currency }}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="label">Описание:</span>
+        <span class="value">{{ paymentDetails?.description }}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="label">Способ оплаты:</span>
+        <span class="value">YooMoney</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="label">Дата оплаты:</span>
+        <span class="value">{{ paymentDetails?.paymentData?.captured_at | date:'dd.MM.yyyy HH:mm' }}</span>
+      </div>
+      
+      <!-- <div class="detail-row">
+        <span class="label">ID платежа:</span>
+        <span class="value">{{ paymentDetails?.paymentData?.id }}</span>
+      </div> -->
+    </div>
+  </mat-card>
+
+  <!-- <pre>{{ paymentDetails | json }}</pre> -->
+</div>

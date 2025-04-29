@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IUser } from '../../interfaces/user.interface';
 import { TelegramService } from '../../services/telegram.service';
 import { OrdersService } from '../../services/orders.service';
+import {Router} from "@angular/router";
 
 @Component({
   standalone: true,
@@ -29,42 +30,51 @@ export class UserDetailsSheetComponent implements OnInit, OnDestroy {
   errorMessage = '';
 
   constructor(
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: IUser,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public user: IUser,
     private bottomSheetRef: MatBottomSheetRef<UserDetailsSheetComponent>,
     private telegramService: TelegramService,
-    private ordersService: OrdersService
+    private ordersService: OrdersService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.setupMainButton();
+    this.setupTelegramButtons();
     this.loadUserOrders();
   }
 
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
+    this.telegramService.clearTelegramHandlers();
+
+    this.telegramService.backButtonClickHandler = this.navigateToBack.bind(this);
+    this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
   }
 
-  setupMainButton(): void {
+  setupTelegramButtons(): void {
     if (this.telegramService.webApp) {
-      // Настройка MainButton
-      this.telegramService.webApp.MainButton.setText('ОК');
-      this.telegramService.webApp.MainButton.show();
+      // Настройка кнопки "Назад"
+      this.telegramService.backButtonClickHandler = this.close.bind(this);
+      this.telegramService.showBackButton(this.telegramService.backButtonClickHandler);
 
-      // Обработчик нажатия
-      this.telegramService.webApp.MainButton.onClick(() => {
-        this.close();
-      });
+      // Обработчик нажатия на "Анкета"
+      this.telegramService.mainButtonClickHandler = this.close.bind(this);
+      this.telegramService.showMainButton('ОК', this.telegramService.mainButtonClickHandler);
     }
+  }
+
+  private navigateToBack(): void {
+    this.router.navigate(['/main']).then(r => {});
   }
 
   loadUserOrders(): void {
     this.loadingOrders = true;
     this.ordersError = false;
 
-    this.ordersService.getUserOrdersByTelegramId(this.data.id).subscribe({
+    this.ordersService.getUserOrdersByTelegramId(this.user.id).subscribe({
       next: (orders) => {
-        this.userOrders = orders.filter(order => order.status === 'paid' || order.status === 'completed');
+        console.log(orders);
+        this.userOrders = orders.filter(order => order.status === 'paid' || order.status === 'completed' || order.status === 'succeeded');
         this.loadingOrders = false;
       },
       error: (error) => {

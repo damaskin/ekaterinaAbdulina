@@ -9,15 +9,15 @@
   <!-- Основная информация о пользователе -->
   <div class="user-content">
     <div class="user-header">
-      <div class="user-avatar-container" *ngIf="data.photo_url">
-        <img class="user-avatar" [src]="data.photo_url" alt="Аватар пользователя">
+      <div class="user-avatar-container" *ngIf="user.photo_url">
+        <img class="user-avatar" [src]="user.photo_url" alt="Аватар пользователя">
       </div>
       <div class="user-name-container">
         <h3 class="user-name" style="color: var(--tg-theme-text-color);">
-          {{ data.first_name }} {{ data.last_name }}
+          {{ user.first_name }} {{ user.last_name }}
         </h3>
         <div class="user-username" style="color: var(--tg-theme-hint-color);">
-          {{ data.username || 'нет username' }}
+          {{ user.username || 'нет username' }}
         </div>
       </div>
     </div>
@@ -26,49 +26,49 @@
 
     <div class="user-info-section">
       <h4 style="color: var(--tg-theme-text-color);">Основная информация</h4>
-      
+
       <div class="info-row">
         <span class="info-label">ID в Telegram:</span>
-        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ data.id }}</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ user.id }}</span>
       </div>
-      
-      <div class="info-row" *ngIf="data.language_code">
+
+      <div class="info-row" *ngIf="user.language_code">
         <span class="info-label">Язык:</span>
-        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ data.language_code }}</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ user.language_code }}</span>
       </div>
-      
+
       <div class="info-row">
         <span class="info-label">Регистрация:</span>
-        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ formatDate(data.created_at) }}</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ formatDate(user.created_at) }}</span>
       </div>
-      
-      <div class="info-row" *ngIf="data.lastLoginDate">
+
+      <div class="info-row" *ngIf="user.lastLoginDate">
         <span class="info-label">Последний вход:</span>
-        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ formatDate(data.lastLoginDate) }}</span>
+        <span class="info-value" style="color: var(--tg-theme-text-color);">{{ formatDate(user.lastLoginDate) }}</span>
       </div>
     </div>
 
     <!-- Заказы пользователя -->
     <div class="user-orders-section">
       <h4 style="color: var(--tg-theme-text-color);">Оплаченные заказы</h4>
-      
+
       <!-- Состояние загрузки -->
       <div *ngIf="loadingOrders" class="loading-container">
         <mat-spinner [diameter]="30"></mat-spinner>
         <p class="loading-text" style="color: var(--tg-theme-text-color);">Загрузка заказов...</p>
       </div>
-      
+
       <!-- Сообщение об ошибке -->
       <div *ngIf="!loadingOrders && ordersError" class="error-container">
         <mat-icon color="warn">error</mat-icon>
         <p style="color: var(--tg-theme-destructive-text-color);">{{ errorMessage }}</p>
       </div>
-      
+
       <!-- Нет заказов -->
       <div *ngIf="!loadingOrders && !ordersError && userOrders.length === 0" class="empty-container">
         <p style="color: var(--tg-theme-text-color);">У пользователя пока нет оплаченных заказов</p>
       </div>
-      
+
       <!-- Список заказов -->
       <div *ngIf="!loadingOrders && !ordersError && userOrders.length > 0" class="orders-list">
         <div *ngFor="let order of userOrders" class="order-item">
@@ -80,7 +80,7 @@
               {{ getStatusText(order.status) }}
             </div>
           </div>
-          
+
           <div class="order-item-details">
             <div class="order-item-date" style="color: var(--tg-theme-hint-color);">
               {{ formatDateTime(order.createdAt) }}
@@ -94,4 +94,4 @@
     </div>
   </div>
 
-</div> 
+</div>
