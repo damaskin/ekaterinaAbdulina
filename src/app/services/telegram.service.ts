@@ -183,6 +183,19 @@ export class TelegramService {
     }
   }
 
+  showProgressMainBtn() {
+    if (this.webApp) {
+      this.webApp.MainButton.showProgress(true);
+      this.webApp.MainButton.disable();
+    }
+  }
+  hideProgressMainBtn() {
+    if (this.webApp) {
+      this.webApp.MainButton.hideProgress();
+      this.webApp.MainButton.enable();
+    }
+  }
+
   getClientPlatform(): string {
     return this.webApp ? this.webApp.platform : 'unknown';
   }

@@ -62,6 +62,7 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.setupTelegramButtons();
     this.loadOrderDetails();
     this.checkExistingForm();
   }
@@ -86,12 +87,13 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
 
       // Обработчик нажатия на "Анкета"
       this.telegramService.mainButtonClickHandler = this.navigateToForm.bind(this);
-      this.telegramService.showMainButton(this.isAdmin ? 'Закрыть' : 'Анкета', this.telegramService.mainButtonClickHandler);
+      this.telegramService.showMainButton('Анкета', this.telegramService.mainButtonClickHandler);
     }
   }
 
   // Проверяем, существует ли уже анкета для этого заказа
   checkExistingForm(): void {
+    console.log(this.data);
     if (!this.data.orderId) {
       return;
     }
@@ -115,13 +117,13 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
         }
 
         // После проверки настраиваем кнопки Telegram
-        this.setupTelegramButtons();
+        // this.setupTelegramButtons();
       },
       error: (error) => {
         console.error('Ошибка при проверке существующей анкеты:', error);
         this.formLoading = false;
         // Всё равно настраиваем кнопки Telegram
-        this.setupTelegramButtons();
+        // this.setupTelegramButtons();
       }
     });
   }
@@ -130,10 +132,6 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   navigateToForm(): void {
     this.telegramService.checkMainButtonEvents();
     this.close(); // Закрываем шторку
-
-    if (this.isAdmin) {
-      return;
-    }
 
     // Запускаем навигацию напрямую, без подписки на событие
     if (this.existingFormId) {
@@ -146,12 +144,14 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
   }
 
   loadOrderDetails(): void {
+    this.telegramService.showProgressMainBtn();
     this.loading = true;
     this.error = false;
 
     this.orderService.getOrderDetails(this.data.orderId).subscribe({
       next: (orderData) => {
         this.order = orderData;
+        this.telegramService.hideProgressMainBtn();
         this.loading = false;
       },
       error: (error) => {
@@ -159,6 +159,7 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.error = true;
         this.errorMessage = 'Не удалось загрузить детали заказа. Пожалуйста, попробуйте позже.';
+        this.telegramService.hideProgressMainBtn();
       }
     });
   }
