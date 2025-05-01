@@ -121,7 +121,6 @@ export class AdminFormFieldsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
-    this.telegramService.clearTelegramHandlers();
   }
 
   setupTelegramButtons(): void {

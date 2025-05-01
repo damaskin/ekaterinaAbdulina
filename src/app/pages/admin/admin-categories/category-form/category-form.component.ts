@@ -145,7 +145,6 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
     this.telegramService.hideBackButton();
-    this.telegramService.clearTelegramHandlers();
   }
 
   setupTelegramButtons(): void {
@@ -200,29 +199,27 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
-      this.isLoading = true;
-      this.telegramService.hideMainButton();
+    this.isLoading = true;
+    this.telegramService.hideMainButton();
 
-      const categoryData: ICategory = {
-        ...this.form.value,
-        imageUrl: this.imagePreview || null
-      };
+    const categoryData: ICategory = {
+      ...this.form.value,
+      imageUrl: this.imagePreview || null
+    };
 
-      if (this.categoryId) {
-        categoryData.id = this.categoryId;
-      }
-
-      this.categoriesService.saveCategory(categoryData)
-        .then(() => {
-          this.telegramService.cleanup();
-          this.router.navigate(['/admin/categories']);
-        })
-        .catch(error => {
-          console.error('Error saving category:', error);
-          this.telegramService.showMainButton('Сохранить', () => this.onSubmit());
-        });
+    if (this.categoryId) {
+      categoryData.id = this.categoryId;
     }
+
+    this.categoriesService.saveCategory(categoryData)
+      .then(() => {
+        this.telegramService.cleanup();
+        this.router.navigate(['/admin/categories']);
+      })
+      .catch(error => {
+        console.error('Error saving category:', error);
+        this.telegramService.showMainButton('Сохранить', () => this.onSubmit());
+      });
   }
 
   onCancel(): void {

@@ -281,9 +281,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
           this.loadFormFields(category.formFields);
 
           // Инициализируем кнопки после загрузки данных
-          setTimeout(() => {
-            this.setupTelegramButtons();
-          }, 100);
+          this.setupTelegramButtons();
         },
         error: (error) => {
           console.error('Error loading category:', error);

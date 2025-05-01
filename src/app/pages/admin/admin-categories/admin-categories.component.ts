@@ -49,7 +49,6 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();
     this.telegramService.hideBackButton();
-    this.telegramService.clearTelegramHandlers();
   }
 
   loadCategories(): void {

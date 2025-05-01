@@ -90,6 +90,7 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
 
   // Store reference to the back button click handler
   private backButtonClickHandler: () => void = () => {};
+  private orderData: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -109,7 +110,7 @@ export class SuccessPaymentComponent implements OnInit, OnDestroy {
 
     // Показываем главную кнопку Telegram
     this.telegramService.showMainButton('Заполнить анкету', () => {
-      window.location.href = '/';
+      this.router.navigate([`/order/${this.orderData.categoryId}/form`], { queryParams: { orderId: this.orderData.orderId } });
     });
   }
 
@@ -123,6 +124,7 @@ this.telegramService.clearTelegramHandlers();
     try {
       const orderData = await this.firebaseService.getOrder(this.paymentId);
       console.log('Данные заказа:', orderData);
+      this.orderData = orderData
 
       if (orderData) {
         this.paymentDetails = orderData;

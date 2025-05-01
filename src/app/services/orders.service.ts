@@ -43,7 +43,8 @@ export class OrdersService {
     const ordersRef = collection(this.firestore, 'orders');
     const q = query(
       ordersRef,
-      where('user.id', '==', userId)
+      where('user.id', '==', userId),
+      orderBy('createdAt', 'desc')
     );
 
     return this.getOrdersFromQuery(q);
