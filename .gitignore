@@ -42,3 +42,6 @@ testem.log
 Thumbs.db
 /admin/
 /public/assets/i18n/admin/
+
+# Environment variables
+.env
