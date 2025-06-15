@@ -1,0 +1,62 @@
+{
+  "mainPage": {
+    "title": "Telegram Template",
+    "description": "<p>This is a template for creating Telegram themes.</p>\n<p>It is built with Angular and Angular Material.</p>\n<p>You can use it to create your own themes.</p>"
+  },
+  "auth": {
+    "title": "Sign In",
+    "alert": "<p>After successful authorization, user data should be stored in the database and the authenticity and integrity of the received data should be checked, as specified in the documentation - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>We do not save your data, this functionality works for demonstration purposes.</p>"
+  },
+  "webAppData": {
+    "title": "Telegram Web App Data",
+    "user": {
+      "title": "User",
+      "id": "ID",
+      "username": "Username",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "languageCode": "Language code",
+      "language": "Language",
+      "isPremium": "Is premium",
+      "authDate": "Auth date",
+      "hash": "Hash"
+    },
+    "themeParams": {
+      "title": "Theme Params",
+      "accentTextColor": "Accent Text Color",
+      "bgColor": "Background Color",
+      "buttonColor": "Button Color",
+      "buttonTextColor": "Button Text Color",
+      "destructiveTextColor": "Destructive Text Color",
+      "headerBgColor": "Header Background Color",
+      "hintColor": "Hint Color",
+      "linkColor": "Link Color",
+      "secondaryBgColor": "Secondary Background Color",
+      "sectionBgColor": "Section Background Color",
+      "sectionHeaderTextColor": "Section Header Text Color",
+      "sectionSeparatorColor": "Section Separator Color",
+      "subtitleTextColor": "Subtitle Text Color"
+    },
+    "colorScheme": "Color scheme",
+    "platform": "Platform",
+    "version": "Version",
+    "viewportHeight": "Viewport Height",
+    "viewportStableHeight": "Viewport Stable Height",
+    "isExpanded": "Is Expanded",
+    "backButton": {
+      "isVisible": "Back Button Visible"
+    },
+    "mainButton": {
+      "title": "Main Button",
+      "text": "Text",
+      "color": "Color",
+      "textColor": "Text Color",
+      "isVisible": "Main Button Visible",
+      "isProgressVisible": "Progress Visible",
+      "isActive": "Active"
+    },
+    "settingsButton": {
+      "isVisible": "Settings Button Visible"
+    }
+  }
+}

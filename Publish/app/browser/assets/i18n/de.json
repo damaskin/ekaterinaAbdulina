@@ -1,0 +1,62 @@
+{
+  "mainPage": {
+    "title": "Telegram-Vorlage",
+    "description": "<p>Dies ist eine Vorlage zur Erstellung von Telegram-Themen.</p>\n<p>Es wurde mit Angular und Angular Material erstellt.</p>\n<p>Sie können es verwenden, um Ihre eigenen Themen zu erstellen.</p>"
+  },
+  "auth": {
+    "title": "Anmelden",
+    "alert": "<p>Nach erfolgreicher Autorisierung sollten die Benutzerdaten in der Datenbank gespeichert und die Authentizität und Integrität der empfangenen Daten überprüft werden, wie in der Dokumentation angegeben - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>Wir speichern Ihre Daten nicht, diese Funktion dient nur Demonstrationszwecken.</p><p>Das bedeutet, dass Sie sich bei jedem Neuladen der Seite erneut anmelden müssen.</p>"
+  },
+  "webAppData": {
+    "title": "Telegram-Web-App-Daten",
+    "user": {
+      "title": "Benutzer",
+      "id": "ID",
+      "username": "Benutzername",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "languageCode": "Sprachcode",
+      "language": "Sprache",
+      "isPremium": "Ist Premium",
+      "authDate": "Authentifizierungsdatum",
+      "hash": "Hash"
+    },
+    "themeParams": {
+      "title": "Themenparameter",
+      "accentTextColor": "Akzenttextfarbe",
+      "bgColor": "Hintergrundfarbe",
+      "buttonColor": "Schaltflächenfarbe",
+      "buttonTextColor": "Schaltflächentextfarbe",
+      "destructiveTextColor": "Destruktive Textfarbe",
+      "headerBgColor": "Kopfzeilen-Hintergrundfarbe",
+      "hintColor": "Hinweisfarbe",
+      "linkColor": "Linkfarbe",
+      "secondaryBgColor": "Sekundäre Hintergrundfarbe",
+      "sectionBgColor": "Abschnitt-Hintergrundfarbe",
+      "sectionHeaderTextColor": "Abschnitt-Kopfzeilentextfarbe",
+      "sectionSeparatorColor": "Abschnitt-Trennfarben",
+      "subtitleTextColor": "Untertitel-Textfarbe"
+    },
+    "colorScheme": "Farbschema",
+    "platform": "Plattform",
+    "version": "Version",
+    "viewportHeight": "Ansichtshöhe",
+    "viewportStableHeight": "Stabile Ansichtshöhe",
+    "isExpanded": "Erweitert",
+    "backButton": {
+      "isVisible": "Zurück-Taste sichtbar"
+    },
+    "mainButton": {
+      "title": "Haupttaste",
+      "text": "Text",
+      "color": "Farbe",
+      "textColor": "Textfarbe",
+      "isVisible": "Haupttaste sichtbar",
+      "isProgressVisible": "Fortschritt sichtbar",
+      "isActive": "Aktiv"
+    },
+    "settingsButton": {
+      "isVisible": "Einstellungstaste sichtbar"
+    }
+  }
+}

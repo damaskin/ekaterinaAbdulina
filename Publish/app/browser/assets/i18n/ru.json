@@ -1,0 +1,62 @@
+{
+  "mainPage": {
+    "title": "Шаблон Telegram",
+    "description": "<p>Это шаблон для создания тем Telegram.</p>\n<p>Он создан с использованием Angular и Angular Material.</p>\n<p>Вы можете использовать его для создания собственных тем.</p>"
+  },
+  "auth": {
+    "title": "Войти",
+    "alert": "<p>После успешной авторизации данные пользователя должны быть сохранены в базе данных, а подлинность и целостность полученных данных должны быть проверены, как указано в документации - <a href=\"https://core.telegram.org/widgets/login\" target=\"_blank\">https://core.telegram.org/widgets/login</a>.</p>\n<p>Мы не сохраняем ваши данные, эта функция работает исключительно в демонстрационных целях.</p><p>Это означает, что каждый раз при перезагрузке страницы вам потребуется снова войти в систему.</p>"
+  },
+  "webAppData": {
+    "title": "Данные веб-приложения Telegram",
+    "user": {
+      "title": "Пользователь",
+      "id": "ID",
+      "username": "Имя пользователя",
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "languageCode": "Код языка",
+      "language": "Язык",
+      "isPremium": "Премиум",
+      "authDate": "Дата авторизации",
+      "hash": "Хеш"
+    },
+    "themeParams": {
+      "title": "Параметры темы",
+      "accentTextColor": "Цвет акцентного текста",
+      "bgColor": "Цвет фона",
+      "buttonColor": "Цвет кнопки",
+      "buttonTextColor": "Цвет текста на кнопке",
+      "destructiveTextColor": "Цвет разрушительного текста",
+      "headerBgColor": "Цвет фона заголовка",
+      "hintColor": "Цвет подсказки",
+      "linkColor": "Цвет ссылки",
+      "secondaryBgColor": "Цвет второстепенного фона",
+      "sectionBgColor": "Цвет фона секции",
+      "sectionHeaderTextColor": "Цвет текста заголовка секции",
+      "sectionSeparatorColor": "Цвет разделителя секции",
+      "subtitleTextColor": "Цвет подзаголовка"
+    },
+    "colorScheme": "Цветовая схема",
+    "platform": "Платформа",
+    "version": "Версия",
+    "viewportHeight": "Высота экрана",
+    "viewportStableHeight": "Стабильная высота экрана",
+    "isExpanded": "Развернуто",
+    "backButton": {
+      "isVisible": "Кнопка 'Назад' видна"
+    },
+    "mainButton": {
+      "title": "Основная кнопка",
+      "text": "Текст",
+      "color": "Цвет",
+      "textColor": "Цвет текста",
+      "isVisible": "Основная кнопка видна",
+      "isProgressVisible": "Прогресс виден",
+      "isActive": "Активна"
+    },
+    "settingsButton": {
+      "isVisible": "Кнопка настроек видна"
+    }
+  }
+}
