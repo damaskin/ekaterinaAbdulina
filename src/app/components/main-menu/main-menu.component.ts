@@ -27,7 +27,7 @@ import { TelegramService } from '../../services/telegram.service';
         }
       </mat-nav-list>
       <div class="menu-footer">
-        v.1.0.0
+        v.1.0.1
       </div>
     </div>
   `,
