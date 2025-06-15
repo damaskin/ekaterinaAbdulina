@@ -318,15 +318,12 @@ export class TelegramService {
 
     sortedFields.forEach(field => {
       const value = formData[field.id];
-
-      // Пропускаем пустые значения и неактивные поля
       if (value === null || value === undefined || !field.isActive) return;
 
       if (field.type === 'separator') {
         result += `\n${field.label}\n`;
       } else if (field.type === 'file' && Array.isArray(value) && value.length > 0) {
         result += `  - ${field.label}: ${value.length} шт.\n`;
-        // Собираем URL фотографий с информацией о поле
         value.forEach((photo: any) => {
           if (photo.originalUrl) {
             photos.push({
@@ -338,6 +335,42 @@ export class TelegramService {
         });
       } else if (field.type === 'checkbox') {
         result += `  - ${field.label}: ${value ? 'Да' : 'Нет'}\n`;
+      } else if (field.type === 'color') {
+        if (Array.isArray(value)) {
+          result += `  - ${field.label}: ${value.map((c: string) => c).join(', ')}\n`;
+        } else {
+          result += `  - ${field.label}: ${value}\n`;
+        }
+      } else if (field.type === 'toggle') {
+        if (field.allowMultiple && Array.isArray(value)) {
+          result += `  - ${field.label}: ${value.join(', ')}\n`;
+        } else {
+          result += `  - ${field.label}: ${value}\n`;
+        }
+      } else if (field.type === 'select') {
+        if (field.allowMultiple && Array.isArray(value)) {
+          result += `  - ${field.label}: ${value.join(', ')}\n`;
+        } else {
+          result += `  - ${field.label}: ${value}\n`;
+        }
+      } else if (field.type === 'slider') {
+        result += `  - ${field.label}: ${value}${field.unit ? ' ' + field.unit : ''}\n`;
+      } else if (field.type === 'diagram') {
+        // value — массив значений слайдеров, field.options — массив слайдеров
+        if (Array.isArray(value) && Array.isArray(field.options)) {
+          result += `  - ${field.label}:\n`;
+          field.options.forEach((opt: any, idx: number) => {
+            const v = value[idx] ?? '';
+            result += `    • ${opt.label}: ${v}${opt.unit ? ' ' + opt.unit : ''}\n`;
+          });
+        }
+      } else if (field.type === 'social') {
+        const instagram = formData[field.id + '_instagram'];
+        const other = formData[field.id + '_other'];
+        if (instagram) result += `  - Instagram: ${instagram}\n`;
+        if (other) result += `  - Другое: ${other}\n`;
+      } else if (field.type === 'message') {
+        // Не добавляем в текст, это просто инфоблок
       } else {
         result += `  - ${field.label}: ${value}\n`;
       }
@@ -418,6 +451,26 @@ export class TelegramService {
       console.log('BackButton события:', {
         backButtonHandler: this.backButtonHandler,
         backButtonClickHandler: this.backButtonClickHandler
+      });
+    }
+  }
+
+  goFullscreen(): void {
+    if (this.webApp?.requestFullscreen) {
+      this.webApp.requestFullscreen();
+    } else {
+      console.warn('Полноэкранный режим недоступен');
+    }
+  }
+
+  /**
+   * Подписка на событие изменения полноэкранного режима
+   * @param callback (isFullscreen: boolean) => void
+   */
+  subscribeFullscreenChange(callback: (isFullscreen: boolean) => void): void {
+    if (this.webApp?.onEvent) {
+      this.webApp.onEvent('fullscreenChanged', (params: any) => {
+        callback(!!params);
       });
     }
   }

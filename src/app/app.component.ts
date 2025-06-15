@@ -10,12 +10,12 @@ import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {TelegramService} from "./services/telegram.service";
 import {UserGreetingComponent} from "./components/user-greeting/user-greeting.component";
 import {FirebaseService} from "./services/firebase.service";
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, CommonModule } from '@angular/common';
 import {ITelegramUser} from "./interface/telegram-user";
 @Component({
   selector: 'app-root',
   standalone: true,
-    imports: [RouterOutlet, MatToolbar, ToolbarComponent, MatSidenavContainer, MainMenuComponent, MatSidenav, TranslateModule, UserGreetingComponent, JsonPipe],
+    imports: [CommonModule, RouterOutlet, MatToolbar, ToolbarComponent, MatSidenavContainer, MainMenuComponent, MatSidenav, TranslateModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -29,6 +29,10 @@ export class AppComponent implements OnInit {
   themingService = inject(ThemingService);
   responsiveService = inject(ResponsiveService);
   firebaseService = inject(FirebaseService);
+
+  isFullscreen: boolean = false;
+  isMobile: boolean = false;
+  appHeightClass = '';
 
   componentSelectorMode = computed(() => {
     if (this.responsiveService.smallWidth()) {
@@ -72,6 +76,21 @@ export class AppComponent implements OnInit {
     this.telegramService.cleanup();
     this.telegramService.hideAllButtons();this.telegramService.clearTelegramHandlers();
     this.telegramService.hideBackButton();
+
+    // Подписка на изменение полноэкранного режима
+    this.telegramService.subscribeFullscreenChange((isFullscreen) => {
+      this.isFullscreen = isFullscreen;
+    });
+
+    // Включаем полноэкранный режим только на мобильных устройствах
+    const platform = this.telegramService.getClientPlatform();
+    this.isMobile = (platform === 'android' || platform === 'ios' || platform === 'iphone' || platform === 'ipad');
+    if (this.isMobile) {
+      this.telegramService.goFullscreen();
+      this.appHeightClass = 'app-mobile';
+    } else {
+      this.appHeightClass = 'app-desktop';
+    }
   }
 
   switchLanguage(language: string) {

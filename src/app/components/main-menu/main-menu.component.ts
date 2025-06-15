@@ -5,12 +5,11 @@ import {RouterLink, RouterLinkActive} from '@angular/router';
 import {MatIcon} from "@angular/material/icon";
 import {MenuService} from "../../services/menu.service";
 import { TelegramService } from '../../services/telegram.service';
-import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-main-menu',
   standalone: true,
-  imports: [MatListModule, RouterLink, RouterLinkActive, MatButtonModule, MatIcon, JsonPipe],
+  imports: [MatListModule, RouterLink, RouterLinkActive, MatButtonModule, MatIcon],
   template: `
     <div class="menu-container">
       <mat-nav-list>

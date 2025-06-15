@@ -1,14 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ITelegramWebAppData} from "../../../interface/telegram-web-app-data";
 import {TranslateModule} from "@ngx-translate/core";
-import {JsonPipe} from "@angular/common";
 
 @Component({
   selector: 'app-theme-params',
   standalone: true,
   imports: [
-    TranslateModule,
-    JsonPipe
+    TranslateModule
   ],
   templateUrl: './theme-params.component.html',
   styleUrl: './theme-params.component.scss'

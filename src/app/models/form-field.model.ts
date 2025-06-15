@@ -2,7 +2,7 @@ export interface IFormField {
   id: string;
   name: string;
   label: string;
-  type: 'text' | 'number' | 'select' | 'checkbox' | 'file' | 'date' | 'phone' | 'email' | 'separator';
+  type: 'text' | 'number' | 'select' | 'checkbox' | 'file' | 'date' | 'phone' | 'email' | 'separator' | 'toggle' | 'diagram' | 'slider' | 'color' | 'message' | 'social';
   placeholder?: string;
   position: number;
   isActive: boolean;
@@ -33,4 +33,7 @@ export interface IFormField {
   }>;
   selectMode?: 'autocomplete' | 'select';
   inputmode?: 'text' | 'numeric' | 'tel' | 'email';
+  allowMultiple?: boolean;
+  unit?: string;
+  hint?: string;
 } 

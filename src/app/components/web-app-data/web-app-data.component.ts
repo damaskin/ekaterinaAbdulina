@@ -11,8 +11,6 @@ import {MainBtnParamsComponent} from "./main-btn-params/main-btn-params.componen
   selector: 'app-web-app-data',
   standalone: true,
   imports: [
-    JsonPipe,
-    NgOptimizedImage,
     UserDataComponent,
     ThemeParamsComponent,
     TranslateModule,

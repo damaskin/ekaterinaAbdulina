@@ -93,7 +93,6 @@ export class OrderDetailsBottomSheetComponent implements OnInit, OnDestroy {
 
   // Проверяем, существует ли уже анкета для этого заказа
   checkExistingForm(): void {
-    console.log(this.data);
     if (!this.data.orderId) {
       return;
     }

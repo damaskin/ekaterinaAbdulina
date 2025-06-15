@@ -2,7 +2,6 @@ import {Component, computed, inject, Input, model, OnInit} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {ResponsiveService} from '../../services/responsive.service';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {TelegramService} from "../../services/telegram.service";
 import {ITelegramWebAppData} from "../../interface/telegram-web-app-data";
 import { UserGreetingComponent } from "../user-greeting/user-greeting.component";
@@ -11,7 +10,7 @@ import { UserGreetingComponent } from "../user-greeting/user-greeting.component"
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [MatIcon, MatButtonModule, MatMenu, MatMenuTrigger, MatMenuItem, UserGreetingComponent],
+  imports: [MatIcon, MatButtonModule, UserGreetingComponent],
   template: `
     <button
       mat-icon-button

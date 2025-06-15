@@ -199,8 +199,8 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.telegramService.showProgressMainBtn();
     this.isLoading = true;
-    this.telegramService.hideMainButton();
 
     const categoryData: ICategory = {
       ...this.form.value,
@@ -213,6 +213,8 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
 
     this.categoriesService.saveCategory(categoryData)
       .then(() => {
+        this.telegramService.hideProgressMainBtn();
+        this.isLoading = false;
         this.telegramService.cleanup();
         this.router.navigate(['/admin/categories']);
       })

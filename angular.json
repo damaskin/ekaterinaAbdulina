@@ -39,14 +39,15 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/telegram-template",
+            "outputPath": "Publish/app/",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "@angular/localize/init",
-              "zone.js"
+              "zone.js",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
@@ -64,12 +65,12 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "5MB"
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kB",
-                  "maximumError": "10kB"
+                  "maximumError": "4kB"
                 }
               ],
               "outputHashing": "all"
@@ -78,18 +79,6 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
-            },
-            "admin": {
-              "fileReplacements": [
-                {
-                  "replace": "src/app/app.component.ts",
-                  "with": "admin/app/app.component.ts"
-                },
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "admin/app/environment.admin.ts"
-                }
-              ]
             }
           },
           "defaultConfiguration": "production"
@@ -102,9 +91,6 @@
             },
             "development": {
               "buildTarget": "ekaterinaAbdulina:build:development"
-            },
-            "admin": {
-              "buildTarget": "ekaterinaAbdulina:build:admin"
             }
           },
           "defaultConfiguration": "development"
@@ -117,10 +103,11 @@
           "options": {
             "polyfills": [
               "zone.js",
-              "@angular/localize/init",
-              "zone.js/testing"
+              "zone.js/testing",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",

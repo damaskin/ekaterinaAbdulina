@@ -1,5 +1,5 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {DatePipe, JsonPipe, NgOptimizedImage} from "@angular/common";
+import {DatePipe} from "@angular/common";
 import {ITelegramWebAppData} from "../../../interface/telegram-web-app-data";
 import {TranslateModule} from "@ngx-translate/core";
 import {TelegramService} from "../../../services/telegram.service";
@@ -8,9 +8,7 @@ import {TelegramService} from "../../../services/telegram.service";
   selector: 'app-user-data',
   standalone: true,
   imports: [
-    NgOptimizedImage,
     TranslateModule,
-    JsonPipe,
     DatePipe
   ],
   templateUrl: './user-data.component.html',

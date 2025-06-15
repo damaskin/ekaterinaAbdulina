@@ -132,13 +132,44 @@ $_rest: (
   neutral-variant: map.get($_palettes, neutral-variant),
   error: map.get($_palettes, error),
 );
-$_primary: map.merge(map.get($_palettes, primary), $_rest);
+
+// Проброс основного цвета primary через переменную Telegram
+$tg-primary: (
+  0: #000000,
+  10: #001e2b,
+  20: #003548,
+  25: #004157,
+  30: #004d67,
+  35: #005977,
+  40: var(--tg-theme-button-color),
+  50: var(--tg-theme-button-color),
+  60: var(--tg-theme-button-color),
+  70: var(--tg-theme-button-color),
+  80: var(--tg-theme-button-color),
+  90: var(--tg-theme-button-color),
+  95: var(--tg-theme-button-color),
+  98: var(--tg-theme-button-color),
+  99: var(--tg-theme-button-color),
+  100: #ffffff,
+);
+
+$_primary: map.merge($tg-primary, $_rest);
 $_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
 
 $light-theme: mat.define-theme(
   (
     color: (
       theme-type: light,
+      primary: $_primary,
+      tertiary: $_tertiary,
+    ),
+  )
+);
+
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
       primary: $_primary,
       tertiary: $_tertiary,
     ),

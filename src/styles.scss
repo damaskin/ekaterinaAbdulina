@@ -1,21 +1,127 @@
+@use "@angular/material" as mat;
+@use "m3-theme" as *;
+@use "tg-theme" as *;
+
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use "@angular/material" as mat;
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
+// ВАЖНО: Не вызывать mat.core() и mat.all-component-themes в других SCSS-файлах!
+// Все theming-миксины Angular Material должны быть только здесь.
 @include mat.core();
 
-@import "m3-theme";
-@import "tg-theme";
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-:root {
+html {
   @include mat.all-component-themes($light-theme);
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    @include mat.all-component-themes($dark-theme);
+  }
+}
+
+:root {
+  // Фон и текст для input/textarea Material через Telegram
+  --mdc-filled-text-field-container-color: var(--tg-theme-secondary-bg-color);
+  --mdc-filled-text-field-input-text-color: var(--tg-theme-text-color);
+  --mdc-outlined-text-field-container-color: var(--tg-theme-secondary-bg-color);
+  --mdc-outlined-text-field-input-text-color: var(--tg-theme-text-color);
+
+  // Material input/textarea цвета через Telegram
+  --mdc-filled-text-field-label-text-color: var(--tg-theme-hint-color);
+  --mdc-filled-text-field-active-indicator-color: var(--tg-theme-button-color);
+  --mdc-filled-text-field-hover-active-indicator-color: var(--tg-theme-accent-text-color);
+  --mdc-filled-text-field-disabled-input-text-color: var(--tg-theme-hint-color);
+  --mdc-filled-text-field-disabled-label-text-color: var(--tg-theme-hint-color);
+  --mdc-filled-text-field-disabled-container-color: var(--tg-theme-secondary-bg-color);
+
+  --mdc-outlined-text-field-label-text-color: var(--tg-theme-hint-color);
+  --mdc-outlined-text-field-active-indicator-color: var(--tg-theme-button-color);
+  --mdc-outlined-text-field-hover-active-indicator-color: var(--tg-theme-accent-text-color);
+  --mdc-outlined-text-field-disabled-input-text-color: var(--tg-theme-hint-color);
+  --mdc-outlined-text-field-disabled-label-text-color: var(--tg-theme-hint-color);
+  --mdc-outlined-text-field-disabled-container-color: var(--tg-theme-secondary-bg-color);
+
+  // Material 3 input/textarea фон и текст через Telegram
+  --mat-sys-surface-container-high: var(--tg-theme-secondary-bg-color);
+  --mat-sys-surface-container: var(--tg-theme-secondary-bg-color);
+  --mat-sys-surface: var(--tg-theme-secondary-bg-color);
+  --mat-sys-on-surface: var(--tg-theme-text-color);
+
+  // Angular Material 20+ input/textarea фон и текст через Telegram
+  --mat-form-field-filled-container-color: var(--tg-theme-secondary-bg-color);
+  --mat-form-field-input-text-color: var(--tg-theme-text-color);
+  --mat-form-field-label-text-color: var(--tg-theme-hint-color);
+  --mat-form-field-placeholder-text-color: var(--tg-theme-hint-color);
+  --mat-form-field-focus-label-text-color: var(--tg-theme-hint-color);
+  --mat-form-field-outline-color: var(--tg-theme-hint-color);
+  --mat-form-field-focus-outline-color: var(--tg-theme-hint-color);
+  --mat-form-field-hover-outline-color: var(--tg-theme-hint-color);
+  --mat-form-field-underline-color: var(--tg-theme-hint-color);
+  --mat-form-field-filled-label-display: block;
+  --mat-form-field-filled-label-text-color: var(--tg-theme-hint-color);
+  --mat-form-field-filled-active-indicator-color: var(--tg-theme-secondary-bg-color);
+
+  --mdc-text-field-active-indicator-color: var(--tg-theme-button-color);
+  --mdc-text-field-idle-line-color: var(--tg-theme-hint-color);
+  --mdc-text-field-hover-line-color: var(--tg-theme-accent-text-color);
+
+  --mat-form-field-filled-hover-active-indicator-color: var(--tg-theme-hint-color);
+  --mat-form-field-filled-focus-active-indicator-color: var(--tg-theme-button-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mdc-filled-text-field-container-color: var(--tg-theme-secondary-bg-color);
+    --mdc-filled-text-field-input-text-color: var(--tg-theme-text-color);
+    --mdc-outlined-text-field-container-color: var(--tg-theme-secondary-bg-color);
+    --mdc-outlined-text-field-input-text-color: var(--tg-theme-text-color);
+
+    // Material input/textarea цвета через Telegram для dark
+    --mdc-filled-text-field-label-text-color: var(--tg-theme-hint-color);
+    --mdc-filled-text-field-active-indicator-color: var(--tg-theme-button-color);
+    --mdc-filled-text-field-hover-active-indicator-color: var(--tg-theme-accent-text-color);
+    --mdc-filled-text-field-disabled-input-text-color: var(--tg-theme-hint-color);
+    --mdc-filled-text-field-disabled-label-text-color: var(--tg-theme-hint-color);
+    --mdc-filled-text-field-disabled-container-color: var(--tg-theme-bg-color);
+
+    --mdc-outlined-text-field-label-text-color: var(--tg-theme-hint-color);
+    --mdc-outlined-text-field-active-indicator-color: var(--tg-theme-button-color);
+    --mdc-outlined-text-field-hover-active-indicator-color: var(--tg-theme-accent-text-color);
+    --mdc-outlined-text-field-disabled-input-text-color: var(--tg-theme-hint-color);
+    --mdc-outlined-text-field-disabled-label-text-color: var(--tg-theme-hint-color);
+    --mdc-outlined-text-field-disabled-container-color: var(--tg-theme-bg-color);
+
+    // Material 3 input/textarea фон и текст через Telegram для dark
+    --mat-sys-surface-container-high: var(--tg-theme-secondary-bg-color);
+    --mat-sys-surface-container: var(--tg-theme-secondary-bg-color);
+    --mat-sys-surface: var(--tg-theme-secondary-bg-color);
+    --mat-sys-on-surface: var(--tg-theme-text-color);
+
+    // Angular Material 20+ input/textarea фон и текст через Telegram для dark
+    --mat-form-field-filled-container-color: var(--tg-theme-secondary-bg-color);
+    --mat-form-field-input-text-color: var(--tg-theme-text-color);
+    --mat-form-field-label-text-color: var(--tg-theme-hint-color);
+    --mat-form-field-placeholder-text-color: var(--tg-theme-hint-color);
+    --mat-form-field-focus-label-text-color: var(--tg-theme-hint-color);
+    --mat-form-field-outline-color: var(--tg-theme-hint-color);
+    --mat-form-field-focus-outline-color: var(--tg-theme-hint-color);
+    --mat-form-field-hover-outline-color: var(--tg-theme-hint-color);
+    --mat-form-field-underline-color: var(--tg-theme-hint-color);
+    --mat-form-field-filled-label-display: block;
+    --mat-form-field-filled-label-text-color: var(--tg-theme-hint-color);
+    --mat-form-field-filled-active-indicator-color: var(--tg-theme-secondary-bg-color);
+
+    --mdc-text-field-active-indicator-color: var(--tg-theme-button-color);
+    --mdc-text-field-idle-line-color: var(--tg-theme-hint-color);
+    --mdc-text-field-hover-line-color: var(--tg-theme-accent-text-color);
+
+    --mat-form-field-filled-hover-active-indicator-color: var(--tg-theme-hint-color);
+    --mat-form-field-filled-focus-active-indicator-color: var(--tg-theme-button-color);
+  }
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
@@ -35,9 +141,6 @@ root {
   --error: var(--tg-theme-button-text-color);
 }
 
-html,
-body {
-}
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -147,7 +250,6 @@ ngx-dropzone-remove-badge {
 /* Глобальные стили для работы с длинными метками в формах Material */
 .mat-mdc-form-field {
   width: 100%;
-  margin-bottom: 16px;
 
   /* Предотвращаем скролл при длинных метках */
   .mat-mdc-form-field-flex {
@@ -172,4 +274,60 @@ ngx-dropzone-remove-badge {
     width: 100%;
     box-sizing: border-box;
   }
+}
+
+/* Глобальные стили для drag&drop карточек (Angular CDK) */
+.cdk-drag-preview {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  border-radius: 10px;
+  background: var(--tg-theme-secondary-bg-color) !important;
+  opacity: 1 !important;
+  min-width: 280px;
+  min-height: 80px;
+  padding: 10px 12px 8px 12px;
+  display: block;
+  z-index: 1000;
+}
+.cdk-drag-placeholder {
+  opacity: 0.2 !important;
+  background: var(--tg-theme-secondary-bg-color) !important;
+  border-radius: 10px;
+  min-width: 280px;
+  min-height: 80px;
+  display: block;
+}
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-preview {
+  border: 2px dashed var(--tg-theme-hint-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  min-height: 80px;
+  padding: 0;
+  width: 100%;
+  margin: 0 !important;
+  z-index: 1000;
+  opacity: 1 !important;
+}
+// .cdk-drag-placeholder {
+//   background: var(--tg-theme-secondary-bg-color) !important;
+//   border-radius: 10px;
+//   min-height: 80px;
+//   padding: 10px 12px 8px 12px;
+//   width: 100%;
+//   margin: 0 !important;
+//   opacity: 0.2 !important;
+// }
+
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

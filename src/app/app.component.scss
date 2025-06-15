@@ -1,19 +1,53 @@
-.container {
+html, body, .app {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app-mobile {
+  height: calc(100vh - 86px);
+  margin-top: 86px;
+}
+
+.app-desktop {
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-toolbar {
+  height: 56px;
+  background: var(--mat-toolbar-container-background-color, var(--tg-theme-bg-color));
+  color: var(--mat-toolbar-container-text-color, var(--tg-theme-text-color));
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  flex-shrink: 0;
+}
+
+mat-sidenav-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.container,
+.main-container {
+  flex: 1 1 auto;
   padding: 10px 20px;
+  margin: 0;
 }
 
 .component-selector {
   width: 210px;
-  height: inherit;
   background: var(--background);
   --mat-sidenav-container-divider-color: var(--primary-light);
 }
 
-
-
 .theme-selector {
   width: 300px;
-  height: inherit;
   background: var(--background);
   --mat-sidenav-container-divider-color: var(--primary-light);
 }

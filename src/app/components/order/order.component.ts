@@ -22,7 +22,6 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     IMaskModule,
-    IMaskPipe,
     MatProgressSpinnerModule,
     MatButtonModule,
     MatIconModule

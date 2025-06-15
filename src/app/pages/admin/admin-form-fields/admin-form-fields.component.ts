@@ -8,6 +8,7 @@ import { FormFieldsService } from '../../../services/form-fields.service';
 import { IFormField } from '../../../models/form-field.model';
 import { TelegramService } from '../../../services/telegram.service';
 import { MatCardModule } from '@angular/material/card';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-admin-form-fields',
@@ -18,7 +19,8 @@ import { MatCardModule } from '@angular/material/card';
     MatIconModule,
     MatSlideToggleModule,
     RouterModule,
-    MatCardModule
+    MatCardModule,
+    DragDropModule
   ],
   template: `
     <div class="admin-form-fields">
@@ -26,81 +28,89 @@ import { MatCardModule } from '@angular/material/card';
         <div class="title">Поля форм</div>
       </div>
 
-      <div class="fields-grid">
-        <mat-card *ngFor="let field of formFields" class="field-card">
-          <mat-card-header>
-            <!-- <mat-card-title>{{ field.label }}</mat-card-title> -->
-            <mat-card-subtitle>{{ field.label }}</mat-card-subtitle>
-            <!-- <mat-card-subtitle *ngIf="field.type !== 'separator'">Тип: {{ field.type }}</mat-card-subtitle> -->
-          </mat-card-header>
-
-          <mat-card-content>
-            <div class="field-info">
-              <div class="field-property">
-                <span class="label">Тип:</span>
-                <span class="value">{{ field.type }}</span>
-              </div>
-              <div class="field-property">
-                <span class="label">Позиция:</span>
-                <span class="value">{{ field.position }}</span>
-              </div>
-              <div class="field-property">
-                <span class="label">Статус:</span>
-                <mat-slide-toggle
-                  [checked]="field.isActive"
-                  (change)="toggleFieldActive(field, $event.checked)"
-                ></mat-slide-toggle>
-              </div>
-            </div>
-          </mat-card-content>
-
-          <mat-card-actions align="end">
-            <button mat-icon-button (click)="onEditField(field)">
+      <div class="fields-grid" cdkDropList (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let field of formFields; let i = index; trackBy: trackByFieldId" class="field-card" cdkDrag>
+          <div class="card-header">
+            <span class="drag-handle" cdkDragHandle>
+              <mat-icon>drag_indicator</mat-icon>
+            </span>
+            <span class="card-subtitle">{{ field.position }} - {{ field.label }}</span>
+          </div>
+          <div class="field-row-grid">
+            <span class="field-type">{{ field.type }}</span>
+            <mat-slide-toggle
+              [checked]="field.isActive"
+              (change)="toggleFieldActive(field, $event.checked)"
+              class="field-status"
+              color="primary"
+            ></mat-slide-toggle>
+            <button mat-icon-button class="field-edit-btn" (click)="onEditField(field)">
               <mat-icon>edit</mat-icon>
             </button>
-            <!-- <button mat-icon-button color="warn" (click)="deleteField(field)">
-              <mat-icon>delete</mat-icon>
-            </button> -->
-          </mat-card-actions>
-        </mat-card>
+          </div>
+        </div>
       </div>
     </div>
   `,
   styles: [`
-    .admin-form-fields {
+.field-card {
+  background-color: var(--tg-theme-secondary-bg-color);
+
+  margin: 0 0 10px 0;
+  min-height: 80px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border-radius: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: box-shadow 0.2s;
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 0 10px;
+    .drag-handle {
+      cursor: grab;
+      color: var(--tg-theme-hint-color);
+      display: flex;
+      align-items: center;
+      margin-right: 8px;
+      font-size: 20px;
+    }
+    .card-subtitle {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--tg-theme-hint-color);
+      margin: 0;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 75vw;
+    }
+  }
+
+  .field-row-grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px 8px 12px;
+  }
+
+  .field-type {
+    font-size: 13px;
+    color: var(--tg-theme-text-color);
+    font-weight: 400;
+    padding-left: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 
 
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-
-        .fields-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 20px;
-        }
-
-        .field-card {
-          background-color: var(--tg-theme-secondary-bg-color);
-          .field-info {
-            margin-top: 10px;
-          }
-
-          .field-property {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-
-            .label {
-              color: var(--tg-theme-text-color);
-            }
-          }
-        }
-      }
   `]
 })
 export class AdminFormFieldsComponent implements OnInit, OnDestroy {
@@ -165,5 +175,34 @@ export class AdminFormFieldsComponent implements OnInit, OnDestroy {
 
   onCancel(): void {
     this.router.navigate(['/main']);
+  }
+
+  async drop(event: CdkDragDrop<IFormField[]>) {
+    moveItemInArray(this.formFields, event.previousIndex, event.currentIndex);
+    // Пересчитываем позиции и гарантируем наличие position у всех
+    this.formFields.forEach((field, idx) => {
+      // Если поле не имеет position или оно не число — присваиваем
+      if (typeof field.position !== 'number' || isNaN(field.position)) {
+        field.position = idx + 1;
+      } else {
+        field.position = idx + 1;
+      }
+    });
+    // Сохраняем новые позиции
+    for (const field of this.formFields) {
+      await this.formFieldsService.updateFormField({ ...field, position: field.position });
+    }
+    // Обновляем список
+    this.loadFormFields();
+  }
+
+  // TrackBy для сохранения состояния карточек при drag-and-drop
+  trackByFieldId(index: number, field: IFormField) {
+    return field.id;
+  }
+
+  onStatusChange(field: IFormField, event: Event) {
+    const checked = (event.target as HTMLInputElement)?.checked;
+    this.toggleFieldActive(field, checked);
   }
 }
